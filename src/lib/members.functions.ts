@@ -59,6 +59,25 @@ export const inviteMember = createServerFn({ method: "POST" })
       if (error.code === "23505") throw new Error("That user is already a member.");
       throw new Error(error.message);
     }
+
+    // Notify invitee + log activity (admin client bypasses RLS).
+    const { data: projInfo } = await supabaseAdmin
+      .from("projects").select("name").eq("id", data.projectId).maybeSingle();
+    await supabaseAdmin.from("notifications").insert({
+      user_id: target.id,
+      kind: "project.invited",
+      title: `You were added to "${projInfo?.name ?? "a project"}"`,
+      body: `Role: ${data.role}`,
+      link: `/app/${data.projectId}`,
+      project_id: data.projectId,
+    } as never);
+    await supabaseAdmin.from("activity_log").insert({
+      project_id: data.projectId,
+      actor_id: userId,
+      action: "member.invited",
+      target: data.email,
+      metadata: { role: data.role } as never,
+    } as never);
     return row;
   });
 
