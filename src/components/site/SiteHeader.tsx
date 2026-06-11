@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
+import { NotificationsBell } from "@/components/site/NotificationsBell";
 
 export function SiteHeader() {
   const [authed, setAuthed] = useState<boolean | null>(null);
