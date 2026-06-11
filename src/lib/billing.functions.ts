@@ -9,7 +9,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const listPlans = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
-    // @ts-expect-error - plans table types regenerate after migration
     .from("plans")
     .select("id, name, price_inr_paise, interval, ai_message_quota, features, sort_order")
     .eq("is_active", true)
@@ -26,7 +25,6 @@ export const getMySubscription = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data } = await supabase
-      // @ts-expect-error - subscriptions table types regenerate after migration
       .from("subscriptions")
       .select("id, plan_id, status, current_period_end, cancel_at_period_end, razorpay_subscription_id")
       .eq("user_id", userId)
@@ -58,7 +56,6 @@ export const startSubscription = createServerFn({ method: "POST" })
 
     // Resolve plan (server-side price/plan-id lookup — never trust the client)
     const { data: plan, error: planErr } = await supabaseAdmin
-      // @ts-expect-error - plans table types regenerate after migration
       .from("plans").select("id, razorpay_plan_id, price_inr_paise").eq("id", data.planId).maybeSingle();
     if (planErr || !plan) return { ok: false as const, reason: "invalid_plan" as const, message: "Plan not found." };
     if (!plan.razorpay_plan_id) {
@@ -71,7 +68,6 @@ export const startSubscription = createServerFn({ method: "POST" })
 
     // Get-or-create existing subscription row + Razorpay customer
     const { data: existing } = await supabaseAdmin
-      // @ts-expect-error - subscriptions table types regenerate after migration
       .from("subscriptions").select("id, razorpay_customer_id, status").eq("user_id", userId).maybeSingle();
 
     let customerId = existing?.razorpay_customer_id as string | undefined;
@@ -90,7 +86,6 @@ export const startSubscription = createServerFn({ method: "POST" })
 
     // Upsert local subscription row in 'pending' state — webhook will flip to 'active'
     await supabaseAdmin
-      // @ts-expect-error - subscriptions table types regenerate after migration
       .from("subscriptions").upsert({
         user_id: userId,
         plan_id: plan.id,
@@ -117,12 +112,10 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: sub } = await supabaseAdmin
-      // @ts-expect-error - subscriptions table types regenerate after migration
       .from("subscriptions").select("razorpay_subscription_id").eq("user_id", userId).maybeSingle();
     if (!sub?.razorpay_subscription_id) return { ok: false as const, message: "No active subscription." };
     await cancelSubscription(sub.razorpay_subscription_id, true);
     await supabaseAdmin
-      // @ts-expect-error - subscriptions table types regenerate after migration
       .from("subscriptions").update({ cancel_at_period_end: true }).eq("user_id", userId);
     return { ok: true as const };
   });
