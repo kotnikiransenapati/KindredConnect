@@ -5,15 +5,25 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
-const SYSTEM_PROMPT = `You are Foundry, an expert AI software engineer that builds web apps inside a sandboxed workspace.
+const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI software engineer that builds web apps inside a sandboxed workspace.
 
-RULES:
-- You can read and write files in the user's project using the provided tools.
-- Always prefer writing complete, runnable files. Use React + TypeScript + Tailwind unless asked otherwise.
-- Entry file is /App.tsx. Keep components small and focused.
-- After making edits, briefly explain what you changed in 1-3 sentences.
-- Never invent or call tools other than the ones provided.
-- Never include secrets, API keys, or backend code unless the user asks.`;
+PIPELINE (follow strictly):
+1. Plan: briefly state your intent in one sentence before tool calls.
+2. Read: if a file likely exists, call readFile before overwriting blindly.
+3. Search: use searchFiles to discover where a symbol/text lives.
+4. Write: produce COMPLETE, runnable files. Never use ellipsis/placeholders/"... rest unchanged".
+5. Verify: after edits, summarize what changed in 1-3 sentences.
+
+STACK:
+- React 18 + TypeScript + Tailwind utility classes. Entry: /App.tsx.
+- Use functional components, hooks, semantic HTML, accessible markup.
+- Keep components small (<200 lines), split into /components/* when appropriate.
+- No secrets, no backend code, no network calls to private APIs.
+
+TOOL DISCIPLINE:
+- Never invent tools. Only call the provided tool names.
+- Prefer writeFile over deleteFile+writeFile. Use renameFile for moves.
+- Stop calling tools once the user's request is satisfied.`;
 
 const BodySchema = z.object({
   messages: z.array(z.any()).min(1).max(200),
@@ -138,11 +148,61 @@ export const Route = createFileRoute("/api/chat")({
               return { files: data ?? [] };
             },
           }),
+          searchFiles: tool({
+            description: "Case-insensitive substring search across file contents. Returns up to 20 matching paths with a snippet.",
+            inputSchema: z.object({ query: z.string().min(1).max(200) }),
+            execute: async ({ query }) => {
+              const { data } = await supabase.from("project_files")
+                .select("path, content")
+                .eq("project_id", projectId)
+                .ilike("content", `%${query}%`)
+                .limit(20);
+              return {
+                matches: (data ?? []).map((f) => {
+                  const idx = f.content.toLowerCase().indexOf(query.toLowerCase());
+                  const start = Math.max(0, idx - 60);
+                  const end = Math.min(f.content.length, idx + query.length + 60);
+                  return { path: f.path, snippet: f.content.slice(start, end) };
+                }),
+              };
+            },
+          }),
+          renameFile: tool({
+            description: "Rename or move a file in the project.",
+            inputSchema: z.object({
+              from: z.string().min(1).max(255),
+              to: z.string().min(1).max(255),
+            }),
+            execute: async ({ from, to }) => {
+              const src = from.startsWith("/") ? from : `/${from}`;
+              const dst = to.startsWith("/") ? to : `/${to}`;
+              const { data: existing } = await supabase.from("project_files")
+                .select("id, version").eq("project_id", projectId).eq("path", src).maybeSingle();
+              if (!existing) return { ok: false, error: "Source not found" };
+              const { error } = await supabase.from("project_files")
+                .update({ path: dst, version: existing.version + 1 })
+                .eq("id", existing.id);
+              if (error) return { ok: false, error: error.message };
+              return { ok: true, from: src, to: dst };
+            },
+          }),
         };
+
+        // Inject current file index into the system prompt so the model has context
+        const { data: fileIndex } = await supabase
+          .from("project_files")
+          .select("path, version")
+          .eq("project_id", projectId)
+          .order("path")
+          .limit(200);
+        const indexBlock = fileIndex && fileIndex.length > 0
+          ? `\n\nCURRENT PROJECT FILES (${fileIndex.length}):\n${fileIndex.map((f) => `- ${f.path} (v${f.version})`).join("\n")}`
+          : "\n\nCURRENT PROJECT FILES: (empty — start by creating /App.tsx)";
+        const systemPrompt = SYSTEM_PROMPT_BASE + indexBlock;
 
         const result = streamText({
           model,
-          system: SYSTEM_PROMPT,
+          system: systemPrompt,
           messages: await convertToModelMessages(messages as UIMessage[]),
           tools,
           stopWhen: stepCountIs(50),
