@@ -49,24 +49,36 @@ export const Route = createFileRoute("/api/chat")({
         }
         const { messages, projectId } = body;
 
-        // Verify project ownership
-        const { data: project } = await supabase
-          .from("projects").select("id").eq("id", projectId).eq("owner_id", userId).maybeSingle();
-        if (!project) return new Response("Project not found", { status: 404 });
+        // Verify access (owner OR member as editor+) via security-definer fn
+        const { data: canEdit } = await supabase.rpc("has_project_role", {
+          _project_id: projectId, _user_id: userId, _min_role: "editor",
+        });
+        if (!canEdit) return new Response("Project not found or insufficient permission", { status: 403 });
+
+        // Rate limit: 20 messages/minute, 200/day per user (service-role bypasses RLS)
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const [perMin, perDay] = await Promise.all([
+          supabaseAdmin.rpc("check_rate_limit", { _user_id: userId, _bucket: "chat_min", _window: "1 minute", _max: 20 }),
+          supabaseAdmin.rpc("check_rate_limit", { _user_id: userId, _bucket: "chat_day", _window: "1 day", _max: 200 }),
+        ]);
+        if (perMin.data === false || perDay.data === false) {
+          return new Response("Rate limit exceeded. Try again later.", { status: 429 });
+        }
 
         // Persist the latest user message
         const lastMsg = messages[messages.length - 1] as UIMessage;
         if (lastMsg?.role === "user") {
           await supabase.from("messages").insert({
-            project_id: projectId,
-            user_id: userId,
-            role: "user",
+            project_id: projectId, user_id: userId, role: "user",
             parts: lastMsg.parts as unknown as Database["public"]["Tables"]["messages"]["Insert"]["parts"],
           });
         }
 
+        const promptChars = JSON.stringify(messages).length;
         const gateway = createLovableAiGatewayProvider(lovableKey);
-        const model = gateway("google/gemini-3-flash-preview");
+        const modelId = "google/gemini-3-flash-preview";
+        const model = gateway(modelId);
+
 
         const tools = {
           writeFile: tool({
