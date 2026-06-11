@@ -99,6 +99,7 @@ function ProjectWorkspace() {
                     </div>
                   </TabsContent>
                 </Tabs>
+                <ActivityFeed projectId={projectId} />
               </div>
             </div>
           </>
