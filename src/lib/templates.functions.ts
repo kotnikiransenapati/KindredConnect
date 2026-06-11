@@ -96,14 +96,12 @@ export const createProjectFromTemplate = createServerFn({ method: "POST" })
       }
     }
 
-    // Bump template use count + activity log (admin client; bypass RLS for counter)
+    // Bump template use count + log activity (admin client bypasses RLS).
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.rpc("noop_bump", {}).then(() => {}, () => {}); // ignore if not present
-    await supabaseAdmin.from("templates").update({ use_count: (tpl as { use_count?: number }).use_count ? undefined : undefined } as never).eq("id", tpl.id);
-    // Simpler: increment via raw SQL-style update
+    const { data: cur } = await supabaseAdmin.from("templates").select("use_count").eq("id", tpl.id).maybeSingle();
     await supabaseAdmin
       .from("templates")
-      .update({ use_count: ((await supabaseAdmin.from("templates").select("use_count").eq("id", tpl.id).maybeSingle()).data?.use_count ?? 0) + 1 } as never)
+      .update({ use_count: (cur?.use_count ?? 0) + 1 } as never)
       .eq("id", tpl.id);
 
     await supabaseAdmin.from("activity_log").insert({
