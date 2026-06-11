@@ -76,6 +76,8 @@ function ProjectWorkspace() {
                   shareToken={projectQ.data.public_share_token ?? null}
                 />
               </div>
+            </div>
+
 
             <div className="grid gap-4 lg:grid-cols-[400px_1fr]">
               <ChatPanel projectId={projectId} initialMessages={initialMessages} />
