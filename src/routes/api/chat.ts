@@ -150,9 +150,21 @@ export const Route = createFileRoute("/api/chat")({
           }),
         };
 
+        // Inject current file index into the system prompt so the model has context
+        const { data: fileIndex } = await supabase
+          .from("project_files")
+          .select("path, version")
+          .eq("project_id", projectId)
+          .order("path")
+          .limit(200);
+        const indexBlock = fileIndex && fileIndex.length > 0
+          ? `\n\nCURRENT PROJECT FILES (${fileIndex.length}):\n${fileIndex.map((f) => `- ${f.path} (v${f.version})`).join("\n")}`
+          : "\n\nCURRENT PROJECT FILES: (empty — start by creating /App.tsx)";
+        const systemPrompt = SYSTEM_PROMPT_BASE + indexBlock;
+
         const result = streamText({
           model,
-          system: SYSTEM_PROMPT,
+          system: systemPrompt,
           messages: await convertToModelMessages(messages as UIMessage[]),
           tools,
           stopWhen: stepCountIs(50),
