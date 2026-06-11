@@ -61,9 +61,22 @@ function Dashboard() {
           <NewProjectDialog onCreate={(d) => createMut.mutate(d)} loading={createMut.isPending} />
         </div>
 
-        <div className="mb-8">
+        <div className="mb-8 grid gap-4 md:grid-cols-[1fr_320px]">
           <UsageCard />
+          <Link
+            to="/templates"
+            className="group flex items-center justify-between rounded-2xl border border-border/60 bg-gradient-to-br from-brand/10 to-transparent p-5 shadow-card transition-colors hover:border-brand/50"
+          >
+            <div>
+              <div className="flex items-center gap-2 font-display text-base font-semibold">
+                <LayoutTemplate className="h-4 w-4 text-brand" /> Templates
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">Start from a curated starter — SaaS, dashboard, blog, more.</p>
+            </div>
+            <ArrowRight className="h-4 w-4 text-brand transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
+
 
 
 
