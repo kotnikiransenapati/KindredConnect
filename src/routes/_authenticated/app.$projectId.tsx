@@ -68,12 +68,14 @@ function ProjectWorkspace() {
                 <h1 className="font-display text-3xl font-semibold tracking-tight">{projectQ.data.name}</h1>
                 {projectQ.data.description && <p className="mt-1 text-sm text-muted-foreground">{projectQ.data.description}</p>}
               </div>
-              <ProjectActions
-                projectId={projectId}
-                isPublic={projectQ.data.is_public ?? false}
-                shareToken={projectQ.data.public_share_token ?? null}
-              />
-            </div>
+              <div className="flex items-center gap-2">
+                <MembersDialog projectId={projectId} />
+                <ProjectActions
+                  projectId={projectId}
+                  isPublic={projectQ.data.is_public ?? false}
+                  shareToken={projectQ.data.public_share_token ?? null}
+                />
+              </div>
 
             <div className="grid gap-4 lg:grid-cols-[400px_1fr]">
               <ChatPanel projectId={projectId} initialMessages={initialMessages} />
