@@ -37,7 +37,7 @@ export function SiteHeader() {
                 <Link to="/app">Dashboard</Link>
               </Button>
               <Button variant="ghost" asChild className="hidden sm:inline-flex">
-                <Link to="/_authenticated/templates" search={{}}>Templates</Link>
+                <Link to="/templates">Templates</Link>
               </Button>
               <Button
                 variant="outline"
