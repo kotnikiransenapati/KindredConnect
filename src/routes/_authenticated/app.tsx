@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Trash2, ArrowRight, Sparkles } from "lucide-react";
+import { UsageCard } from "@/components/workspace/UsageCard";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
@@ -59,6 +60,12 @@ function Dashboard() {
           </div>
           <NewProjectDialog onCreate={(d) => createMut.mutate(d)} loading={createMut.isPending} />
         </div>
+
+        <div className="mb-8">
+          <UsageCard />
+        </div>
+
+
 
         {isLoading ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
