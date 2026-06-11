@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2, ArrowRight, Sparkles } from "lucide-react";
+import { Plus, Trash2, ArrowRight, Sparkles, LayoutTemplate } from "lucide-react";
 import { UsageCard } from "@/components/workspace/UsageCard";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
