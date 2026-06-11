@@ -32,8 +32,12 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           {authed ? (
             <>
+              <NotificationsBell />
               <Button variant="ghost" asChild>
                 <Link to="/app">Dashboard</Link>
+              </Button>
+              <Button variant="ghost" asChild className="hidden sm:inline-flex">
+                <Link to="/_authenticated/templates" search={{}}>Templates</Link>
               </Button>
               <Button
                 variant="outline"
