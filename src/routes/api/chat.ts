@@ -148,6 +148,44 @@ export const Route = createFileRoute("/api/chat")({
               return { files: data ?? [] };
             },
           }),
+          searchFiles: tool({
+            description: "Case-insensitive substring search across file contents. Returns up to 20 matching paths with a snippet.",
+            inputSchema: z.object({ query: z.string().min(1).max(200) }),
+            execute: async ({ query }) => {
+              const { data } = await supabase.from("project_files")
+                .select("path, content")
+                .eq("project_id", projectId)
+                .ilike("content", `%${query}%`)
+                .limit(20);
+              return {
+                matches: (data ?? []).map((f) => {
+                  const idx = f.content.toLowerCase().indexOf(query.toLowerCase());
+                  const start = Math.max(0, idx - 60);
+                  const end = Math.min(f.content.length, idx + query.length + 60);
+                  return { path: f.path, snippet: f.content.slice(start, end) };
+                }),
+              };
+            },
+          }),
+          renameFile: tool({
+            description: "Rename or move a file in the project.",
+            inputSchema: z.object({
+              from: z.string().min(1).max(255),
+              to: z.string().min(1).max(255),
+            }),
+            execute: async ({ from, to }) => {
+              const src = from.startsWith("/") ? from : `/${from}`;
+              const dst = to.startsWith("/") ? to : `/${to}`;
+              const { data: existing } = await supabase.from("project_files")
+                .select("id, version").eq("project_id", projectId).eq("path", src).maybeSingle();
+              if (!existing) return { ok: false, error: "Source not found" };
+              const { error } = await supabase.from("project_files")
+                .update({ path: dst, version: existing.version + 1 })
+                .eq("id", existing.id);
+              if (error) return { ok: false, error: error.message };
+              return { ok: true, from: src, to: dst };
+            },
+          }),
         };
 
         // Inject current file index into the system prompt so the model has context
