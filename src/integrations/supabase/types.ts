@@ -114,14 +114,54 @@ export type Database = {
           },
         ]
       }
+      project_versions: {
+        Row: {
+          created_at: string
+          file_count: number
+          id: string
+          label: string | null
+          owner_id: string
+          project_id: string
+          snapshot: Json
+        }
+        Insert: {
+          created_at?: string
+          file_count?: number
+          id?: string
+          label?: string | null
+          owner_id: string
+          project_id: string
+          snapshot: Json
+        }
+        Update: {
+          created_at?: string
+          file_count?: number
+          id?: string
+          label?: string | null
+          owner_id?: string
+          project_id?: string
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_versions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string
           description: string | null
           id: string
           initial_prompt: string | null
+          is_public: boolean
           name: string
           owner_id: string
+          public_share_token: string | null
           slug: string
           updated_at: string
         }
@@ -130,8 +170,10 @@ export type Database = {
           description?: string | null
           id?: string
           initial_prompt?: string | null
+          is_public?: boolean
           name: string
           owner_id: string
+          public_share_token?: string | null
           slug: string
           updated_at?: string
         }
@@ -140,8 +182,10 @@ export type Database = {
           description?: string | null
           id?: string
           initial_prompt?: string | null
+          is_public?: boolean
           name?: string
           owner_id?: string
+          public_share_token?: string | null
           slug?: string
           updated_at?: string
         }
