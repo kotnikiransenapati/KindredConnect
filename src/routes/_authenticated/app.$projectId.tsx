@@ -10,6 +10,7 @@ import { FileTree } from "@/components/workspace/FileTree";
 import { FileViewer } from "@/components/workspace/FileViewer";
 import { LivePreview } from "@/components/workspace/LivePreview";
 import { ProjectActions } from "@/components/workspace/ProjectActions";
+import { MembersDialog } from "@/components/workspace/MembersDialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
 import type { UIMessage } from "ai";
