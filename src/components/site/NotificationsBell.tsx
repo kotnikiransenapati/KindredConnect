@@ -11,7 +11,6 @@ import {
   listNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification,
 } from "@/lib/notifications.functions";
 import { formatDistanceToNow } from "date-fns";
-import { Link } from "@tanstack/react-router";
 
 export function NotificationsBell() {
   const fetchList = useServerFn(listNotifications);
