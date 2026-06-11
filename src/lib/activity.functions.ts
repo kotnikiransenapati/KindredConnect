@@ -9,7 +9,7 @@ export interface ActivityRow {
   actor_id: string | null;
   action: string;
   target: string | null;
-  metadata: Record<string, unknown>;
+  metadata: Record<string, string | number | boolean | null>;
   created_at: string;
 }
 
