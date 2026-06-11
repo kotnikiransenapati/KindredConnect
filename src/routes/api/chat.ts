@@ -152,14 +152,21 @@ export const Route = createFileRoute("/api/chat")({
           originalMessages: messages as UIMessage[],
           onFinish: async ({ responseMessage }) => {
             try {
-              await supabase.from("messages").insert({
-                project_id: projectId,
-                user_id: userId,
-                role: "assistant",
-                parts: responseMessage.parts as unknown as Database["public"]["Tables"]["messages"]["Insert"]["parts"],
-              });
+              const parts = responseMessage.parts as Array<{ type: string }>;
+              const toolCalls = parts.filter((p) => p.type?.startsWith("tool-")).length;
+              const responseChars = JSON.stringify(parts).length;
+              await Promise.all([
+                supabase.from("messages").insert({
+                  project_id: projectId, user_id: userId, role: "assistant",
+                  parts: responseMessage.parts as unknown as Database["public"]["Tables"]["messages"]["Insert"]["parts"],
+                }),
+                supabase.from("ai_usage").insert({
+                  project_id: projectId, user_id: userId, model: modelId,
+                  prompt_chars: promptChars, response_chars: responseChars, tool_calls: toolCalls,
+                }),
+              ]);
             } catch (e) {
-              console.error("[chat] persist assistant failed", e);
+              console.error("[chat] persist failed", e);
             }
           },
         });
