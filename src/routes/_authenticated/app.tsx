@@ -60,6 +60,12 @@ function Dashboard() {
           <NewProjectDialog onCreate={(d) => createMut.mutate(d)} loading={createMut.isPending} />
         </div>
 
+        <div className="mb-8">
+          <UsageCard />
+        </div>
+
+
+
         {isLoading ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
