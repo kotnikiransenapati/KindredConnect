@@ -57,7 +57,11 @@ export const Route = createFileRoute("/api/public/razorpay-webhook")({
 
         let userId: string | null = null;
         if (sub?.id && newStatus) {
-          const updates: Record<string, unknown> = { status: newStatus };
+          const updates: {
+            status: string;
+            current_period_start?: string;
+            current_period_end?: string;
+          } = { status: newStatus };
           if (sub.current_start) updates.current_period_start = new Date(sub.current_start * 1000).toISOString();
           if (sub.current_end) updates.current_period_end = new Date(sub.current_end * 1000).toISOString();
           const { data: row } = await supabaseAdmin
