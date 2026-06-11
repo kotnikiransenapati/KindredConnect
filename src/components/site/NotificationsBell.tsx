@@ -70,13 +70,13 @@ export function NotificationsBell() {
                       <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
                         <span>{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span>
                         {n.link && (
-                          <Link
-                            to={n.link}
+                          <a
+                            href={n.link}
                             onClick={() => !n.read_at && readMut.mutate(n.id)}
                             className="text-brand hover:underline"
                           >
                             Open →
-                          </Link>
+                          </a>
                         )}
                       </div>
                     </div>
