@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
+import { NotificationsBell } from "@/components/site/NotificationsBell";
 
 export function SiteHeader() {
   const [authed, setAuthed] = useState<boolean | null>(null);
@@ -31,8 +32,12 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           {authed ? (
             <>
+              <NotificationsBell />
               <Button variant="ghost" asChild>
                 <Link to="/app">Dashboard</Link>
+              </Button>
+              <Button variant="ghost" asChild className="hidden sm:inline-flex">
+                <Link to="/templates">Templates</Link>
               </Button>
               <Button
                 variant="outline"
