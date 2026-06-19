@@ -18,6 +18,7 @@ Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-lan
 - **Phase 9A/B** ✅ `deployments` table + versioned public URLs (`/p/$slug`, `/p/$slug/$version`) + deploy / rollback UI
 - **Phase 10A** ✅ Supabase Realtime presence: live avatars of collaborators viewing the same project
 - **Phase 10B** ✅ comments + @mentions: per-project + per-file threads, realtime sync, mention → notification fan-out
+- **Phase 11A** ✅ public template marketplace: publish project → template, public `/marketplace`, 1–5 star ratings with trigger-maintained averages
 
 ## Phase M — Mobile (iOS / Android) track
 1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).

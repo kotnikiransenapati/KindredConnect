@@ -16,6 +16,7 @@ import { KnowledgePanel } from "@/components/workspace/KnowledgePanel";
 import { DeploymentsPanel } from "@/components/workspace/DeploymentsPanel";
 import { PresenceBar } from "@/components/workspace/PresenceBar";
 import { CommentsPanel } from "@/components/workspace/CommentsPanel";
+import { PublishTemplateDialog } from "@/components/workspace/PublishTemplateDialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
 import type { UIMessage } from "ai";
@@ -75,6 +76,7 @@ function ProjectWorkspace() {
               </div>
               <div className="flex items-center gap-2">
                 <PresenceBar projectId={projectId} />
+                <PublishTemplateDialog projectId={projectId} />
                 <MembersDialog projectId={projectId} />
                 <ProjectActions
                   projectId={projectId}

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -26,6 +27,11 @@ import { Route as AuthenticatedAppProjectIdRouteImport } from './routes/_authent
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -93,6 +99,7 @@ const AuthenticatedAppProjectIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/marketplace': typeof MarketplaceRoute
   '/pricing': typeof PricingRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/billing': typeof AuthenticatedBillingRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/marketplace': typeof MarketplaceRoute
   '/pricing': typeof PricingRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/billing': typeof AuthenticatedBillingRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/marketplace': typeof MarketplaceRoute
   '/pricing': typeof PricingRoute
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/marketplace'
     | '/pricing'
     | '/app'
     | '/billing'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/marketplace'
     | '/pricing'
     | '/app'
     | '/billing'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/marketplace'
     | '/pricing'
     | '/_authenticated/app'
     | '/_authenticated/billing'
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   PricingRoute: typeof PricingRoute
   ApiChatRoute: typeof ApiChatRoute
   PSlugRoute: typeof PSlugRouteWithChildren
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  MarketplaceRoute: MarketplaceRoute,
   PricingRoute: PricingRoute,
   ApiChatRoute: ApiChatRoute,
   PSlugRoute: PSlugRouteWithChildren,

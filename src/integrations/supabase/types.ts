@@ -661,8 +661,48 @@ export type Database = {
           },
         ]
       }
+      template_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          rating: number
+          review: string | null
+          template_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rating: number
+          review?: string | null
+          template_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rating?: number
+          review?: string | null
+          template_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_ratings_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       templates: {
         Row: {
+          author_id: string | null
+          avg_rating: number
           category: string
           created_at: string
           description: string
@@ -671,7 +711,9 @@ export type Database = {
           initial_prompt: string | null
           is_active: boolean
           is_featured: boolean
+          is_public: boolean
           name: string
+          rating_count: number
           slug: string
           sort_order: number
           thumbnail_url: string | null
@@ -679,6 +721,8 @@ export type Database = {
           use_count: number
         }
         Insert: {
+          author_id?: string | null
+          avg_rating?: number
           category?: string
           created_at?: string
           description?: string
@@ -687,7 +731,9 @@ export type Database = {
           initial_prompt?: string | null
           is_active?: boolean
           is_featured?: boolean
+          is_public?: boolean
           name: string
+          rating_count?: number
           slug: string
           sort_order?: number
           thumbnail_url?: string | null
@@ -695,6 +741,8 @@ export type Database = {
           use_count?: number
         }
         Update: {
+          author_id?: string | null
+          avg_rating?: number
           category?: string
           created_at?: string
           description?: string
@@ -703,7 +751,9 @@ export type Database = {
           initial_prompt?: string | null
           is_active?: boolean
           is_featured?: boolean
+          is_public?: boolean
           name?: string
+          rating_count?: number
           slug?: string
           sort_order?: number
           thumbnail_url?: string | null
