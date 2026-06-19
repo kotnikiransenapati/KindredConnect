@@ -28,6 +28,7 @@ export function SiteHeader() {
           <Link to="/" hash="features" className="hover:text-foreground transition-colors">Features</Link>
           <Link to="/pricing" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Pricing</Link>
           <Link to="/marketplace" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Marketplace</Link>
+          <Link to="/docs" className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground" }}>Docs</Link>
           <Link to="/" hash="how" className="hover:text-foreground transition-colors">How it works</Link>
         </nav>
         <div className="flex items-center gap-2">
