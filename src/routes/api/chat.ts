@@ -2,8 +2,43 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, stepCountIs, tool, type UIMessage } from "ai";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
+import { parse as babelParse } from "@babel/parser";
+import { createTwoFilesPatch } from "diff";
 import type { Database } from "@/integrations/supabase/types";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+
+/** Parse JS/TS/JSX/TSX with Babel — returns syntax errors (no type-checking). */
+function lintSource(path: string, content: string): { ok: boolean; errors: { line: number; column: number; message: string }[] } {
+  const isTs = /\.(ts|tsx)$/.test(path);
+  const isJsx = /\.(jsx|tsx)$/.test(path);
+  if (!/\.(jsx?|tsx?|mjs|cjs)$/.test(path)) return { ok: true, errors: [] };
+  try {
+    babelParse(content, {
+      sourceType: "module",
+      allowReturnOutsideFunction: false,
+      errorRecovery: true,
+      plugins: [
+        isJsx ? "jsx" : null,
+        isTs ? "typescript" : null,
+        "decorators-legacy",
+        "classProperties",
+        "topLevelAwait",
+      ].filter(Boolean) as never,
+    });
+    return { ok: true, errors: [] };
+  } catch (e) {
+    const err = e as { loc?: { line: number; column: number }; message?: string };
+    return {
+      ok: false,
+      errors: [{ line: err.loc?.line ?? 0, column: err.loc?.column ?? 0, message: err.message ?? "Parse error" }],
+    };
+  }
+}
+
+function makePatch(path: string, oldContent: string, newContent: string): string {
+  const patch = createTwoFilesPatch(path, path, oldContent, newContent, "", "", { context: 3 });
+  return patch.length > 16_000 ? patch.slice(0, 16_000) + "\n... (truncated)" : patch;
+}
 
 const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI software engineer that builds web apps inside a sandboxed workspace.
 
