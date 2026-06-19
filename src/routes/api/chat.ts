@@ -40,7 +40,7 @@ function makePatch(path: string, oldContent: string, newContent: string): string
   return patch.length > 16_000 ? patch.slice(0, 16_000) + "\n... (truncated)" : patch;
 }
 
-const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI software engineer that builds web apps inside a sandboxed workspace.
+const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI engineer that builds production-grade web and mobile apps inside a sandboxed workspace.
 
 PIPELINE (follow strictly):
 1. Plan: briefly state your intent in one sentence before tool calls.
@@ -51,15 +51,56 @@ PIPELINE (follow strictly):
 
 STACK:
 - React 18 + TypeScript + Tailwind utility classes. Entry: /App.tsx.
-- Use functional components, hooks, semantic HTML, accessible markup.
+- Functional components, hooks, semantic HTML, accessible markup, responsive-first.
 - Keep components small (<200 lines), split into /components/* when appropriate.
 - No secrets, no backend code, no network calls to private APIs.
+
+MOBILE (iOS / Android):
+- If the user asks for a mobile app or wants to ship to iOS/Android, call scaffoldCapacitor once.
+  This adds capacitor.config.ts + /docs/MOBILE.md with the exact 'npx cap add ios/android' steps.
+- Design touch-first: 44px+ tap targets, safe-area padding (env(safe-area-inset-*)), no hover-only states.
+- Prefer system fonts on mobile; avoid fixed pixel widths; use clamp() / responsive units.
 
 TOOL DISCIPLINE:
 - Never invent tools. Only call the provided tool names.
 - Prefer writeFile over deleteFile+writeFile. Use renameFile for moves.
 - After writeFile, inspect the returned 'lint' object. If lint.ok is false, immediately call writeFile again with corrected content. Repeat until clean (max 3 attempts per file).
 - Stop calling tools once the user's request is satisfied and all touched files lint cleanly.`;
+
+const EMBEDDABLE = /\.(tsx?|jsx?|css|md|mdx|json|html|txt|ya?ml)$/i;
+
+/** Fire-and-forget chunk + embed of a file, scoped to the user's project. */
+async function autoEmbedFile(
+  supabaseAdmin: ReturnType<typeof createClient<Database>>,
+  gateway: ReturnType<typeof createLovableAiGatewayProvider>,
+  projectId: string,
+  path: string,
+  content: string,
+): Promise<void> {
+  try {
+    if (!EMBEDDABLE.test(path) || content.length < 80 || content.length > 60_000) return;
+    const { embedMany } = await import("ai");
+    const SIZE = 1200, OVERLAP = 150;
+    const chunks: string[] = [];
+    let i = 0;
+    while (i < content.length) { chunks.push(content.slice(i, i + SIZE)); i += SIZE - OVERLAP; }
+    const { embeddings } = await embedMany({
+      model: gateway.textEmbeddingModel("google/text-embedding-004"),
+      values: chunks,
+    });
+    await supabaseAdmin.from("knowledge_chunks")
+      .delete().eq("project_id", projectId).eq("source_type", "file").eq("source_path", path);
+    await supabaseAdmin.from("knowledge_chunks").insert(
+      chunks.map((c, idx) => ({
+        project_id: projectId, source_type: "file" as const, source_path: path,
+        chunk_index: idx, content: c, tokens: Math.ceil(c.length / 4),
+        embedding: embeddings[idx] as unknown as string,
+      })),
+    );
+  } catch (e) {
+    console.warn("[autoEmbed] skipped", path, e);
+  }
+}
 
 const BodySchema = z.object({
   messages: z.array(z.any()).min(1).max(200),
@@ -147,13 +188,83 @@ export const Route = createFileRoute("/api/chat")({
                   .update({ content, language: language ?? null, version: existing.version + 1 })
                   .eq("id", existing.id);
                 if (error) return { ok: false, error: error.message };
+                void autoEmbedFile(supabaseAdmin, gateway, projectId, normalized, content);
                 return { ok: true, path: normalized, action: "updated", version: existing.version + 1, lint, patch };
               }
               const { error } = await supabase.from("project_files").insert({
                 project_id: projectId, path: normalized, content, language: language ?? null,
               });
               if (error) return { ok: false, error: error.message };
+              void autoEmbedFile(supabaseAdmin, gateway, projectId, normalized, content);
               return { ok: true, path: normalized, action: "created", version: 1, lint, patch };
+            },
+          }),
+          scaffoldCapacitor: tool({
+            description: "Add Capacitor mobile-shell config so this project can be wrapped as an iOS / Android app. Writes /capacitor.config.ts and /docs/MOBILE.md with the exact CLI steps. Call ONCE per project when the user wants a mobile app.",
+            inputSchema: z.object({
+              appId: z.string().regex(/^[a-z][a-z0-9.]*$/).max(120).describe("Reverse-DNS bundle id, e.g. app.foundry.todo"),
+              appName: z.string().min(1).max(80),
+              platforms: z.array(z.enum(["ios", "android"])).min(1).default(["ios", "android"]),
+            }),
+            execute: async ({ appId, appName, platforms }) => {
+              const cfg = `import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: '${appId}',
+  appName: ${JSON.stringify(appName)},
+  webDir: 'dist',
+  bundledWebRuntime: false,
+  ios: { contentInset: 'always', limitsNavigationsToAppBoundDomains: true },
+  android: { allowMixedContent: false },
+  server: { androidScheme: 'https' },
+  plugins: {
+    SplashScreen: { launchShowDuration: 1200, backgroundColor: '#0b0b10' },
+    StatusBar: { style: 'dark', overlaysWebView: false },
+  },
+};
+
+export default config;
+`;
+              const docs = `# ${appName} — Mobile (iOS / Android)
+
+This project is configured with Capacitor for native iOS / Android shells around the same React app.
+
+## One-time setup (on your machine)
+\`\`\`bash
+npm i -D @capacitor/cli
+npm i @capacitor/core ${platforms.includes("ios") ? "@capacitor/ios " : ""}${platforms.includes("android") ? "@capacitor/android" : ""}
+npx cap init "${appName}" "${appId}" --web-dir dist
+${platforms.includes("ios") ? "npx cap add ios\n" : ""}${platforms.includes("android") ? "npx cap add android\n" : ""}\`\`\`
+
+## Every build
+\`\`\`bash
+npm run build
+npx cap sync
+${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device / simulator\n" : ""}${platforms.includes("android") ? "npx cap open android   # Android Studio → Run\n" : ""}\`\`\`
+
+## Native features (install on demand)
+- Camera:  \`npm i @capacitor/camera\`
+- Push:    \`npm i @capacitor/push-notifications\`
+- Storage: \`npm i @capacitor/preferences\`
+- Geolocation: \`npm i @capacitor/geolocation\`
+
+## Design rules baked into the UI
+- 44px+ tap targets, safe-area insets (\`env(safe-area-inset-*)\`), no hover-only states.
+- Use system fonts on mobile, prefer \`clamp()\` and responsive units over fixed px.
+`;
+              const writeOne = async (p: string, c: string) => {
+                const { data: ex } = await supabase.from("project_files")
+                  .select("id, version").eq("project_id", projectId).eq("path", p).maybeSingle();
+                if (ex) {
+                  await supabase.from("project_files")
+                    .update({ content: c, version: ex.version + 1 }).eq("id", ex.id);
+                } else {
+                  await supabase.from("project_files").insert({ project_id: projectId, path: p, content: c });
+                }
+              };
+              await writeOne("/capacitor.config.ts", cfg);
+              await writeOne("/docs/MOBILE.md", docs);
+              return { ok: true, appId, appName, platforms, files: ["/capacitor.config.ts", "/docs/MOBILE.md"] };
             },
           }),
           lintFile: tool({
