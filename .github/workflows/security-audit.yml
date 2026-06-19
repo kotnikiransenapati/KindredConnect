@@ -1,0 +1,21 @@
+name: Security audit
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  rls-audit:
+    name: RLS migration audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Audit backend access rules
+        run: bun run audit:rls
