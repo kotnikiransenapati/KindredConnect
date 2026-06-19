@@ -379,6 +379,50 @@ export type Database = {
         }
         Relationships: []
       }
+      project_comments: {
+        Row: {
+          anchor_path: string | null
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          mentions: string[]
+          project_id: string
+          resolved: boolean
+          updated_at: string
+        }
+        Insert: {
+          anchor_path?: string | null
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          mentions?: string[]
+          project_id: string
+          resolved?: boolean
+          updated_at?: string
+        }
+        Update: {
+          anchor_path?: string | null
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          mentions?: string[]
+          project_id?: string
+          resolved?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_files: {
         Row: {
           content: string
