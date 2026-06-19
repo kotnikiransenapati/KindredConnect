@@ -12,14 +12,20 @@ Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-lan
 - Templates gallery + fork
 - Razorpay subscription scaffold (inactive — keys pending)
 - AI usage metering + plan quota
-- **Phase 8A in flight** — pgvector knowledge base + per-project chunks
-- **Phase 8B in flight** — RAG retrieval into system prompt + URL/note ingestion UI
+- **Phase 8A** ✅ pgvector knowledge base + per-project chunks
+- **Phase 8B** ✅ RAG retrieval into system prompt + URL/note ingestion UI
+- **Phase 8C** ✅ auto-embed `project_files` on writeFile (fire-and-forget), multimodal image attachments in chat, Capacitor mobile-shell `scaffoldCapacitor` tool
+
+## Phase M — Mobile (iOS / Android) track
+1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).
+2. Mobile-first design rules baked into the system prompt (44px tap targets, safe-area insets, no hover-only states).
+3. Future: one-click "Download Xcode/Android Studio project" — server bundles `dist/` + `ios/` + `android/` into a zip via storage.
+4. Future: native plugin catalog tool (`addCapacitorPlugin('camera'|'push'|'geolocation'|...)`).
+5. Future: EAS-style cloud build webhook (Codemagic or Bitrise) so users get `.ipa`/`.aab` without a local toolchain.
 
 ## Phase 8 — Knowledge & retrieval (remaining)
-1. Auto-embed `project_files` on `writeFile` (debounced server-side task).
-2. Multimodal: accept image attachments → Lovable Cloud storage → pass as `image` parts to Gemini 3 Flash.
-3. Re-ranker pass: top-20 vector hits → rerank via cheap LLM judge → top-6 into prompt.
-4. Long-term memory: per-user "preferences" namespace (writing style, framework choice).
+1. Re-ranker pass: top-20 vector hits → rerank via cheap LLM judge → top-6 into prompt.
+2. Long-term memory: per-user "preferences" namespace (writing style, framework choice).
 
 ## Phase 9 — Real preview & deploy
 1. Server-side bundle pipeline using esbuild-wasm in a Worker (Sandpack stays for instant inner-loop preview).
