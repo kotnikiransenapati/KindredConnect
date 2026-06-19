@@ -2,8 +2,43 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, stepCountIs, tool, type UIMessage } from "ai";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
+import { parse as babelParse } from "@babel/parser";
+import { createTwoFilesPatch } from "diff";
 import type { Database } from "@/integrations/supabase/types";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+
+/** Parse JS/TS/JSX/TSX with Babel — returns syntax errors (no type-checking). */
+function lintSource(path: string, content: string): { ok: boolean; errors: { line: number; column: number; message: string }[] } {
+  const isTs = /\.(ts|tsx)$/.test(path);
+  const isJsx = /\.(jsx|tsx)$/.test(path);
+  if (!/\.(jsx?|tsx?|mjs|cjs)$/.test(path)) return { ok: true, errors: [] };
+  try {
+    babelParse(content, {
+      sourceType: "module",
+      allowReturnOutsideFunction: false,
+      errorRecovery: true,
+      plugins: [
+        isJsx ? "jsx" : null,
+        isTs ? "typescript" : null,
+        "decorators-legacy",
+        "classProperties",
+        "topLevelAwait",
+      ].filter(Boolean) as never,
+    });
+    return { ok: true, errors: [] };
+  } catch (e) {
+    const err = e as { loc?: { line: number; column: number }; message?: string };
+    return {
+      ok: false,
+      errors: [{ line: err.loc?.line ?? 0, column: err.loc?.column ?? 0, message: err.message ?? "Parse error" }],
+    };
+  }
+}
+
+function makePatch(path: string, oldContent: string, newContent: string): string {
+  const patch = createTwoFilesPatch(path, path, oldContent, newContent, "", "", { context: 3 });
+  return patch.length > 16_000 ? patch.slice(0, 16_000) + "\n... (truncated)" : patch;
+}
 
 const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI software engineer that builds web apps inside a sandboxed workspace.
 
@@ -23,7 +58,8 @@ STACK:
 TOOL DISCIPLINE:
 - Never invent tools. Only call the provided tool names.
 - Prefer writeFile over deleteFile+writeFile. Use renameFile for moves.
-- Stop calling tools once the user's request is satisfied.`;
+- After writeFile, inspect the returned 'lint' object. If lint.ok is false, immediately call writeFile again with corrected content. Repeat until clean (max 3 attempts per file).
+- Stop calling tools once the user's request is satisfied and all touched files lint cleanly.`;
 
 const BodySchema = z.object({
   messages: z.array(z.any()).min(1).max(200),
@@ -92,7 +128,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const tools = {
           writeFile: tool({
-            description: "Create or overwrite a file in the project. Use complete file contents.",
+            description: "Create or overwrite a file with COMPLETE contents. Result includes a unified diff and lint errors (if any). If lint.ok is false, FIX the syntax error and call writeFile again.",
             inputSchema: z.object({
               path: z.string().min(1).max(255).describe("Absolute path starting with /"),
               content: z.string().max(200_000),
@@ -100,21 +136,35 @@ export const Route = createFileRoute("/api/chat")({
             }),
             execute: async ({ path, content, language }) => {
               const normalized = path.startsWith("/") ? path : `/${path}`;
+              const lint = lintSource(normalized, content);
               const { data: existing } = await supabase
-                .from("project_files").select("id, version")
+                .from("project_files").select("id, version, content")
                 .eq("project_id", projectId).eq("path", normalized).maybeSingle();
+              const oldContent = existing?.content ?? "";
+              const patch = makePatch(normalized, oldContent, content);
               if (existing) {
                 const { error } = await supabase.from("project_files")
                   .update({ content, language: language ?? null, version: existing.version + 1 })
                   .eq("id", existing.id);
                 if (error) return { ok: false, error: error.message };
-                return { ok: true, path: normalized, action: "updated", version: existing.version + 1 };
+                return { ok: true, path: normalized, action: "updated", version: existing.version + 1, lint, patch };
               }
               const { error } = await supabase.from("project_files").insert({
                 project_id: projectId, path: normalized, content, language: language ?? null,
               });
               if (error) return { ok: false, error: error.message };
-              return { ok: true, path: normalized, action: "created", version: 1 };
+              return { ok: true, path: normalized, action: "created", version: 1, lint, patch };
+            },
+          }),
+          lintFile: tool({
+            description: "Run syntax/parse check on a file already in the project. Use to verify before declaring done.",
+            inputSchema: z.object({ path: z.string().min(1).max(255) }),
+            execute: async ({ path }) => {
+              const normalized = path.startsWith("/") ? path : `/${path}`;
+              const { data } = await supabase.from("project_files")
+                .select("content").eq("project_id", projectId).eq("path", normalized).maybeSingle();
+              if (!data) return { ok: false, error: "Not found" };
+              return { path: normalized, ...lintSource(normalized, data.content) };
             },
           }),
           deleteFile: tool({
