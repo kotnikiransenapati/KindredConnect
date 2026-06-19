@@ -14,6 +14,7 @@ import { MembersDialog } from "@/components/workspace/MembersDialog";
 import { ActivityFeed } from "@/components/workspace/ActivityFeed";
 import { KnowledgePanel } from "@/components/workspace/KnowledgePanel";
 import { DeploymentsPanel } from "@/components/workspace/DeploymentsPanel";
+import { PresenceBar } from "@/components/workspace/PresenceBar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
 import type { UIMessage } from "ai";
@@ -72,6 +73,7 @@ function ProjectWorkspace() {
                 {projectQ.data.description && <p className="mt-1 text-sm text-muted-foreground">{projectQ.data.description}</p>}
               </div>
               <div className="flex items-center gap-2">
+                <PresenceBar projectId={projectId} />
                 <MembersDialog projectId={projectId} />
                 <ProjectActions
                   projectId={projectId}
