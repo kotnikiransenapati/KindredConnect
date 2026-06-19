@@ -93,6 +93,56 @@ export type Database = {
           },
         ]
       }
+      deployments: {
+        Row: {
+          created_at: string
+          created_by: string
+          file_count: number
+          id: string
+          is_current: boolean
+          label: string | null
+          project_id: string
+          slug: string
+          snapshot: Json
+          status: string
+          version_num: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          file_count?: number
+          id?: string
+          is_current?: boolean
+          label?: string | null
+          project_id: string
+          slug: string
+          snapshot?: Json
+          status?: string
+          version_num: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          file_count?: number
+          id?: string
+          is_current?: boolean
+          label?: string | null
+          project_id?: string
+          slug?: string
+          snapshot?: Json
+          status?: string
+          version_num?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deployments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_chunks: {
         Row: {
           chunk_index: number
@@ -663,6 +713,7 @@ export type Database = {
           source_type: string
         }[]
       }
+      next_deployment_version: { Args: { _slug: string }; Returns: number }
     }
     Enums: {
       project_role: "owner" | "editor" | "viewer"

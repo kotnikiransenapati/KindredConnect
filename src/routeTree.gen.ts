@@ -14,10 +14,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShareTokenRouteImport } from './routes/share.$token'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as PSlugVersionRouteImport } from './routes/p.$slug.$version'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAppProjectIdRouteImport } from './routes/_authenticated/app.$projectId'
 
@@ -45,6 +47,11 @@ const ShareTokenRoute = ShareTokenRouteImport.update({
   path: '/share/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -64,6 +71,11 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const PSlugVersionRoute = PSlugVersionRouteImport.update({
+  id: '/$version',
+  path: '/$version',
+  getParentRoute: () => PSlugRoute,
 } as any)
 const ApiPublicRazorpayWebhookRoute =
   ApiPublicRazorpayWebhookRouteImport.update({
@@ -86,9 +98,11 @@ export interface FileRoutesByFullPath {
   '/billing': typeof AuthenticatedBillingRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/api/chat': typeof ApiChatRoute
+  '/p/$slug': typeof PSlugRouteWithChildren
   '/share/$token': typeof ShareTokenRoute
   '/app/$projectId': typeof AuthenticatedAppProjectIdRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
+  '/p/$slug/$version': typeof PSlugVersionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,9 +112,11 @@ export interface FileRoutesByTo {
   '/billing': typeof AuthenticatedBillingRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/api/chat': typeof ApiChatRoute
+  '/p/$slug': typeof PSlugRouteWithChildren
   '/share/$token': typeof ShareTokenRoute
   '/app/$projectId': typeof AuthenticatedAppProjectIdRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
+  '/p/$slug/$version': typeof PSlugVersionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,9 +128,11 @@ export interface FileRoutesById {
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/api/chat': typeof ApiChatRoute
+  '/p/$slug': typeof PSlugRouteWithChildren
   '/share/$token': typeof ShareTokenRoute
   '/_authenticated/app/$projectId': typeof AuthenticatedAppProjectIdRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
+  '/p/$slug/$version': typeof PSlugVersionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,9 +144,11 @@ export interface FileRouteTypes {
     | '/billing'
     | '/templates'
     | '/api/chat'
+    | '/p/$slug'
     | '/share/$token'
     | '/app/$projectId'
     | '/api/public/razorpay-webhook'
+    | '/p/$slug/$version'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,9 +158,11 @@ export interface FileRouteTypes {
     | '/billing'
     | '/templates'
     | '/api/chat'
+    | '/p/$slug'
     | '/share/$token'
     | '/app/$projectId'
     | '/api/public/razorpay-webhook'
+    | '/p/$slug/$version'
   id:
     | '__root__'
     | '/'
@@ -151,9 +173,11 @@ export interface FileRouteTypes {
     | '/_authenticated/billing'
     | '/_authenticated/templates'
     | '/api/chat'
+    | '/p/$slug'
     | '/share/$token'
     | '/_authenticated/app/$projectId'
     | '/api/public/razorpay-webhook'
+    | '/p/$slug/$version'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -162,6 +186,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PricingRoute: typeof PricingRoute
   ApiChatRoute: typeof ApiChatRoute
+  PSlugRoute: typeof PSlugRouteWithChildren
   ShareTokenRoute: typeof ShareTokenRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
 }
@@ -203,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShareTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -230,6 +262,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app'
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/p/$slug/$version': {
+      id: '/p/$slug/$version'
+      path: '/$version'
+      fullPath: '/p/$slug/$version'
+      preLoaderRoute: typeof PSlugVersionRouteImport
+      parentRoute: typeof PSlugRoute
     }
     '/api/public/razorpay-webhook': {
       id: '/api/public/razorpay-webhook'
@@ -274,12 +313,23 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface PSlugRouteChildren {
+  PSlugVersionRoute: typeof PSlugVersionRoute
+}
+
+const PSlugRouteChildren: PSlugRouteChildren = {
+  PSlugVersionRoute: PSlugVersionRoute,
+}
+
+const PSlugRouteWithChildren = PSlugRoute._addFileChildren(PSlugRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   PricingRoute: PricingRoute,
   ApiChatRoute: ApiChatRoute,
+  PSlugRoute: PSlugRouteWithChildren,
   ShareTokenRoute: ShareTokenRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
 }
