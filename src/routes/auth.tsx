@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Turnstile, TURNSTILE_ENABLED } from "@/components/Turnstile";
+import { verifyTurnstile } from "@/lib/turnstile.functions";
 import { toast } from "sonner";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { z } from "zod";
@@ -30,6 +33,8 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const verifyCaptcha = useServerFn(verifyTurnstile);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -47,6 +52,10 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "sign-up") {
+        if (TURNSTILE_ENABLED) {
+          const v = await verifyCaptcha({ data: { token: captchaToken ?? undefined } });
+          if (!v.ok) { toast.error("Please complete the captcha."); setLoading(false); return; }
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -119,6 +128,7 @@ function AuthPage() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
+            {mode === "sign-up" && <Turnstile onToken={setCaptchaToken} />}
             <Button type="submit" disabled={loading} className="w-full bg-gradient-brand text-brand-foreground hover:opacity-95">
               {loading ? "Please wait…" : mode === "sign-in" ? "Sign in" : "Create account"}
             </Button>
