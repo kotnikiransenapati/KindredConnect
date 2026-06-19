@@ -248,7 +248,35 @@ export const Route = createFileRoute("/api/chat")({
         const indexBlock = fileIndex && fileIndex.length > 0
           ? `\n\nCURRENT PROJECT FILES (${fileIndex.length}):\n${fileIndex.map((f) => `- ${f.path} (v${f.version})`).join("\n")}`
           : "\n\nCURRENT PROJECT FILES: (empty — start by creating /App.tsx)";
-        const systemPrompt = SYSTEM_PROMPT_BASE + indexBlock;
+
+        // RAG: pull top-K knowledge chunks relevant to the latest user message
+        let knowledgeBlock = "";
+        try {
+          const userText = (lastMsg?.parts ?? [])
+            .filter((p): p is { type: "text"; text: string } => (p as { type?: string }).type === "text")
+            .map((p) => p.text).join(" ").slice(0, 2000);
+          if (userText && userText.trim().length > 8) {
+            const { embed } = await import("ai");
+            const { embedding } = await embed({
+              model: gateway.textEmbeddingModel("google/text-embedding-004"),
+              value: userText,
+            });
+            const { data: hits } = await supabaseAdmin.rpc("match_knowledge", {
+              _project_id: projectId,
+              _user_id: userId,
+              _query: embedding as unknown as string,
+              _k: 6,
+            });
+            if (hits && hits.length > 0) {
+              knowledgeBlock = "\n\nRELEVANT KNOWLEDGE (retrieved from project KB):\n" +
+                hits.map((h, i) => `[#${i + 1} ${h.source_type}:${h.source_path} sim=${h.similarity.toFixed(2)}]\n${h.content.slice(0, 800)}`).join("\n\n");
+            }
+          }
+        } catch (e) {
+          console.warn("[chat] knowledge retrieval skipped", e);
+        }
+
+        const systemPrompt = SYSTEM_PROMPT_BASE + indexBlock + knowledgeBlock;
 
         const result = streamText({
           model,
