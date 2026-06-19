@@ -206,6 +206,7 @@ function ToolView({ part }: { part: { type: string; state?: string; input?: unkn
                name === "deleteFile" ? <Trash2 className="h-3.5 w-3.5" /> :
                name === "searchFiles" ? <Search className="h-3.5 w-3.5" /> :
                name === "renameFile" ? <ArrowRightLeft className="h-3.5 w-3.5" /> :
+               name === "scaffoldCapacitor" ? <Smartphone className="h-3.5 w-3.5" /> :
                <FileText className="h-3.5 w-3.5" />;
   const path = (part.input as { path?: string } | undefined)?.path;
   const done = part.state === "output-available" || part.state === "result";
