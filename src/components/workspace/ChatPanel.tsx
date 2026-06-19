@@ -182,6 +182,13 @@ function MessageView({ message }: { message: UIMessage }) {
               </div>
             );
           }
+          if (part.type === "file") {
+            const f = part as { mediaType?: string; url?: string; filename?: string };
+            if (f.mediaType?.startsWith("image/") && f.url) {
+              return <img key={i} src={f.url} alt={f.filename ?? "attachment"} className="mt-1.5 max-h-48 rounded-md border border-border/60" />;
+            }
+            return null;
+          }
           if (part.type?.startsWith("tool-")) {
             return <ToolView key={i} part={part} />;
           }
