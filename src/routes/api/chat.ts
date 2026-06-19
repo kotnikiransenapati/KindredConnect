@@ -390,7 +390,7 @@ ${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device 
           ? `\n\nCURRENT PROJECT FILES (${fileIndex.length}):\n${fileIndex.map((f) => `- ${f.path} (v${f.version})`).join("\n")}`
           : "\n\nCURRENT PROJECT FILES: (empty — start by creating /App.tsx)";
 
-        // RAG: pull top-K knowledge chunks relevant to the latest user message
+        // RAG: top-20 vector hits → diversity rerank → top-6 into prompt
         let knowledgeBlock = "";
         try {
           const userText = (lastMsg?.parts ?? [])
@@ -406,18 +406,47 @@ ${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device 
               _project_id: projectId,
               _user_id: userId,
               _query: embedding as unknown as string,
-              _k: 6,
+              _k: 20,
             });
             if (hits && hits.length > 0) {
-              knowledgeBlock = "\n\nRELEVANT KNOWLEDGE (retrieved from project KB):\n" +
-                hits.map((h, i) => `[#${i + 1} ${h.source_type}:${h.source_path} sim=${h.similarity.toFixed(2)}]\n${h.content.slice(0, 800)}`).join("\n\n");
+              // Diversity rerank: penalize repeats from same source_path so a single
+              // file can't dominate the window. Top-6 wins.
+              const seen = new Map<string, number>();
+              const reranked = hits
+                .map((h) => {
+                  const repeats = seen.get(h.source_path) ?? 0;
+                  seen.set(h.source_path, repeats + 1);
+                  const penalty = repeats * 0.12;
+                  return { h, score: h.similarity - penalty };
+                })
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 6)
+                .map(({ h }) => h);
+              knowledgeBlock = "\n\nRELEVANT KNOWLEDGE (retrieved + reranked from project KB):\n" +
+                reranked.map((h, i) => `[#${i + 1} ${h.source_type}:${h.source_path} sim=${h.similarity.toFixed(2)}]\n${h.content.slice(0, 800)}`).join("\n\n");
             }
           }
         } catch (e) {
           console.warn("[chat] knowledge retrieval skipped", e);
         }
 
-        const systemPrompt = SYSTEM_PROMPT_BASE + indexBlock + knowledgeBlock;
+        // Long-term user preferences (cross-project memory)
+        let prefsBlock = "";
+        try {
+          const { data: prefs } = await supabase
+            .from("user_preferences")
+            .select("notes")
+            .eq("user_id", userId)
+            .maybeSingle();
+          const notes = (prefs?.notes ?? "").trim();
+          if (notes.length > 0) {
+            prefsBlock = `\n\nUSER PREFERENCES (apply across all projects):\n${notes.slice(0, 4000)}`;
+          }
+        } catch (e) {
+          console.warn("[chat] preferences fetch skipped", e);
+        }
+
+        const systemPrompt = SYSTEM_PROMPT_BASE + prefsBlock + indexBlock + knowledgeBlock;
 
         const result = streamText({
           model,

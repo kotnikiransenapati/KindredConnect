@@ -18,6 +18,8 @@ import { PresenceBar } from "@/components/workspace/PresenceBar";
 import { CommentsPanel } from "@/components/workspace/CommentsPanel";
 import { IntegrationsPanel } from "@/components/workspace/IntegrationsPanel";
 import { PublishTemplateDialog } from "@/components/workspace/PublishTemplateDialog";
+import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
+import { OnboardingTour } from "@/components/workspace/OnboardingTour";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
 import type { UIMessage } from "ai";
@@ -77,6 +79,7 @@ function ProjectWorkspace() {
               </div>
               <div className="flex items-center gap-2">
                 <PresenceBar projectId={projectId} />
+                <PreferencesDialog />
                 <PublishTemplateDialog projectId={projectId} />
                 <MembersDialog projectId={projectId} />
                 <ProjectActions
@@ -86,6 +89,7 @@ function ProjectWorkspace() {
                 />
               </div>
             </div>
+            <OnboardingTour />
 
 
             <div className="grid gap-4 lg:grid-cols-[400px_1fr]">
