@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Sparkles, FileCode, Trash2, FileText, ChevronDown, Search, ArrowRightLeft } from "lucide-react";
+import { Send, Sparkles, FileCode, Trash2, FileText, ChevronDown, Search, ArrowRightLeft, ImagePlus, X, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
