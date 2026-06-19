@@ -35,6 +35,8 @@ export const inviteMember = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { assertRateLimit } = await import("@/lib/rate-limit.server");
+    await assertRateLimit(userId, "invite_day", "1 day", 50);
     // verify owner
     const { data: proj } = await supabase
       .from("projects").select("id").eq("id", data.projectId).eq("owner_id", userId).maybeSingle();
