@@ -347,6 +347,36 @@ ${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device 
               return { ok: true, from: src, to: dst };
             },
           }),
+          installIntegration: tool({
+            description: "Install a pre-wired integration (Stripe, Resend, OpenAI, Google Maps, PostHog) into the project. Writes ready-to-use files and returns env vars the user must add as secrets.",
+            inputSchema: z.object({
+              slug: z.enum(["stripe-checkout", "resend-email", "openai-chat", "google-maps", "posthog-analytics"]),
+              overwrite: z.boolean().default(false),
+            }),
+            execute: async ({ slug, overwrite }) => {
+              const { getIntegration } = await import("@/lib/integrations.catalog");
+              const integration = getIntegration(slug);
+              if (!integration) return { ok: false, error: `Unknown integration: ${slug}` };
+              const written: string[] = [];
+              const skipped: string[] = [];
+              for (const f of integration.files) {
+                const { data: ex } = await supabase.from("project_files")
+                  .select("id, version").eq("project_id", projectId).eq("path", f.path).maybeSingle();
+                if (ex && !overwrite) { skipped.push(f.path); continue; }
+                if (ex) {
+                  const { error } = await supabase.from("project_files")
+                    .update({ content: f.content, version: ex.version + 1 }).eq("id", ex.id);
+                  if (error) return { ok: false, error: error.message };
+                } else {
+                  const { error } = await supabase.from("project_files")
+                    .insert({ project_id: projectId, path: f.path, content: f.content });
+                  if (error) return { ok: false, error: error.message };
+                }
+                written.push(f.path);
+              }
+              return { ok: true, slug, name: integration.name, written, skipped, envVars: integration.envVars };
+            },
+          }),
         };
 
         // Inject current file index into the system prompt so the model has context
