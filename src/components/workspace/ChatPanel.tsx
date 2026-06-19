@@ -70,9 +70,9 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
     setInput("");
     const attached = files;
     setFiles([]);
-    const fileList = attached.length > 0
-      ? Object.assign(new DataTransfer(), { items: attached.reduce((dt, f) => { dt.items.add(f); return dt; }, new DataTransfer()).items }).files
-      : undefined;
+    const dt = new DataTransfer();
+    for (const f of attached) dt.items.add(f);
+    const fileList = attached.length > 0 ? dt.files : undefined;
     await sendMessage({ text: text || "(see attached image)", files: fileList });
   };
 
