@@ -42,19 +42,42 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
   });
 
   const [input, setInput] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, [projectId, status]);
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [messages, status]);
 
   const isLoading = status === "submitted" || status === "streaming";
 
+  const onPickFiles = (list: FileList | null) => {
+    if (!list) return;
+    const next: File[] = [];
+    for (const f of Array.from(list)) {
+      if (!f.type.startsWith("image/")) { toast.error(`${f.name}: only images allowed`); continue; }
+      if (f.size > 5 * 1024 * 1024) { toast.error(`${f.name}: max 5MB`); continue; }
+      next.push(f);
+    }
+    setFiles((prev) => [...prev, ...next].slice(0, 4));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text || isLoading) return;
+    if ((!text && files.length === 0) || isLoading) return;
     setInput("");
+    const attached = files;
+    setFiles([]);
+    const fileList = attached.length > 0
+      ? Object.assign(new DataTransfer(), { items: attached.reduce((dt, f) => { dt.items.add(f); return dt; }, new DataTransfer()).items }).files
+      : undefined;
+    await sendMessage({ text: text || "(see attached image)", files: fileList });
+  };
+
+  const sendQuickPrompt = async (text: string) => {
+    if (isLoading) return;
     await sendMessage({ text });
   };
 
