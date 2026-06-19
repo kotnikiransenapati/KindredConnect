@@ -21,6 +21,8 @@ Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-lan
 - **Phase 11A** ✅ public template marketplace: publish project → template, public `/marketplace`, 1–5 star ratings with trigger-maintained averages
 - **Phase 11B** ✅ integrations catalog (Stripe / Resend / OpenAI / Maps / PostHog) + `installIntegration` agent tool + sidebar Install panel
 - **Phase 12A (part)** ✅ shared `assertRateLimit` helper + rate limits on deploy / invite / ingest / publish-template (chat already limited); CI RLS/anon-access audit script
+- **Phase 8 (remaining)** ✅ diversity rerank pass on top-20 vector hits → top-6; long-term per-user `user_preferences` memory injected into every chat
+- **Phase 12B (part)** ✅ `/docs` site with sectioned content; first-run onboarding tour in project workspace
 
 ## Phase M — Mobile (iOS / Android) track
 1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).
