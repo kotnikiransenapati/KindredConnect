@@ -188,6 +188,7 @@ export const Route = createFileRoute("/api/chat")({
                   .update({ content, language: language ?? null, version: existing.version + 1 })
                   .eq("id", existing.id);
                 if (error) return { ok: false, error: error.message };
+                void autoEmbedFile(supabaseAdmin, gateway, projectId, normalized, content);
                 return { ok: true, path: normalized, action: "updated", version: existing.version + 1, lint, patch };
               }
               const { error } = await supabase.from("project_files").insert({
