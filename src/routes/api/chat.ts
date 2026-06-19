@@ -40,7 +40,7 @@ function makePatch(path: string, oldContent: string, newContent: string): string
   return patch.length > 16_000 ? patch.slice(0, 16_000) + "\n... (truncated)" : patch;
 }
 
-const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI software engineer that builds web apps inside a sandboxed workspace.
+const SYSTEM_PROMPT_BASE = `You are Foundry, an expert AI engineer that builds production-grade web and mobile apps inside a sandboxed workspace.
 
 PIPELINE (follow strictly):
 1. Plan: briefly state your intent in one sentence before tool calls.
@@ -51,15 +51,56 @@ PIPELINE (follow strictly):
 
 STACK:
 - React 18 + TypeScript + Tailwind utility classes. Entry: /App.tsx.
-- Use functional components, hooks, semantic HTML, accessible markup.
+- Functional components, hooks, semantic HTML, accessible markup, responsive-first.
 - Keep components small (<200 lines), split into /components/* when appropriate.
 - No secrets, no backend code, no network calls to private APIs.
+
+MOBILE (iOS / Android):
+- If the user asks for a mobile app or wants to ship to iOS/Android, call scaffoldCapacitor once.
+  This adds capacitor.config.ts + /docs/MOBILE.md with the exact 'npx cap add ios/android' steps.
+- Design touch-first: 44px+ tap targets, safe-area padding (env(safe-area-inset-*)), no hover-only states.
+- Prefer system fonts on mobile; avoid fixed pixel widths; use clamp() / responsive units.
 
 TOOL DISCIPLINE:
 - Never invent tools. Only call the provided tool names.
 - Prefer writeFile over deleteFile+writeFile. Use renameFile for moves.
 - After writeFile, inspect the returned 'lint' object. If lint.ok is false, immediately call writeFile again with corrected content. Repeat until clean (max 3 attempts per file).
 - Stop calling tools once the user's request is satisfied and all touched files lint cleanly.`;
+
+const EMBEDDABLE = /\.(tsx?|jsx?|css|md|mdx|json|html|txt|ya?ml)$/i;
+
+/** Fire-and-forget chunk + embed of a file, scoped to the user's project. */
+async function autoEmbedFile(
+  supabaseAdmin: ReturnType<typeof createClient<Database>>,
+  gateway: ReturnType<typeof createLovableAiGatewayProvider>,
+  projectId: string,
+  path: string,
+  content: string,
+): Promise<void> {
+  try {
+    if (!EMBEDDABLE.test(path) || content.length < 80 || content.length > 60_000) return;
+    const { embedMany } = await import("ai");
+    const SIZE = 1200, OVERLAP = 150;
+    const chunks: string[] = [];
+    let i = 0;
+    while (i < content.length) { chunks.push(content.slice(i, i + SIZE)); i += SIZE - OVERLAP; }
+    const { embeddings } = await embedMany({
+      model: gateway.textEmbeddingModel("google/text-embedding-004"),
+      values: chunks,
+    });
+    await supabaseAdmin.from("knowledge_chunks")
+      .delete().eq("project_id", projectId).eq("source_type", "file").eq("source_path", path);
+    await supabaseAdmin.from("knowledge_chunks").insert(
+      chunks.map((c, idx) => ({
+        project_id: projectId, source_type: "file" as const, source_path: path,
+        chunk_index: idx, content: c, tokens: Math.ceil(c.length / 4),
+        embedding: embeddings[idx] as unknown as string,
+      })),
+    );
+  } catch (e) {
+    console.warn("[autoEmbed] skipped", path, e);
+  }
+}
 
 const BodySchema = z.object({
   messages: z.array(z.any()).min(1).max(200),
