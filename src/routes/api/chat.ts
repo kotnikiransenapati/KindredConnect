@@ -267,6 +267,44 @@ ${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device 
               return { ok: true, appId, appName, platforms, files: ["/capacitor.config.ts", "/docs/MOBILE.md"] };
             },
           }),
+          addCapacitorPlugin: tool({
+            description: "Install a native Capacitor plugin (camera, geolocation, push, haptics, share, etc). Updates /docs/MOBILE.md with the install command and a minimal usage snippet. Call AFTER scaffoldCapacitor.",
+            inputSchema: z.object({
+              plugin: z.enum([
+                "camera", "geolocation", "push-notifications", "local-notifications",
+                "preferences", "filesystem", "share", "haptics",
+                "status-bar", "splash-screen", "browser", "app",
+              ]),
+            }),
+            execute: async ({ plugin }) => {
+              const pkg = `@capacitor/${plugin}`;
+              const SNIPPETS: Record<string, string> = {
+                "camera": `import { Camera, CameraResultType } from '@capacitor/camera';\nconst photo = await Camera.getPhoto({ resultType: CameraResultType.Uri, quality: 90 });`,
+                "geolocation": `import { Geolocation } from '@capacitor/geolocation';\nconst pos = await Geolocation.getCurrentPosition();`,
+                "push-notifications": `import { PushNotifications } from '@capacitor/push-notifications';\nawait PushNotifications.requestPermissions(); await PushNotifications.register();`,
+                "local-notifications": `import { LocalNotifications } from '@capacitor/local-notifications';\nawait LocalNotifications.schedule({ notifications: [{ id: 1, title: 'Hi', body: 'Hello' }] });`,
+                "preferences": `import { Preferences } from '@capacitor/preferences';\nawait Preferences.set({ key: 'name', value: 'Foundry' });`,
+                "filesystem": `import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';\nawait Filesystem.writeFile({ path: 'log.txt', data: 'hi', directory: Directory.Data, encoding: Encoding.UTF8 });`,
+                "share": `import { Share } from '@capacitor/share';\nawait Share.share({ title: 'Hi', text: 'Check this', url: 'https://example.com' });`,
+                "haptics": `import { Haptics, ImpactStyle } from '@capacitor/haptics';\nawait Haptics.impact({ style: ImpactStyle.Medium });`,
+                "status-bar": `import { StatusBar, Style } from '@capacitor/status-bar';\nawait StatusBar.setStyle({ style: Style.Dark });`,
+                "splash-screen": `import { SplashScreen } from '@capacitor/splash-screen';\nawait SplashScreen.hide();`,
+                "browser": `import { Browser } from '@capacitor/browser';\nawait Browser.open({ url: 'https://example.com' });`,
+                "app": `import { App } from '@capacitor/app';\nApp.addListener('appStateChange', ({ isActive }) => console.log(isActive));`,
+              };
+              const snippet = SNIPPETS[plugin] ?? "";
+              const { data: existing } = await supabase.from("project_files")
+                .select("id, content, version").eq("project_id", projectId).eq("path", "/docs/MOBILE.md").maybeSingle();
+              const block = `\n\n## Plugin: ${plugin}\n\`\`\`bash\nnpm i ${pkg}\nnpx cap sync\n\`\`\`\n\n\`\`\`ts\n${snippet}\n\`\`\`\n`;
+              const next = (existing?.content ?? `# Mobile\n`) + (existing?.content?.includes(`## Plugin: ${plugin}`) ? "" : block);
+              if (existing) {
+                await supabase.from("project_files").update({ content: next, version: existing.version + 1 }).eq("id", existing.id);
+              } else {
+                await supabase.from("project_files").insert({ project_id: projectId, path: "/docs/MOBILE.md", content: next });
+              }
+              return { ok: true, plugin, pkg, installCommand: `npm i ${pkg} && npx cap sync` };
+            },
+          }),
           lintFile: tool({
             description: "Run syntax/parse check on a file already in the project. Use to verify before declaring done.",
             inputSchema: z.object({ path: z.string().min(1).max(255) }),
