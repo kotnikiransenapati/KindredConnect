@@ -146,20 +146,46 @@ function ToolView({ part }: { part: { type: string; state?: string; input?: unkn
                <FileText className="h-3.5 w-3.5" />;
   const path = (part.input as { path?: string } | undefined)?.path;
   const done = part.state === "output-available" || part.state === "result";
+  const output = part.output as { patch?: string; lint?: { ok: boolean; errors?: { line: number; message: string }[] }; action?: string } | undefined;
+  const patch = output?.patch;
+  const lint = output?.lint;
+  const lintBad = lint && lint.ok === false;
   return (
-    <div className="my-1.5 rounded-lg border border-border/60 bg-muted/30 text-xs">
+    <div className={cn("my-1.5 rounded-lg border bg-muted/30 text-xs", lintBad ? "border-destructive/50" : "border-border/60")}>
       <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 px-2.5 py-1.5">
-        <span className={cn("grid h-5 w-5 place-items-center rounded", done ? "bg-brand/20 text-brand" : "bg-muted text-muted-foreground")}>
+        <span className={cn("grid h-5 w-5 place-items-center rounded",
+          lintBad ? "bg-destructive/20 text-destructive" :
+          done ? "bg-brand/20 text-brand" : "bg-muted text-muted-foreground")}>
           {icon}
         </span>
         <span className="font-mono">{name}</span>
         {path && <span className="truncate text-muted-foreground">{path}</span>}
+        {output?.action && <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase">{output.action}</span>}
+        {lintBad && <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[10px] text-destructive">lint error</span>}
         <ChevronDown className={cn("ml-auto h-3 w-3 transition", open && "rotate-180")} />
       </button>
       {open && (
-        <pre className="overflow-x-auto border-t border-border/60 p-2 text-[10px] leading-snug">
+        <div className="border-t border-border/60">
+          {lintBad && lint?.errors && (
+            <div className="border-b border-border/60 bg-destructive/5 p-2 text-[11px] text-destructive">
+              {lint.errors.map((e, i) => <div key={i}>Line {e.line}: {e.message}</div>)}
+            </div>
+          )}
+          {patch ? (
+            <pre className="max-h-72 overflow-auto p-2 font-mono text-[10px] leading-snug">
+              {patch.split("\n").map((line, i) => {
+                const cls = line.startsWith("+") && !line.startsWith("+++") ? "text-emerald-400" :
+                            line.startsWith("-") && !line.startsWith("---") ? "text-rose-400" :
+                            line.startsWith("@@") ? "text-brand" : "text-muted-foreground";
+                return <div key={i} className={cls}>{line || " "}</div>;
+              })}
+            </pre>
+          ) : (
+            <pre className="overflow-x-auto p-2 text-[10px] leading-snug">
 {JSON.stringify({ input: part.input, output: part.output }, null, 2)}
-        </pre>
+            </pre>
+          )}
+        </div>
       )}
     </div>
   );
