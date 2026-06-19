@@ -76,7 +76,6 @@ export const postComment = createServerFn({ method: "POST" })
 
     // Fan-out notifications for mentions
     if (mentionIds.length > 0) {
-      const { data: project } = await supabase.from("projects").select("name").eq("id", data.projectId).maybeSingle();
       const { data: actor } = await supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle();
       const rows = mentionIds
         .filter((uid) => uid !== userId)
@@ -87,8 +86,6 @@ export const postComment = createServerFn({ method: "POST" })
           body: data.body.slice(0, 200),
           link: `/app/${data.projectId}`,
           project_id: data.projectId,
-          actor_id: userId,
-          metadata: { project_name: project?.name ?? null, comment_id: inserted.id },
         }));
       if (rows.length > 0) await supabase.from("notifications").insert(rows);
     }
@@ -104,7 +101,7 @@ export const updateComment = createServerFn({ method: "POST" })
     resolved: z.boolean().optional(),
   }).parse(d))
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
+    const patch: { body?: string; resolved?: boolean } = {};
     if (data.body !== undefined) patch.body = data.body;
     if (data.resolved !== undefined) patch.resolved = data.resolved;
     const { error } = await context.supabase.from("project_comments").update(patch).eq("id", data.id);
