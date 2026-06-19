@@ -93,8 +93,22 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
 
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
         {messages.length === 0 && (
-          <div className="rounded-xl border border-dashed border-border/60 p-4 text-sm text-muted-foreground">
-            Describe what you want to build. The AI will generate files in your project.
+          <div className="space-y-3">
+            <div className="rounded-xl border border-dashed border-border/60 p-4 text-sm text-muted-foreground">
+              Describe what you want to build. Attach a screenshot to copy a design, or ask for a mobile app.
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { icon: <Smartphone className="h-3 w-3" />, text: "Build a mobile-first todo app for iOS and Android" },
+                { icon: <Sparkles className="h-3 w-3" />, text: "Landing page with hero, features, pricing, footer" },
+                { icon: <FileCode className="h-3 w-3" />, text: "Dashboard with sidebar, chart, and data table" },
+              ].map((c) => (
+                <button key={c.text} type="button" onClick={() => sendQuickPrompt(c.text)}
+                  className="flex items-center gap-1.5 rounded-full border border-border/60 bg-background/40 px-2.5 py-1 text-[11px] text-muted-foreground transition hover:border-brand/50 hover:text-foreground">
+                  {c.icon}<span>{c.text}</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {messages.map((m) => (
@@ -109,6 +123,19 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
       </div>
 
       <form onSubmit={handleSubmit} className="border-t border-border/60 p-3">
+        {files.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {files.map((f, i) => (
+              <div key={i} className="group relative h-14 w-14 overflow-hidden rounded-md border border-border/60">
+                <img src={URL.createObjectURL(f)} alt={f.name} className="h-full w-full object-cover" />
+                <button type="button" onClick={() => setFiles((p) => p.filter((_, j) => j !== i))}
+                  className="absolute right-0.5 top-0.5 grid h-4 w-4 place-items-center rounded-full bg-background/80 text-foreground opacity-0 transition group-hover:opacity-100">
+                  <X className="h-2.5 w-2.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="flex gap-2">
           <Textarea
             ref={inputRef}
@@ -117,13 +144,19 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(e as unknown as React.FormEvent); }
             }}
-            placeholder="Build a landing page with a hero and pricing table…"
+            placeholder="Build a landing page, or drop a screenshot to copy its design…"
             className="min-h-[60px] resize-none bg-background/60"
             disabled={isLoading}
           />
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="h-auto self-stretch">
-            <Send className="h-4 w-4" />
-          </Button>
+          <div className="flex flex-col gap-1.5 self-stretch">
+            <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { onPickFiles(e.target.files); e.target.value = ""; }} />
+            <Button type="button" size="icon" variant="outline" onClick={() => fileRef.current?.click()} disabled={isLoading} title="Attach image (max 4, 5MB each)">
+              <ImagePlus className="h-4 w-4" />
+            </Button>
+            <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && files.length === 0)} className="flex-1">
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </form>
     </div>
