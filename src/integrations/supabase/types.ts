@@ -93,6 +93,56 @@ export type Database = {
           },
         ]
       }
+      knowledge_chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          metadata: Json
+          project_id: string
+          source_path: string
+          source_type: string
+          tokens: number
+          updated_at: string
+        }
+        Insert: {
+          chunk_index?: number
+          content: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          metadata?: Json
+          project_id: string
+          source_path: string
+          source_type: string
+          tokens?: number
+          updated_at?: string
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          metadata?: Json
+          project_id?: string
+          source_path?: string
+          source_type?: string
+          tokens?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_chunks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           created_at: string
@@ -597,6 +647,21 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      match_knowledge: {
+        Args: {
+          _k?: number
+          _project_id: string
+          _query: string
+          _user_id: string
+        }
+        Returns: {
+          content: string
+          id: string
+          similarity: number
+          source_path: string
+          source_type: string
+        }[]
       }
     }
     Enums: {
