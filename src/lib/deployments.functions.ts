@@ -14,6 +14,9 @@ export const createDeployment = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { assertRateLimit } = await import("@/lib/rate-limit.server");
+    await assertRateLimit(userId, "deploy_day", "1 day", 30);
+    await assertRateLimit(userId, "deploy_min", "1 minute", 3);
 
     // Verify editor+
     const { data: roleOk } = await supabase.rpc("has_project_role", {

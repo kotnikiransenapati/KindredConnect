@@ -44,6 +44,8 @@ export const indexKnowledgeSource = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { assertRateLimit } = await import("@/lib/rate-limit.server");
+    await assertRateLimit(userId, "ingest_day", "1 day", 100);
     const { data: canEdit } = await supabase.rpc("has_project_role", {
       _project_id: data.projectId, _user_id: userId, _min_role: "editor",
     });
@@ -86,6 +88,8 @@ export const ingestUrl = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { assertRateLimit } = await import("@/lib/rate-limit.server");
+    await assertRateLimit(userId, "ingest_url_day", "1 day", 50);
     const { data: canEdit } = await supabase.rpc("has_project_role", {
       _project_id: data.projectId, _user_id: userId, _min_role: "editor",
     });
