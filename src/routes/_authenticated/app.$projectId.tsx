@@ -100,6 +100,7 @@ function ProjectWorkspace() {
                     </div>
                   </TabsContent>
                 </Tabs>
+                <KnowledgePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
             </div>
