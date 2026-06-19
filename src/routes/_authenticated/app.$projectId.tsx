@@ -13,6 +13,7 @@ import { ProjectActions } from "@/components/workspace/ProjectActions";
 import { MembersDialog } from "@/components/workspace/MembersDialog";
 import { ActivityFeed } from "@/components/workspace/ActivityFeed";
 import { KnowledgePanel } from "@/components/workspace/KnowledgePanel";
+import { DeploymentsPanel } from "@/components/workspace/DeploymentsPanel";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
 import type { UIMessage } from "ai";
@@ -100,6 +101,7 @@ function ProjectWorkspace() {
                     </div>
                   </TabsContent>
                 </Tabs>
+                <DeploymentsPanel projectId={projectId} />
                 <KnowledgePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
