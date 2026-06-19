@@ -127,7 +127,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const tools = {
           writeFile: tool({
-            description: "Create or overwrite a file in the project. Use complete file contents.",
+            description: "Create or overwrite a file with COMPLETE contents. Result includes a unified diff and lint errors (if any). If lint.ok is false, FIX the syntax error and call writeFile again.",
             inputSchema: z.object({
               path: z.string().min(1).max(255).describe("Absolute path starting with /"),
               content: z.string().max(200_000),
@@ -135,21 +135,35 @@ export const Route = createFileRoute("/api/chat")({
             }),
             execute: async ({ path, content, language }) => {
               const normalized = path.startsWith("/") ? path : `/${path}`;
+              const lint = lintSource(normalized, content);
               const { data: existing } = await supabase
-                .from("project_files").select("id, version")
+                .from("project_files").select("id, version, content")
                 .eq("project_id", projectId).eq("path", normalized).maybeSingle();
+              const oldContent = existing?.content ?? "";
+              const patch = makePatch(normalized, oldContent, content);
               if (existing) {
                 const { error } = await supabase.from("project_files")
                   .update({ content, language: language ?? null, version: existing.version + 1 })
                   .eq("id", existing.id);
                 if (error) return { ok: false, error: error.message };
-                return { ok: true, path: normalized, action: "updated", version: existing.version + 1 };
+                return { ok: true, path: normalized, action: "updated", version: existing.version + 1, lint, patch };
               }
               const { error } = await supabase.from("project_files").insert({
                 project_id: projectId, path: normalized, content, language: language ?? null,
               });
               if (error) return { ok: false, error: error.message };
-              return { ok: true, path: normalized, action: "created", version: 1 };
+              return { ok: true, path: normalized, action: "created", version: 1, lint, patch };
+            },
+          }),
+          lintFile: tool({
+            description: "Run syntax/parse check on a file already in the project. Use to verify before declaring done.",
+            inputSchema: z.object({ path: z.string().min(1).max(255) }),
+            execute: async ({ path }) => {
+              const normalized = path.startsWith("/") ? path : `/${path}`;
+              const { data } = await supabase.from("project_files")
+                .select("content").eq("project_id", projectId).eq("path", normalized).maybeSingle();
+              if (!data) return { ok: false, error: "Not found" };
+              return { path: normalized, ...lintSource(normalized, data.content) };
             },
           }),
           deleteFile: tool({
