@@ -16,6 +16,7 @@ import { KnowledgePanel } from "@/components/workspace/KnowledgePanel";
 import { DeploymentsPanel } from "@/components/workspace/DeploymentsPanel";
 import { PresenceBar } from "@/components/workspace/PresenceBar";
 import { CommentsPanel } from "@/components/workspace/CommentsPanel";
+import { IntegrationsPanel } from "@/components/workspace/IntegrationsPanel";
 import { PublishTemplateDialog } from "@/components/workspace/PublishTemplateDialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
@@ -109,6 +110,7 @@ function ProjectWorkspace() {
                 <DeploymentsPanel projectId={projectId} />
                 <CommentsPanel projectId={projectId} anchorPath={selectedPath} />
                 <KnowledgePanel projectId={projectId} />
+                <IntegrationsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
             </div>
