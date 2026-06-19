@@ -110,6 +110,7 @@ function ProjectWorkspace() {
                 <DeploymentsPanel projectId={projectId} />
                 <CommentsPanel projectId={projectId} anchorPath={selectedPath} />
                 <KnowledgePanel projectId={projectId} />
+                <IntegrationsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
             </div>
