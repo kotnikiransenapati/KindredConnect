@@ -78,6 +78,8 @@ export const publishProjectAsTemplate = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { assertRateLimit } = await import("@/lib/rate-limit.server");
+    await assertRateLimit(userId, "publish_template_day", "1 day", 10);
 
     // Must be project owner
     const { data: proj } = await supabase
