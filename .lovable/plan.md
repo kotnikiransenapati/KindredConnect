@@ -15,6 +15,7 @@ Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-lan
 - **Phase 8A** ✅ pgvector knowledge base + per-project chunks
 - **Phase 8B** ✅ RAG retrieval into system prompt + URL/note ingestion UI
 - **Phase 8C** ✅ auto-embed `project_files` on writeFile (fire-and-forget), multimodal image attachments in chat, Capacitor mobile-shell `scaffoldCapacitor` tool
+- **Phase 9A/B** ✅ `deployments` table + versioned public URLs (`/p/$slug`, `/p/$slug/$version`) + deploy / rollback UI
 
 ## Phase M — Mobile (iOS / Android) track
 1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).
