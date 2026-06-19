@@ -194,7 +194,76 @@ export const Route = createFileRoute("/api/chat")({
                 project_id: projectId, path: normalized, content, language: language ?? null,
               });
               if (error) return { ok: false, error: error.message };
+              void autoEmbedFile(supabaseAdmin, gateway, projectId, normalized, content);
               return { ok: true, path: normalized, action: "created", version: 1, lint, patch };
+            },
+          }),
+          scaffoldCapacitor: tool({
+            description: "Add Capacitor mobile-shell config so this project can be wrapped as an iOS / Android app. Writes /capacitor.config.ts and /docs/MOBILE.md with the exact CLI steps. Call ONCE per project when the user wants a mobile app.",
+            inputSchema: z.object({
+              appId: z.string().regex(/^[a-z][a-z0-9.]*$/).max(120).describe("Reverse-DNS bundle id, e.g. app.foundry.todo"),
+              appName: z.string().min(1).max(80),
+              platforms: z.array(z.enum(["ios", "android"])).min(1).default(["ios", "android"]),
+            }),
+            execute: async ({ appId, appName, platforms }) => {
+              const cfg = `import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: '${appId}',
+  appName: ${JSON.stringify(appName)},
+  webDir: 'dist',
+  bundledWebRuntime: false,
+  ios: { contentInset: 'always', limitsNavigationsToAppBoundDomains: true },
+  android: { allowMixedContent: false },
+  server: { androidScheme: 'https' },
+  plugins: {
+    SplashScreen: { launchShowDuration: 1200, backgroundColor: '#0b0b10' },
+    StatusBar: { style: 'dark', overlaysWebView: false },
+  },
+};
+
+export default config;
+`;
+              const docs = `# ${appName} — Mobile (iOS / Android)
+
+This project is configured with Capacitor for native iOS / Android shells around the same React app.
+
+## One-time setup (on your machine)
+\`\`\`bash
+npm i -D @capacitor/cli
+npm i @capacitor/core ${platforms.includes("ios") ? "@capacitor/ios " : ""}${platforms.includes("android") ? "@capacitor/android" : ""}
+npx cap init "${appName}" "${appId}" --web-dir dist
+${platforms.includes("ios") ? "npx cap add ios\n" : ""}${platforms.includes("android") ? "npx cap add android\n" : ""}\`\`\`
+
+## Every build
+\`\`\`bash
+npm run build
+npx cap sync
+${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device / simulator\n" : ""}${platforms.includes("android") ? "npx cap open android   # Android Studio → Run\n" : ""}\`\`\`
+
+## Native features (install on demand)
+- Camera:  \`npm i @capacitor/camera\`
+- Push:    \`npm i @capacitor/push-notifications\`
+- Storage: \`npm i @capacitor/preferences\`
+- Geolocation: \`npm i @capacitor/geolocation\`
+
+## Design rules baked into the UI
+- 44px+ tap targets, safe-area insets (\`env(safe-area-inset-*)\`), no hover-only states.
+- Use system fonts on mobile, prefer \`clamp()\` and responsive units over fixed px.
+`;
+              const writeOne = async (p: string, c: string) => {
+                const { data: ex } = await supabase.from("project_files")
+                  .select("id, version").eq("project_id", projectId).eq("path", p).maybeSingle();
+                if (ex) {
+                  await supabase.from("project_files")
+                    .update({ content: c, version: ex.version + 1 }).eq("id", ex.id);
+                } else {
+                  await supabase.from("project_files").insert({ project_id: projectId, path: p, content: c });
+                }
+              };
+              await writeOne("/capacitor.config.ts", cfg);
+              await writeOne("/docs/MOBILE.md", docs);
+              return { ok: true, appId, appName, platforms, files: ["/capacitor.config.ts", "/docs/MOBILE.md"] };
             },
           }),
           lintFile: tool({
