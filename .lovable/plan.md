@@ -23,7 +23,8 @@ Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-lan
 - **Phase 12A (part)** ✅ shared `assertRateLimit` helper + rate limits on deploy / invite / ingest / publish-template (chat already limited); CI RLS/anon-access audit script
 - **Phase 8 (remaining)** ✅ diversity rerank pass on top-20 vector hits → top-6; long-term per-user `user_preferences` memory injected into every chat
 - **Phase 12B (part)** ✅ `/docs` site with sectioned content; first-run onboarding tour in project workspace
-- **Phase M (parts 3–4)** ✅ `bundleMobileProject` server fn (zips project → downloadable iOS/Android source), `MobileBuilderPanel` UI, `addCapacitorPlugin` agent tool with snippets for camera / geolocation / push / haptics / share / preferences / filesystem / status-bar / splash / browser / app / local-notifications
+- **Phase M (parts 3–4)** ✅ `bundleMobileProject` server fn (zips project → downloadable iOS/Android source), `MobileBuilderPanel` UI, `addCapacitorPlugin` agent tool with snippets for 12 native plugins
+- **Phase 12B (final)** ✅ Cloudflare Turnstile widget + `verifyTurnstile` server fn on sign-up (auto no-ops when `VITE_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` unset)
 
 ## Phase M — Mobile (iOS / Android) track
 1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).
