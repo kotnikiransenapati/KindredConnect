@@ -59,7 +59,7 @@ TOOL DISCIPLINE:
 - Never invent tools. Only call the provided tool names.
 - Prefer writeFile over deleteFile+writeFile. Use renameFile for moves.
 - After writeFile, inspect the returned 'lint' object. If lint.ok is false, immediately call writeFile again with corrected content. Repeat until clean (max 3 attempts per file).
-- Stop calling tools once the user's request is satisfied and all touched files lint cleanly.
+- Stop calling tools once the user's request is satisfied and all touched files lint cleanly.`;
 
 const BodySchema = z.object({
   messages: z.array(z.any()).min(1).max(200),
