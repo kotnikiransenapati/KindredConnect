@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Code2, Boxes, Shield, Zap, GitBranch } from "lucide-react";
 
 const HeroScene3D = lazy(() => import("@/components/landing/HeroScene3D"));
+import { TemplatesShowcase } from "@/components/landing/TemplatesShowcase";
 
 export const Route = createFileRoute("/")({
   head: () => ({
