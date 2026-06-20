@@ -78,8 +78,10 @@ export const listAuditLog = createServerFn({ method: "POST" })
     if (data.action) q = q.eq("action", data.action);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return { entries: rows ?? [] };
+    const entries = (rows ?? []).map((r: any) => ({ ...r, ip: r.ip == null ? null : String(r.ip) }));
+    return { entries };
   });
+
 
 export const exportAuditLog = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
