@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { startAgentRun, listAgentRuns, getAgentRun, cancelAgentRun } from "@/lib/agents.functions";
-import { runQueuedTasks } from "@/lib/agents-worker.functions";
+import { runQueuedTasks, listTaskMessages } from "@/lib/agents-worker.functions";
 import { AGENTS, AGENT_BY_ROLE, type AgentRole } from "@/lib/agents.catalog";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,6 +35,7 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
     new Set(["architect", "frontend", "backend", "mobile", "qa", "security"]),
   );
   const [activeRun, setActiveRun] = useState<string | null>(null);
+  const [openTask, setOpenTask] = useState<string | null>(null);
 
   const runsQ = useQuery({
     queryKey: ["agent-runs", projectId],
@@ -201,24 +202,30 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
                 </Button>
               )}
             </div>
-            <ScrollArea className="h-56">
+            <ScrollArea className="h-72">
               <ol className="space-y-0">
                 {runQ.data.tasks.map((t) => {
                   const def = AGENT_BY_ROLE[t.role as AgentRole];
                   return (
-                    <li key={t.id} className="flex items-start gap-2 border-b border-border/30 px-3 py-2 last:border-b-0">
-                      <span className="mt-0.5">{STATUS_ICON[t.status] ?? STATUS_ICON.queued}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 text-xs">
-                          <span>{def?.emoji}</span>
-                          <span className="font-medium">{def?.name ?? t.role}</span>
-                          <span className="text-muted-foreground">— {t.title}</span>
+                    <li key={t.id} className="border-b border-border/30 last:border-b-0">
+                      <button
+                        onClick={() => setOpenTask(openTask === t.id ? null : t.id)}
+                        className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-accent/30"
+                      >
+                        <span className="mt-0.5">{STATUS_ICON[t.status] ?? STATUS_ICON.queued}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 text-xs">
+                            <span>{def?.emoji}</span>
+                            <span className="font-medium">{def?.name ?? t.role}</span>
+                            <span className="text-muted-foreground">— {t.title}</span>
+                          </div>
+                          {t.error && <div className="mt-0.5 text-[11px] text-destructive">{t.error}</div>}
                         </div>
-                        {t.error && <div className="mt-0.5 text-[11px] text-destructive">{t.error}</div>}
-                      </div>
-                      {t.tokens > 0 && (
-                        <span className="text-[10px] text-muted-foreground">{t.tokens} tok</span>
-                      )}
+                        {t.tokens > 0 && (
+                          <span className="text-[10px] text-muted-foreground">{t.tokens} tok</span>
+                        )}
+                      </button>
+                      {openTask === t.id && <TaskTranscript taskId={t.id} />}
                     </li>
                   );
                 })}
@@ -228,5 +235,41 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function TaskTranscript({ taskId }: { taskId: string }) {
+  const fetchMsgs = useServerFn(listTaskMessages);
+  const q = useQuery({
+    queryKey: ["agent-task-messages", taskId],
+    queryFn: () => fetchMsgs({ data: { taskId } }),
+    refetchInterval: 4000,
+  });
+  if (q.isLoading) {
+    return <div className="px-3 pb-3 text-[11px] text-muted-foreground">Loading transcript…</div>;
+  }
+  const msgs = q.data?.messages ?? [];
+  if (msgs.length === 0) {
+    return <div className="px-3 pb-3 text-[11px] text-muted-foreground">No output yet.</div>;
+  }
+  return (
+    <div className="space-y-2 border-t border-border/30 bg-background/40 px-3 py-2">
+      {msgs.map((m) => {
+        const text = (Array.isArray(m.parts) ? (m.parts as unknown[]) : [])
+          .map((p) => {
+            const part = p as { type?: string; text?: string } | null;
+            return part?.type === "text" ? part.text ?? "" : "";
+          })
+          .join("");
+        return (
+          <pre
+            key={m.id}
+            className="max-h-72 overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-2 font-mono text-[11px] leading-relaxed text-foreground/90"
+          >
+            {text}
+          </pre>
+        );
+      })}
+    </div>
   );
 }

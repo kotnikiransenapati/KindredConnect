@@ -165,6 +165,50 @@ export const runQueuedTasks = createServerFn({ method: "POST" })
 
     const failed = results.filter((r) => !r.ok).length;
     const allFailed = results.length > 0 && failed === results.length;
+
+    // === Reviewer/Critic pass (Batch 6) ====================================
+    // After specialists finish, spawn a single Reviewer task that ingests every
+    // succeeded output and renders an approve / request-changes verdict.
+    if (results.length > 0 && !allFailed) {
+      const { data: doneTasks } = await supabase
+        .from("agent_tasks")
+        .select("role,title,output")
+        .eq("run_id", data.runId)
+        .eq("status", "succeeded")
+        .neq("role", "orchestrator");
+
+      const transcript = (doneTasks ?? [])
+        .map((t) => {
+          const text = (t.output as { text?: string } | null)?.text ?? "";
+          return `### ${t.role} — ${t.title}\n${text}`;
+        })
+        .join("\n\n---\n\n");
+
+      const { data: runRow } = await supabase
+        .from("agent_runs")
+        .select("project_id")
+        .eq("id", data.runId)
+        .single();
+      const projectId = runRow?.project_id;
+      if (projectId) {
+        const { data: reviewerTask } = await supabase
+          .from("agent_tasks")
+          .insert({
+            run_id: data.runId,
+            project_id: projectId,
+            role: "reviewer",
+            title: "Critic review of specialist outputs",
+            status: "queued",
+            input: { goal: transcript.slice(0, 24_000) },
+          })
+          .select("id")
+          .single();
+        if (reviewerTask?.id) {
+          await runOneTask(supabase, userId, reviewerTask.id, apiKey);
+        }
+      }
+    }
+
     await supabase
       .from("agent_runs")
       .update({
@@ -175,4 +219,18 @@ export const runQueuedTasks = createServerFn({ method: "POST" })
       .eq("id", data.runId);
 
     return { ok: true, total: results.length, failed };
+  });
+
+/** Fetch the assistant transcript for a single task. */
+export const listTaskMessages = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ taskId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: msgs, error } = await context.supabase
+      .from("agent_messages")
+      .select("id,role,parts,tokens,created_at")
+      .eq("task_id", data.taskId)
+      .order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { messages: msgs ?? [] };
   });

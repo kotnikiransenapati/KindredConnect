@@ -185,4 +185,10 @@ Added `agent_runs`, `agent_tasks`, `agent_messages`, `usage_ledger` with full RL
 - AgentsPanel subscribes to Supabase realtime `postgres_changes` on `agent_tasks` (filtered by `run_id`) and `agent_runs` (filtered by `id`), invalidating the query cache on every event for sub-second timeline updates.
 - Channel torn down on unmount or active-run change.
 
-**Batches remaining: 8** (B5 IDE polish, B6 web deploy, B7 mobile OTA, B8 QA/Security/Perf gates, B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).
+### Batch 5 — Per-task transcript viewer ✅
+Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent_messages` content (markdown plan/deliverables/risks per agent) with 4s refetch.
+
+### Batch 6 — Reviewer/Critic loop ✅
+`runQueuedTasks` now spawns a Reviewer task after specialists finish, feeds it the concatenated transcript, and runs it through the same worker for an approve/request-changes verdict.
+
+**Batches remaining: 6** (B7 mobile OTA, B8 QA/Security/Perf gates, B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).
