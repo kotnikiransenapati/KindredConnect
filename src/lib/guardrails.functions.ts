@@ -242,7 +242,7 @@ export const scanContent = createServerFn({ method: "POST" })
       const inserts = findings.map((f) => ({
         project_id: data.projectId,
         guardrail_id: f.guardrailId,
-        guardrail_type: f.type,
+        guardrail_type: f.type as any,
         severity: f.severity,
         action_taken: f.actionTaken,
         content_hash: hash,
@@ -251,7 +251,7 @@ export const scanContent = createServerFn({ method: "POST" })
         metadata: { direction: data.direction },
         actor_id: context.userId,
       }));
-      await context.supabase.from("ai_guardrail_violations").insert(inserts);
+      await context.supabase.from("ai_guardrail_violations").insert(inserts as any);
     }
 
     return {
