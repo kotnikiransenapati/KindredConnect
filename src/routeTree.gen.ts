@@ -22,6 +22,7 @@ import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as PSlugVersionRouteImport } from './routes/p.$slug.$version'
+import { Route as ApiPublicSitemapRouteImport } from './routes/api/public/sitemap'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAppProjectIdRouteImport } from './routes/_authenticated/app.$projectId'
 
@@ -89,6 +90,11 @@ const PSlugVersionRoute = PSlugVersionRouteImport.update({
   path: '/$version',
   getParentRoute: () => PSlugRoute,
 } as any)
+const ApiPublicSitemapRoute = ApiPublicSitemapRouteImport.update({
+  id: '/api/public/sitemap',
+  path: '/api/public/sitemap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicRazorpayWebhookRoute =
   ApiPublicRazorpayWebhookRouteImport.update({
     id: '/api/public/razorpay-webhook',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/share/$token': typeof ShareTokenRoute
   '/app/$projectId': typeof AuthenticatedAppProjectIdRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
+  '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
 }
 export interface FileRoutesByTo {
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/share/$token': typeof ShareTokenRoute
   '/app/$projectId': typeof AuthenticatedAppProjectIdRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
+  '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
 }
 export interface FileRoutesById {
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/share/$token': typeof ShareTokenRoute
   '/_authenticated/app/$projectId': typeof AuthenticatedAppProjectIdRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
+  '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
 }
 export interface FileRouteTypes {
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/share/$token'
     | '/app/$projectId'
     | '/api/public/razorpay-webhook'
+    | '/api/public/sitemap'
     | '/p/$slug/$version'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/share/$token'
     | '/app/$projectId'
     | '/api/public/razorpay-webhook'
+    | '/api/public/sitemap'
     | '/p/$slug/$version'
   id:
     | '__root__'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/share/$token'
     | '/_authenticated/app/$projectId'
     | '/api/public/razorpay-webhook'
+    | '/api/public/sitemap'
     | '/p/$slug/$version'
   fileRoutesById: FileRoutesById
 }
@@ -215,6 +227,7 @@ export interface RootRouteChildren {
   PSlugRoute: typeof PSlugRouteWithChildren
   ShareTokenRoute: typeof ShareTokenRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
+  ApiPublicSitemapRoute: typeof ApiPublicSitemapRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -310,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PSlugVersionRouteImport
       parentRoute: typeof PSlugRoute
     }
+    '/api/public/sitemap': {
+      id: '/api/public/sitemap'
+      path: '/api/public/sitemap'
+      fullPath: '/api/public/sitemap'
+      preLoaderRoute: typeof ApiPublicSitemapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/razorpay-webhook': {
       id: '/api/public/razorpay-webhook'
       path: '/api/public/razorpay-webhook'
@@ -374,6 +394,7 @@ const rootRouteChildren: RootRouteChildren = {
   PSlugRoute: PSlugRouteWithChildren,
   ShareTokenRoute: ShareTokenRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
+  ApiPublicSitemapRoute: ApiPublicSitemapRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
