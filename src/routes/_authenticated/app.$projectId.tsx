@@ -131,7 +131,10 @@ function ProjectWorkspace() {
                 <SecretsVaultPanel projectId={projectId} />
                 <DomainsPanel projectId={projectId} />
                 <VersionsPanel projectId={projectId} />
+                <SkillsMarketplacePanel projectId={projectId} />
+                <CiGatesPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
+
               </div>
             </div>
           </>
