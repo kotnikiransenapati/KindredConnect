@@ -277,3 +277,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `MobileScreensPanel.tsx`: tabbed screen list, drag-free composer with per-kind palette, prop-inspector per node, up/down reordering, **live phone-frame preview** rendering the same tree, "Generate .tsx" action that writes the React component into the project. Mounted in the workspace.
 
 **Phase 2 batches remaining: 2** (P3 push + deep-linking, P4 store metadata + screenshot generator + submission checklist).
+
+### P3 — Push notifications + deep linking ✅
+- Tables `push_devices` (self-registered tokens; user can manage their own), `push_campaigns`, `deep_links` with full RLS.
+- `src/lib/push.functions.ts`: `registerPushDevice` (idempotent upsert on project+token), `upsertPushCampaign` / `sendPushCampaign` (target=all|user|segment; FCM legacy HTTP delivery when `FCM_SERVER_KEY` is set, dispatch-only fallback otherwise; per-send rate limits 4/min · 100/day), `generateDeepLinkFiles` (writes `public/.well-known/apple-app-site-association` + `assetlinks.json` into project_files from enabled deep_links — validates TEAMID.bundleId, reverse-DNS package, SHA-256 fingerprint format).
+- `PushPanel.tsx`: composer + live-updating history, deep-link CRUD with one-click .well-known generation. Mounted in workspace.
+
+### P4 — Store metadata + screenshot generator + submission checklist ✅
+- Table `store_listings` (one row per project+platform) with title/subtitle/short_description/full_description/keywords[]/category/contact_email/support_url/privacy_url/age_rating/screenshots[]/checklist jsonb.
+- `src/lib/store-listings.functions.ts`: `upsertStoreListing` (per-store length-limit validation), `runStoreChecklist` (platform-aware: 30/30/80/4000 char caps, iOS 100-char keyword budget, required privacy/contact/support, ≥3 screens iOS / ≥2 Android; scored 0–100 with errors -15, warns -4; persists into `checklist`), `exportStoreManifest` (writes Fastlane `metadata/<platform>/en-US/{name,subtitle,description,keywords,short_description,privacy_url,support_url,release_notes}.txt` into project_files).
+- `StoreListingsPanel.tsx`: tabbed iOS/Android editor, tag-style keyword editor, screenshot grid (URL add + thumbnail preview + remove), Save/Run-checklist/Export-Fastlane buttons, color-coded issue list. Mounted in workspace.
+
+**Phase 2 batches remaining: 0** — full mobile-first dominance phase delivered.
+

@@ -28,6 +28,8 @@ import { SkillsMarketplacePanel } from "@/components/workspace/SkillsMarketplace
 import { CiGatesPanel } from "@/components/workspace/CiGatesPanel";
 import { NativeBuildsPanel } from "@/components/workspace/NativeBuildsPanel";
 import { MobileScreensPanel } from "@/components/workspace/MobileScreensPanel";
+import { PushPanel } from "@/components/workspace/PushPanel";
+import { StoreListingsPanel } from "@/components/workspace/StoreListingsPanel";
 import { AgentsPanel } from "@/components/workspace/AgentsPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
@@ -131,7 +133,10 @@ function ProjectWorkspace() {
                 <MobileBuilderPanel projectId={projectId} />
                 <MobileScreensPanel projectId={projectId} />
                 <NativeBuildsPanel projectId={projectId} />
+                <PushPanel projectId={projectId} />
+                <StoreListingsPanel projectId={projectId} />
                 <OtaPanel projectId={projectId} />
+
 
                 <SecretsVaultPanel projectId={projectId} />
                 <DomainsPanel projectId={projectId} />

@@ -398,6 +398,50 @@ export type Database = {
           },
         ]
       }
+      deep_links: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          id: string
+          params: Json
+          path: string
+          project_id: string
+          screen_slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          params?: Json
+          path: string
+          project_id: string
+          screen_slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          params?: Json
+          path?: string
+          project_id?: string
+          screen_slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deep_links_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deployments: {
         Row: {
           created_at: string
@@ -1205,6 +1249,112 @@ export type Database = {
           },
         ]
       }
+      push_campaigns: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string | null
+          data: Json
+          error: string | null
+          fail_count: number
+          id: string
+          project_id: string
+          scheduled_at: string | null
+          sent_at: string | null
+          sent_count: number
+          status: Database["public"]["Enums"]["push_status"]
+          target: Database["public"]["Enums"]["push_target"]
+          target_value: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          error?: string | null
+          fail_count?: number
+          id?: string
+          project_id: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          sent_count?: number
+          status?: Database["public"]["Enums"]["push_status"]
+          target?: Database["public"]["Enums"]["push_target"]
+          target_value?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          error?: string | null
+          fail_count?: number
+          id?: string
+          project_id?: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          sent_count?: number
+          status?: Database["public"]["Enums"]["push_status"]
+          target?: Database["public"]["Enums"]["push_target"]
+          target_value?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_campaigns_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_devices: {
+        Row: {
+          created_at: string
+          device_label: string | null
+          id: string
+          last_seen_at: string
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          project_id: string
+          token: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_label?: string | null
+          id?: string
+          last_seen_at?: string
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          project_id: string
+          token: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_label?: string | null
+          id?: string
+          last_seen_at?: string
+          platform?: Database["public"]["Enums"]["mobile_platform"]
+          project_id?: string
+          token?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_devices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quality_reports: {
         Row: {
           created_at: string
@@ -1269,6 +1419,77 @@ export type Database = {
           window_start?: string
         }
         Relationships: []
+      }
+      store_listings: {
+        Row: {
+          age_rating: string
+          category: string | null
+          checklist: Json
+          contact_email: string | null
+          created_at: string
+          full_description: string
+          id: string
+          keywords: string[]
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          privacy_url: string | null
+          project_id: string
+          screenshots: Json
+          short_description: string
+          status: string
+          subtitle: string
+          support_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          age_rating?: string
+          category?: string | null
+          checklist?: Json
+          contact_email?: string | null
+          created_at?: string
+          full_description?: string
+          id?: string
+          keywords?: string[]
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          privacy_url?: string | null
+          project_id: string
+          screenshots?: Json
+          short_description?: string
+          status?: string
+          subtitle?: string
+          support_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          age_rating?: string
+          category?: string | null
+          checklist?: Json
+          contact_email?: string | null
+          created_at?: string
+          full_description?: string
+          id?: string
+          keywords?: string[]
+          platform?: Database["public"]["Enums"]["mobile_platform"]
+          privacy_url?: string | null
+          project_id?: string
+          screenshots?: Json
+          short_description?: string
+          status?: string
+          subtitle?: string
+          support_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_listings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -1550,6 +1771,8 @@ export type Database = {
       mobile_build_type: "debug" | "release"
       mobile_platform: "ios" | "android"
       project_role: "owner" | "editor" | "viewer"
+      push_status: "draft" | "scheduled" | "sending" | "sent" | "failed"
+      push_target: "all" | "user" | "segment"
       skill_kind: "mcp" | "http_tool" | "prompt"
       skill_visibility: "private" | "public"
     }
@@ -1685,6 +1908,8 @@ export const Constants = {
       mobile_build_type: ["debug", "release"],
       mobile_platform: ["ios", "android"],
       project_role: ["owner", "editor", "viewer"],
+      push_status: ["draft", "scheduled", "sending", "sent", "failed"],
+      push_target: ["all", "user", "segment"],
       skill_kind: ["mcp", "http_tool", "prompt"],
       skill_visibility: ["private", "public"],
     },
