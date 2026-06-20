@@ -56,6 +56,16 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
       setGoal("");
       setActiveRun(res.runId);
       qc.invalidateQueries({ queryKey: ["agent-runs", projectId] });
+      // Kick off the worker loop (fire-and-forget — the UI streams progress).
+      runWorker({ data: { runId: res.runId } })
+        .then((r) =>
+          toast.success(`Swarm complete — ${r.total - r.failed}/${r.total} succeeded`),
+        )
+        .catch((e: Error) => toast.error(`Swarm failed: ${e.message}`))
+        .finally(() => {
+          qc.invalidateQueries({ queryKey: ["agent-runs", projectId] });
+          qc.invalidateQueries({ queryKey: ["agent-run", res.runId] });
+        });
     },
     onError: (e: Error) => toast.error(e.message),
   });
