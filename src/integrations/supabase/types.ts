@@ -411,6 +411,113 @@ export type Database = {
           },
         ]
       }
+      ai_guardrail_violations: {
+        Row: {
+          action_taken: Database["public"]["Enums"]["guardrail_action"]
+          actor_id: string | null
+          content_hash: string
+          guardrail_id: string | null
+          guardrail_type: Database["public"]["Enums"]["guardrail_type"]
+          id: string
+          matched_patterns: string[] | null
+          metadata: Json
+          occurred_at: string
+          project_id: string
+          severity: Database["public"]["Enums"]["guardrail_severity"]
+          snippet: string | null
+        }
+        Insert: {
+          action_taken: Database["public"]["Enums"]["guardrail_action"]
+          actor_id?: string | null
+          content_hash: string
+          guardrail_id?: string | null
+          guardrail_type: Database["public"]["Enums"]["guardrail_type"]
+          id?: string
+          matched_patterns?: string[] | null
+          metadata?: Json
+          occurred_at?: string
+          project_id: string
+          severity?: Database["public"]["Enums"]["guardrail_severity"]
+          snippet?: string | null
+        }
+        Update: {
+          action_taken?: Database["public"]["Enums"]["guardrail_action"]
+          actor_id?: string | null
+          content_hash?: string
+          guardrail_id?: string | null
+          guardrail_type?: Database["public"]["Enums"]["guardrail_type"]
+          id?: string
+          matched_patterns?: string[] | null
+          metadata?: Json
+          occurred_at?: string
+          project_id?: string
+          severity?: Database["public"]["Enums"]["guardrail_severity"]
+          snippet?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_guardrail_violations_guardrail_id_fkey"
+            columns: ["guardrail_id"]
+            isOneToOne: false
+            referencedRelation: "ai_guardrails"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_guardrail_violations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_guardrails: {
+        Row: {
+          action: Database["public"]["Enums"]["guardrail_action"]
+          config: Json
+          created_at: string
+          created_by: string
+          enabled: boolean
+          id: string
+          name: string
+          project_id: string
+          type: Database["public"]["Enums"]["guardrail_type"]
+          updated_at: string
+        }
+        Insert: {
+          action?: Database["public"]["Enums"]["guardrail_action"]
+          config?: Json
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          project_id: string
+          type: Database["public"]["Enums"]["guardrail_type"]
+          updated_at?: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["guardrail_action"]
+          config?: Json
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          project_id?: string
+          type?: Database["public"]["Enums"]["guardrail_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_guardrails_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_usage: {
         Row: {
           created_at: string
@@ -1940,6 +2047,68 @@ export type Database = {
         }
         Relationships: []
       }
+      sso_connections: {
+        Row: {
+          attribute_map: Json
+          certificate: string
+          created_at: string
+          created_by: string
+          display_name: string
+          domain: string
+          entity_id: string
+          id: string
+          last_error: string | null
+          last_tested_at: string | null
+          org_id: string
+          provider: Database["public"]["Enums"]["sso_provider"]
+          sso_url: string
+          status: Database["public"]["Enums"]["sso_status"]
+          updated_at: string
+        }
+        Insert: {
+          attribute_map?: Json
+          certificate: string
+          created_at?: string
+          created_by?: string
+          display_name: string
+          domain: string
+          entity_id: string
+          id?: string
+          last_error?: string | null
+          last_tested_at?: string | null
+          org_id: string
+          provider: Database["public"]["Enums"]["sso_provider"]
+          sso_url: string
+          status?: Database["public"]["Enums"]["sso_status"]
+          updated_at?: string
+        }
+        Update: {
+          attribute_map?: Json
+          certificate?: string
+          created_at?: string
+          created_by?: string
+          display_name?: string
+          domain?: string
+          entity_id?: string
+          id?: string
+          last_error?: string | null
+          last_tested_at?: string | null
+          org_id?: string
+          provider?: Database["public"]["Enums"]["sso_provider"]
+          sso_url?: string
+          status?: Database["public"]["Enums"]["sso_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sso_connections_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_listings: {
         Row: {
           age_rating: string
@@ -2308,6 +2477,15 @@ export type Database = {
     Enums: {
       gate_kind: "lighthouse" | "smoke" | "a11y"
       gate_status: "pending" | "passed" | "failed" | "error"
+      guardrail_action: "block" | "warn" | "redact"
+      guardrail_severity: "low" | "medium" | "high" | "critical"
+      guardrail_type:
+        | "pii_redact"
+        | "prompt_injection"
+        | "toxicity"
+        | "topic_filter"
+        | "rate_cap"
+        | "secret_leak"
       mobile_build_status: "queued" | "building" | "success" | "failed"
       mobile_build_type: "debug" | "release"
       mobile_platform: "ios" | "android"
@@ -2317,6 +2495,14 @@ export type Database = {
       push_target: "all" | "user" | "segment"
       skill_kind: "mcp" | "http_tool" | "prompt"
       skill_visibility: "private" | "public"
+      sso_provider:
+        | "okta"
+        | "azure_ad"
+        | "google_workspace"
+        | "onelogin"
+        | "jumpcloud"
+        | "generic_saml"
+      sso_status: "pending" | "active" | "disabled" | "error"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2446,6 +2632,16 @@ export const Constants = {
     Enums: {
       gate_kind: ["lighthouse", "smoke", "a11y"],
       gate_status: ["pending", "passed", "failed", "error"],
+      guardrail_action: ["block", "warn", "redact"],
+      guardrail_severity: ["low", "medium", "high", "critical"],
+      guardrail_type: [
+        "pii_redact",
+        "prompt_injection",
+        "toxicity",
+        "topic_filter",
+        "rate_cap",
+        "secret_leak",
+      ],
       mobile_build_status: ["queued", "building", "success", "failed"],
       mobile_build_type: ["debug", "release"],
       mobile_platform: ["ios", "android"],
@@ -2455,6 +2651,15 @@ export const Constants = {
       push_target: ["all", "user", "segment"],
       skill_kind: ["mcp", "http_tool", "prompt"],
       skill_visibility: ["private", "public"],
+      sso_provider: [
+        "okta",
+        "azure_ad",
+        "google_workspace",
+        "onelogin",
+        "jumpcloud",
+        "generic_saml",
+      ],
+      sso_status: ["pending", "active", "disabled", "error"],
     },
   },
 } as const
