@@ -255,8 +255,11 @@ function TaskTranscript({ taskId }: { taskId: string }) {
   return (
     <div className="space-y-2 border-t border-border/30 bg-background/40 px-3 py-2">
       {msgs.map((m) => {
-        const text = (Array.isArray(m.parts) ? m.parts : [])
-          .map((p: { type?: string; text?: string }) => (p.type === "text" ? p.text ?? "" : ""))
+        const text = (Array.isArray(m.parts) ? (m.parts as unknown[]) : [])
+          .map((p) => {
+            const part = p as { type?: string; text?: string } | null;
+            return part?.type === "text" ? part.text ?? "" : "";
+          })
           .join("");
         return (
           <pre
