@@ -229,11 +229,13 @@ function InviteForm({ orgId }: { orgId: string }) {
 
 function InviteRow({ invite, canManage }: { invite: any; canManage: boolean }) {
   const qc = useQueryClient();
+  const revokeFn = useServerFn(revokeInvitation);
   const revokeMu = useMutation({
-    mutationFn: () => useServerFn(revokeInvitation)({ data: { invitationId: invite.id } }),
+    mutationFn: () => revokeFn({ data: { invitationId: invite.id } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["org-invites"] }),
     onError: (e: any) => toast.error(e.message),
   });
+
   const link = `${typeof window !== "undefined" ? window.location.origin : ""}/invite?token=${invite.token}`;
   return (
     <div className="flex items-center gap-2 rounded-lg border border-border/60 p-2 text-xs">
