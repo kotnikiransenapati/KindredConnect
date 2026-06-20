@@ -16,7 +16,7 @@ import {
 const PALETTE: { kind: NodeKind; label: string; icon: typeof Type; defaults: Record<string, string | number | boolean> }[] = [
   { kind: "Header", label: "Header", icon: Heading1, defaults: { text: "Welcome" } },
   { kind: "Text", label: "Text", icon: Type, defaults: { text: "Body copy" } },
-  { kind: "Button", label: "Button", icon: MousePointerSquare, defaults: { label: "Continue" } },
+  { kind: "Button", label: "Button", icon: MousePointer, defaults: { label: "Continue" } },
   { kind: "Image", label: "Image", icon: ImageIcon, defaults: { src: "https://placehold.co/600x300", alt: "" } },
   { kind: "Input", label: "Input", icon: TextCursorInput, defaults: { placeholder: "Type…" } },
   { kind: "List", label: "List", icon: ListIcon, defaults: { items: "Item one,Item two,Item three" as unknown as string } },
