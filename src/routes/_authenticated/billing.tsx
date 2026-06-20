@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getMySubscription, cancelMySubscription, listPlans } from "@/lib/billing.functions";
+import { getMySubscription, cancelMySubscription, listPlans, getMyUsage } from "@/lib/billing.functions";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
@@ -23,9 +23,11 @@ function Billing() {
   const fetchSub = useServerFn(getMySubscription);
   const fetchPlans = useServerFn(listPlans);
   const cancel = useServerFn(cancelMySubscription);
+  const fetchUsage = useServerFn(getMyUsage);
 
   const subQ = useQuery({ queryKey: ["my-subscription"], queryFn: () => fetchSub() });
   const plansQ = useQuery({ queryKey: ["plans"], queryFn: () => fetchPlans() });
+  const usageQ = useQuery({ queryKey: ["my-usage"], queryFn: () => fetchUsage(), refetchInterval: 30000 });
 
   const cancelMut = useMutation({
     mutationFn: () => cancel(),
@@ -79,6 +81,69 @@ function Billing() {
             )}
           </div>
         </div>
+
+        <section className="mt-10 rounded-2xl border border-border/60 bg-card/60 p-6 shadow-card">
+          <div className="flex items-baseline justify-between">
+            <h2 className="font-display text-xl">Usage — last 30 days</h2>
+            <span className="text-xs text-muted-foreground">Auto-refreshing</span>
+          </div>
+          {usageQ.isLoading ? (
+            <p className="mt-4 text-sm text-muted-foreground">Loading usage…</p>
+          ) : (
+            <>
+              <dl className="mt-6 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">AI tokens</dt>
+                  <dd className="mt-1 font-display text-2xl">{(usageQ.data?.totals.tokens ?? 0).toLocaleString()}</dd>
+                </div>
+                <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">Requests</dt>
+                  <dd className="mt-1 font-display text-2xl">{(usageQ.data?.totals.requests ?? 0).toLocaleString()}</dd>
+                </div>
+                <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">Est. cost</dt>
+                  <dd className="mt-1 font-display text-2xl">${(((usageQ.data?.totals.cost_cents ?? 0)) / 100).toFixed(2)}</dd>
+                </div>
+              </dl>
+
+              {usageQ.data?.totals.byKind && Object.keys(usageQ.data.totals.byKind).length > 0 && (
+                <div className="mt-6">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">Tokens by kind</div>
+                  <div className="mt-2 space-y-1.5">
+                    {Object.entries(usageQ.data.totals.byKind).map(([k, v]) => {
+                      const max = Math.max(...Object.values(usageQ.data!.totals.byKind));
+                      const pct = max > 0 ? (v / max) * 100 : 0;
+                      return (
+                        <div key={k} className="flex items-center gap-3 text-sm">
+                          <span className="w-28 text-muted-foreground">{k}</span>
+                          <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                            <div className="h-full bg-gradient-brand" style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="w-20 text-right tabular-nums">{v.toLocaleString()}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {(usageQ.data?.recent.length ?? 0) > 0 && (
+                <details className="mt-6">
+                  <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">Recent ledger entries</summary>
+                  <ul className="mt-3 divide-y divide-border/60 text-sm">
+                    {usageQ.data!.recent.map((r, i) => (
+                      <li key={i} className="flex items-center justify-between py-2">
+                        <span className="font-mono text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString()}</span>
+                        <span>{r.kind}</span>
+                        <span className="tabular-nums">{r.tokens.toLocaleString()} tok</span>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+            </>
+          )}
+        </section>
       </main>
     </div>
   );

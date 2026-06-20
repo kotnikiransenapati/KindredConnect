@@ -202,3 +202,14 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `QualityGatesPanel.tsx` mounted in workspace: three live scorecards (QA / Security / Performance), expandable finding lists with severity icons + file:line.
 
 **Batches remaining: 4** (B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).
+
+### Batch 9 — 3D marketing landing ✅
+- Installed `three`, `@react-three/fiber`, `@react-three/drei`.
+- `src/components/landing/HeroScene3D.tsx`: distorted icosahedron core (MeshDistortMaterial, amber/violet emissive), four floating octahedron shards in brand palette, animated `Float` wrappers, three-point colored lighting, starfield + city environment. Renders client-only (post-mount) inside a transparent absolutely-positioned Canvas; `pointer-events: none` keeps CTAs interactive.
+- Lazy-loaded in `src/routes/index.tsx` Hero behind `<Suspense>` so initial HTML ships without R3F bundle.
+
+### Batch 10 — Billing usage UI ✅
+- Added `getMyUsage` server fn (last-30-day rollup over `usage_ledger`: total tokens, requests, est. cost in $, per-kind breakdown, last 20 entries).
+- Billing page now renders an auto-refreshing (30s) usage section: three KPI cards, gradient bar chart per kind, expandable recent-entry ledger.
+
+**Batches remaining: 2** (B11 templates/docs/onboarding polish, B12 hardening: Lighthouse/a11y/e2e/load test).

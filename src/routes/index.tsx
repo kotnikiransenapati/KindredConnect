@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Code2, Boxes, Shield, Zap, GitBranch } from "lucide-react";
+
+const HeroScene3D = lazy(() => import("@/components/landing/HeroScene3D"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,6 +40,9 @@ function Hero() {
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-aurora opacity-60" aria-hidden />
       <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 h-[640px]" aria-hidden>
+        <Suspense fallback={null}><HeroScene3D /></Suspense>
+      </div>
       <div className="relative mx-auto max-w-5xl px-6 pb-24 pt-24 text-center md:pt-32">
         <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
           <Sparkles className="h-3.5 w-3.5 text-brand" />
