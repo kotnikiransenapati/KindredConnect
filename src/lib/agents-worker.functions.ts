@@ -55,7 +55,7 @@ async function runOneTask(
 
   try {
     const { text, usage } = await generateText({
-      model: gateway.chatModel(modelId),
+      model: gateway(modelId),
       system: systemPromptFor(role, goal),
       prompt: `Task: ${claimed.title}\n\nDeliver your specialist output now.`,
     });
