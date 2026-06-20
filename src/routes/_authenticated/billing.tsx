@@ -23,9 +23,11 @@ function Billing() {
   const fetchSub = useServerFn(getMySubscription);
   const fetchPlans = useServerFn(listPlans);
   const cancel = useServerFn(cancelMySubscription);
+  const fetchUsage = useServerFn(getMyUsage);
 
   const subQ = useQuery({ queryKey: ["my-subscription"], queryFn: () => fetchSub() });
   const plansQ = useQuery({ queryKey: ["plans"], queryFn: () => fetchPlans() });
+  const usageQ = useQuery({ queryKey: ["my-usage"], queryFn: () => fetchUsage(), refetchInterval: 30000 });
 
   const cancelMut = useMutation({
     mutationFn: () => cancel(),
