@@ -16,7 +16,7 @@ import { Trash2, Send, ShieldCheck, AlertCircle, Activity } from "lucide-react";
 
 export function SiemStreamingPanel() {
   const qc = useQueryClient();
-  const orgs = useQuery({ queryKey: ["orgs"], queryFn: () => useServerFn(listOrganizations)({}) });
+  const orgs = useQuery({ queryKey: ["orgs"], queryFn: () => useServerFn(listMyOrganizations)({}) });
   const [orgId, setOrgId] = useState<string>("");
 
   const list = useServerFn(listSiemDestinations);
