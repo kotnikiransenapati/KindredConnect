@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Code2, Boxes, Shield, Zap, GitBranch } from "lucide-react";
+
+const HeroScene3D = lazy(() => import("@/components/landing/HeroScene3D"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
