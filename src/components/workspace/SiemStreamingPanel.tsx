@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Trash2, Send, ShieldCheck, AlertCircle, Activity } from "lucide-react";
 
 export function SiemStreamingPanel() {
+  const qc = useQueryClient();
   const orgsFn = useServerFn(listMyOrganizations);
   const orgs = useQuery({ queryKey: ["orgs"], queryFn: () => orgsFn({}) });
   const [orgId, setOrgId] = useState<string>("");
