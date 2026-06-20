@@ -234,3 +234,15 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - Installed `diff` + `@types/diff` for the line diff engine.
 
 **Batches remaining: 4** (B15 secrets vault, B16 multi-region deploy + custom domains, B17 agent skill marketplace + MCP, B18 Playwright E2E + Lighthouse CI gate).
+
+### Batch 15 — Per-project encrypted secrets vault ✅
+- New `project_secrets` table (bytea ciphertext/iv/auth_tag + last_four mask) with editor read/write, owner delete RLS via `has_project_role`.
+- `src/lib/secrets-vault.functions.ts`: AES-256-GCM encrypt/decrypt with a 32-byte key derived (scrypt) from `SUPABASE_SERVICE_ROLE_KEY` — rotating the service key rotates the vault. `list/upsert/delete/reveal` server fns; reveal is owner-only and rate-limited (10/min). bytea round-trips via `\x<hex>` PostgREST strings.
+- `SecretsVaultPanel.tsx`: UPPER_SNAKE_CASE name + password value form, masked list with per-row eye/trash actions, plaintext only fetched on explicit reveal.
+
+### Batch 16 — Custom domains + multi-region routing ✅
+- New `project_domains` table (hostname unique, verification_token, status, region ∈ {global,us,eu,ap}) with viewer read, editor add/update, owner delete RLS.
+- `src/lib/domains.functions.ts`: `addProjectDomain` (validates RFC-1123 hostname, generates `foundry-verify=<base64url>` token), `verifyProjectDomain` (DNS-over-HTTPS lookup of `_foundry-challenge.<host>` TXT via Cloudflare 1.1.1.1 — works inside the Worker runtime), `list` / `delete`.
+- `DomainsPanel.tsx`: add form with region picker, status icons (Shield/ShieldCheck/ShieldAlert), copy-token, verify button, per-row TXT instructions.
+
+**Batches remaining: 2** (B17 agent skill marketplace + per-project MCP connectors, B18 Playwright E2E + Lighthouse CI deploy gate).

@@ -659,6 +659,53 @@ export type Database = {
           },
         ]
       }
+      project_domains: {
+        Row: {
+          created_at: string
+          created_by: string
+          hostname: string
+          id: string
+          last_checked_at: string | null
+          project_id: string
+          region: string
+          status: string
+          verification_token: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          hostname: string
+          id?: string
+          last_checked_at?: string | null
+          project_id: string
+          region?: string
+          status?: string
+          verification_token: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          hostname?: string
+          id?: string
+          last_checked_at?: string | null
+          project_id?: string
+          region?: string
+          status?: string
+          verification_token?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_domains_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_files: {
         Row: {
           content: string
@@ -728,6 +775,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_secrets: {
+        Row: {
+          auth_tag: string
+          ciphertext: string
+          created_at: string
+          created_by: string
+          id: string
+          iv: string
+          last_four: string
+          name: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          auth_tag: string
+          ciphertext: string
+          created_at?: string
+          created_by: string
+          id?: string
+          iv: string
+          last_four?: string
+          name: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          auth_tag?: string
+          ciphertext?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          iv?: string
+          last_four?: string
+          name?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_secrets_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
