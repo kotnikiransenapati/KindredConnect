@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listScimTokens, createScimToken, revokeScimToken, listScimAudit, listScimProvisionedUsers } from "@/lib/scim.functions";
-import { listOrganizations } from "@/lib/organizations.functions";
+import { listMyOrganizations } from "@/lib/organizations.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ import { Copy, KeyRound, ShieldCheck, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export function ScimPanel() {
-  const list = useServerFn(listOrganizations);
+  const list = useServerFn(listMyOrganizations);
   const orgsQ = useQuery({ queryKey: ["orgs"], queryFn: () => list() });
   const orgs = useMemo(() =>
     (orgsQ.data ?? []).filter((o: any) => ["owner", "admin"].includes(o.role)),

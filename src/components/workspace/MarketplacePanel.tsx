@@ -87,7 +87,13 @@ function MyListingsTab() {
   const del = useServerFn(deleteListing);
 
   const listingsQ = useQuery({ queryKey: ["mkt-mine"], queryFn: () => myL() });
-  const tplsQ = useQuery({ queryKey: ["my-published-tpls"], queryFn: () => tpls({ data: { mine: true } as any }).catch(() => []) });
+  const tplsQ = useQuery({
+    queryKey: ["my-published-tpls"],
+    queryFn: async () => {
+      const r = await tpls().catch(() => ({ templates: [] as any[] }));
+      return Array.isArray(r) ? r : (r?.templates ?? []);
+    },
+  });
 
   const [templateId, setTemplateId] = useState("");
   const [price, setPrice] = useState("999");
