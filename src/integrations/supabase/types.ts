@@ -559,6 +559,87 @@ export type Database = {
           },
         ]
       }
+      deploy_healing: {
+        Row: {
+          action: string
+          ci_gate_id: string | null
+          created_at: string
+          deployment_id: string | null
+          detail: Json
+          id: string
+          project_id: string
+          proposal_id: string | null
+          rollback_to_deployment_id: string | null
+          status: string
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          ci_gate_id?: string | null
+          created_at?: string
+          deployment_id?: string | null
+          detail?: Json
+          id?: string
+          project_id: string
+          proposal_id?: string | null
+          rollback_to_deployment_id?: string | null
+          status?: string
+          summary?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          ci_gate_id?: string | null
+          created_at?: string
+          deployment_id?: string | null
+          detail?: Json
+          id?: string
+          project_id?: string
+          proposal_id?: string | null
+          rollback_to_deployment_id?: string | null
+          status?: string
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deploy_healing_ci_gate_id_fkey"
+            columns: ["ci_gate_id"]
+            isOneToOne: false
+            referencedRelation: "ci_gates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_healing_deployment_id_fkey"
+            columns: ["deployment_id"]
+            isOneToOne: false
+            referencedRelation: "deployments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_healing_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_healing_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "agent_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_healing_rollback_to_deployment_id_fkey"
+            columns: ["rollback_to_deployment_id"]
+            isOneToOne: false
+            referencedRelation: "deployments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deployments: {
         Row: {
           created_at: string
@@ -602,6 +683,65 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "deployments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      e2e_tests: {
+        Row: {
+          created_at: string
+          created_by: string
+          error: string | null
+          id: string
+          last_run_report: Json
+          last_run_status: string | null
+          model: string | null
+          name: string
+          project_id: string
+          spec_code: string
+          spec_path: string
+          status: string
+          updated_at: string
+          user_story: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          error?: string | null
+          id?: string
+          last_run_report?: Json
+          last_run_status?: string | null
+          model?: string | null
+          name: string
+          project_id: string
+          spec_code?: string
+          spec_path: string
+          status?: string
+          updated_at?: string
+          user_story: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          error?: string | null
+          id?: string
+          last_run_report?: Json
+          last_run_status?: string | null
+          model?: string | null
+          name?: string
+          project_id?: string
+          spec_code?: string
+          spec_path?: string
+          status?: string
+          updated_at?: string
+          user_story?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "e2e_tests_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
