@@ -36,6 +36,9 @@ import { ModelRoutingPanel } from "@/components/workspace/ModelRoutingPanel";
 import { E2ETestsPanel } from "@/components/workspace/E2ETestsPanel";
 import { SelfHealPanel } from "@/components/workspace/SelfHealPanel";
 import { OrganizationsPanel } from "@/components/workspace/OrganizationsPanel";
+import { AnalyticsPanel } from "@/components/workspace/AnalyticsPanel";
+import { AuditLogPanel } from "@/components/workspace/AuditLogPanel";
+
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
@@ -154,7 +157,10 @@ function ProjectWorkspace() {
                 <E2ETestsPanel projectId={projectId} />
                 <SelfHealPanel projectId={projectId} />
                 <OrganizationsPanel />
+                <AnalyticsPanel projectId={projectId} />
+                <AuditLogPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
+
 
 
               </div>

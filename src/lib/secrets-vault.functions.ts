@@ -127,5 +127,14 @@ export const revealProjectSecret = createServerFn({ method: "POST" })
       fromBytea(row.iv as unknown as string),
       fromBytea(row.auth_tag as unknown as string),
     );
+    const { recordAudit } = await import("./audit.functions");
+    await recordAudit(supabase, userId, {
+      action: "secret.reveal",
+      resourceType: "project_secret",
+      resourceId: data.id,
+      projectId: data.projectId,
+      metadata: { name: row.name },
+    });
     return { name: row.name, value };
   });
+

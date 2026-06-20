@@ -335,3 +335,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 
 **Phase 4 batches remaining: 0** — full collaboration & growth phase delivered.
 
+
+### Phase 5 — Enterprise data
+### P11 — Product analytics (events, funnels, retention) ✅
+- DB: `analytics_events` (project_id, user_id, session_id, event_name, path, referrer, country, properties jsonb, occurred_at) with project-scoped read + write RLS. Indexed by (project, time), (project, event_name), session_id. SECURITY DEFINER rollup `analytics_daily_counts()` enforces project membership.
+- `src/lib/analytics.functions.ts`: `trackEvent` (Cloudflare cf-ipcountry header capture, 600/min rate-limit, event name regex-validated), `getAnalyticsOverview` (totals + top events/paths/countries + daily rollup), `computeFunnel` (ordered-step session walk, returns per-step count, conversion, dropoff).
+- `AnalyticsPanel.tsx`: window selector (7/14/30/60/90 days), three KPI cards, daily volume bar chart, top events/paths/countries lists, interactive funnel builder with datalist auto-complete, debug event tracker. Auto-refreshes hourly.
+
+### P12 — Append-only audit log + compliance export ✅
+- DB: `audit_log` (project_id, org_id, actor_id, action, resource_type, resource_id, ip inet, user_agent, metadata jsonb) — RLS allows project owners + org admins to read; only the acting user can insert their own rows; **no UPDATE/DELETE policies** ⇒ append-only at the RLS layer.
+- `src/lib/audit.functions.ts`: `recordAudit()` shared helper (captures cf-connecting-ip + user-agent inside the request scope, never throws), strict `AuditAction` literal union, `listAuditLog` (filterable by days/action), `exportAuditLog` (CSV/JSON; rate-limited 10/day; self-audits the export). Wired into `revealProjectSecret` as the first integration point.
+- `AuditLogPanel.tsx`: time-window + action filter, expandable JSON metadata, one-click CSV/JSON download (Blob → object URL). Mounted in workspace.
+
+**Phase 5 batches remaining: 0** — enterprise data phase delivered.
