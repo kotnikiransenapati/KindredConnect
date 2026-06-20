@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { startAgentRun, listAgentRuns, getAgentRun, cancelAgentRun } from "@/lib/agents.functions";
@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sparkles, Loader2, Square, CheckCircle2, XCircle, Circle, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
 
-const STATUS_ICON: Record<string, JSX.Element> = {
+const STATUS_ICON: Record<string, React.ReactNode> = {
   queued: <Circle className="h-3.5 w-3.5 text-muted-foreground" />,
   running: <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />,
   succeeded: <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />,
