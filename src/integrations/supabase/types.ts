@@ -52,6 +52,195 @@ export type Database = {
           },
         ]
       }
+      agent_messages: {
+        Row: {
+          created_at: string
+          id: string
+          parts: Json
+          project_id: string
+          role: string
+          task_id: string
+          tokens: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parts?: Json
+          project_id: string
+          role: string
+          task_id: string
+          tokens?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parts?: Json
+          project_id?: string
+          role?: string
+          task_id?: string
+          tokens?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_messages_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "agent_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_runs: {
+        Row: {
+          created_at: string
+          error: string | null
+          finished_at: string | null
+          goal: string
+          id: string
+          model: string | null
+          plan: Json
+          project_id: string
+          started_at: string | null
+          status: string
+          total_cost_cents: number
+          total_tokens: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          goal: string
+          id?: string
+          model?: string | null
+          plan?: Json
+          project_id: string
+          started_at?: string | null
+          status?: string
+          total_cost_cents?: number
+          total_tokens?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          goal?: string
+          id?: string
+          model?: string | null
+          plan?: Json
+          project_id?: string
+          started_at?: string | null
+          status?: string
+          total_cost_cents?: number
+          total_tokens?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_tasks: {
+        Row: {
+          artifacts: Json
+          attempt: number
+          cost_cents: number
+          created_at: string
+          error: string | null
+          finished_at: string | null
+          id: string
+          input: Json
+          output: Json | null
+          parent_task_id: string | null
+          project_id: string
+          role: string
+          run_id: string
+          started_at: string | null
+          status: string
+          title: string
+          tokens: number
+          updated_at: string
+        }
+        Insert: {
+          artifacts?: Json
+          attempt?: number
+          cost_cents?: number
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          input?: Json
+          output?: Json | null
+          parent_task_id?: string | null
+          project_id: string
+          role: string
+          run_id: string
+          started_at?: string | null
+          status?: string
+          title: string
+          tokens?: number
+          updated_at?: string
+        }
+        Update: {
+          artifacts?: Json
+          attempt?: number
+          cost_cents?: number
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          input?: Json
+          output?: Json | null
+          parent_task_id?: string | null
+          project_id?: string
+          role?: string
+          run_id?: string
+          started_at?: string | null
+          status?: string
+          title?: string
+          tokens?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "agent_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_tasks_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "agent_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_usage: {
         Row: {
           created_at: string
@@ -761,6 +950,57 @@ export type Database = {
           use_count?: number
         }
         Relationships: []
+      }
+      usage_ledger: {
+        Row: {
+          cost_cents: number
+          created_at: string
+          id: string
+          kind: string
+          meta: Json
+          project_id: string | null
+          run_id: string | null
+          tokens: number
+          user_id: string
+        }
+        Insert: {
+          cost_cents?: number
+          created_at?: string
+          id?: string
+          kind: string
+          meta?: Json
+          project_id?: string | null
+          run_id?: string | null
+          tokens?: number
+          user_id: string
+        }
+        Update: {
+          cost_cents?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          meta?: Json
+          project_id?: string | null
+          run_id?: string | null
+          tokens?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_ledger_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_ledger_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "agent_runs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_preferences: {
         Row: {
