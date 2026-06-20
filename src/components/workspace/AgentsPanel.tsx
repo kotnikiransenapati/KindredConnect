@@ -35,6 +35,7 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
     new Set(["architect", "frontend", "backend", "mobile", "qa", "security"]),
   );
   const [activeRun, setActiveRun] = useState<string | null>(null);
+  const [openTask, setOpenTask] = useState<string | null>(null);
 
   const runsQ = useQuery({
     queryKey: ["agent-runs", projectId],
