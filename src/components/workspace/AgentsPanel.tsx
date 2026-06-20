@@ -85,6 +85,30 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
     setSelected(next);
   };
 
+  // Realtime: invalidate the active run query on any agent_tasks change for it.
+  useEffect(() => {
+    if (!activeRun) return;
+    const channel = supabase
+      .channel(`agent-run-${activeRun}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "agent_tasks", filter: `run_id=eq.${activeRun}` },
+        () => qc.invalidateQueries({ queryKey: ["agent-run", activeRun] }),
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "agent_runs", filter: `id=eq.${activeRun}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["agent-run", activeRun] });
+          qc.invalidateQueries({ queryKey: ["agent-runs", projectId] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeRun, projectId, qc]);
+
   return (
     <Card className="border-border/60 bg-card/40 backdrop-blur">
       <CardHeader className="pb-3">
