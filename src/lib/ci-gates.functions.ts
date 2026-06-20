@@ -128,7 +128,7 @@ export const runCiGate = createServerFn({ method: "POST" })
 
     const startedAt = Date.now();
     try {
-      let report: Record<string, unknown> = {};
+      let report: Record<string, any> = {};
       let score = 0;
       if (data.kind === "lighthouse") {
         const lh = await runLighthouse(data.targetUrl);
