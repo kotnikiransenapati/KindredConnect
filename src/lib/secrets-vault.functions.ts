@@ -18,6 +18,14 @@ async function deriveKey(): Promise<Buffer> {
   return scryptSync(secret, "foundry-vault-v1", 32);
 }
 
+// bytea round-trips as a "\x<hex>" string through PostgREST.
+const toBytea = (buf: Buffer) => "\\x" + buf.toString("hex");
+function fromBytea(s: string): Buffer {
+  if (s.startsWith("\\x")) return Buffer.from(s.slice(2), "hex");
+  // base64 fallback (some PostgREST configurations)
+  return Buffer.from(s, "base64");
+}
+
 async function encrypt(plaintext: string) {
   const { randomBytes, createCipheriv } = await import("crypto");
   const key = await deriveKey();
@@ -25,7 +33,7 @@ async function encrypt(plaintext: string) {
   const cipher = createCipheriv("aes-256-gcm", key, iv);
   const ciphertext = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
-  return { ciphertext, iv, tag };
+  return { ciphertext: toBytea(ciphertext), iv: toBytea(iv), tag: toBytea(tag) };
 }
 
 async function decrypt(ciphertext: Buffer, iv: Buffer, tag: Buffer): Promise<string> {
