@@ -362,3 +362,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `GuardrailsPanel.tsx`: three-tab UI — Rules (kind-aware default-action + config templates, toggle, delete), Playground (live scanner with severity badges + after-redaction preview), Violations (10s auto-refresh, severity-colored timeline). Mounted in workspace.
 
 **Phase 6 batches remaining: 0** — full enterprise trust & AI safety phase delivered.
+
+### Phase 8 — Distributed trust & agent mesh
+### P17 — SIEM audit streaming ✅
+- DB: `siem_destinations` (org-scoped, provider enum splunk_hec/datadog/generic_webhook, endpoint, SHA-256-hashed secret + hint, event filter, enabled flag, last delivery status) + `siem_deliveries` (append-only delivery ledger w/ http_code, latency, snippet). RLS gates everything to org admins.
+- `src/lib/siem.functions.ts`: HTTPS-only validation, per-provider payload shaping (Splunk HEC envelope w/ epoch time, Datadog `ddsource`/`ddtags`, generic JSON), HMAC-SHA256 `x-lovable-signature` header on every dispatch, 8s timeout, full success/failure persisted + flipped onto destination last_status. Rate-limited 20/min config, 60/min dispatch.
+- `SiemStreamingPanel.tsx`: org switcher, destination CRUD with provider-aware secret/filter form, live deliveries tab (15s poll) with status badges + latency.
+
+### P18 — Agent-to-Agent (A2A) protocol ✅
+- DB: `a2a_agents` (project-scoped registry, capability text[] indexed via GIN, optional HTTPS endpoint + public key, status enum active/paused/revoked, unique (project, name)) + `a2a_messages` (signed envelopes: from→to, intent, payload jsonb, SHA-256 signature, status enum pending/delivered/acknowledged/failed/rejected, correlation_id, response). RLS: project members read, editors send, only sender updates.
+- `src/lib/a2a.functions.ts`: `discoverAgents` filters by capability (contains GIN); `sendAgentMessage` validates same-project, blocks self-send, signs canonical envelope, POSTs to target endpoint with `x-a2a-signature`+`x-a2a-message-id`, 6s timeout, updates status delivered/failed; `acknowledgeMessage` for receiver-side ack/reject.
+- `A2APanel.tsx`: tabbed Registry / Discover / Send / Messages (8s poll) — register agents w/ capabilities, browse by capability, send signed JSON envelopes, ack/reject inbox.
+
+**Phase 8 batches remaining: 0** — distributed trust & agent mesh delivered.

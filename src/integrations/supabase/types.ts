@@ -14,6 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
+      a2a_agents: {
+        Row: {
+          capabilities: string[]
+          created_at: string
+          created_by: string
+          description: string | null
+          endpoint_url: string | null
+          id: string
+          metadata: Json
+          name: string
+          project_id: string
+          public_key: string | null
+          status: Database["public"]["Enums"]["a2a_agent_status"]
+          updated_at: string
+        }
+        Insert: {
+          capabilities?: string[]
+          created_at?: string
+          created_by: string
+          description?: string | null
+          endpoint_url?: string | null
+          id?: string
+          metadata?: Json
+          name: string
+          project_id: string
+          public_key?: string | null
+          status?: Database["public"]["Enums"]["a2a_agent_status"]
+          updated_at?: string
+        }
+        Update: {
+          capabilities?: string[]
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          endpoint_url?: string | null
+          id?: string
+          metadata?: Json
+          name?: string
+          project_id?: string
+          public_key?: string | null
+          status?: Database["public"]["Enums"]["a2a_agent_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "a2a_agents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      a2a_messages: {
+        Row: {
+          correlation_id: string | null
+          created_at: string
+          error: string | null
+          from_agent_id: string
+          id: string
+          intent: string
+          payload: Json
+          project_id: string
+          response: Json | null
+          sent_by: string
+          signature: string | null
+          status: Database["public"]["Enums"]["a2a_message_status"]
+          to_agent_id: string
+          updated_at: string
+        }
+        Insert: {
+          correlation_id?: string | null
+          created_at?: string
+          error?: string | null
+          from_agent_id: string
+          id?: string
+          intent: string
+          payload?: Json
+          project_id: string
+          response?: Json | null
+          sent_by: string
+          signature?: string | null
+          status?: Database["public"]["Enums"]["a2a_message_status"]
+          to_agent_id: string
+          updated_at?: string
+        }
+        Update: {
+          correlation_id?: string | null
+          created_at?: string
+          error?: string | null
+          from_agent_id?: string
+          id?: string
+          intent?: string
+          payload?: Json
+          project_id?: string
+          response?: Json | null
+          sent_by?: string
+          signature?: string | null
+          status?: Database["public"]["Enums"]["a2a_message_status"]
+          to_agent_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "a2a_messages_from_agent_id_fkey"
+            columns: ["from_agent_id"]
+            isOneToOne: false
+            referencedRelation: "a2a_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "a2a_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "a2a_messages_to_agent_id_fkey"
+            columns: ["to_agent_id"]
+            isOneToOne: false
+            referencedRelation: "a2a_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_log: {
         Row: {
           action: string
@@ -2189,6 +2315,141 @@ export type Database = {
           },
         ]
       }
+      siem_deliveries: {
+        Row: {
+          attempt: number
+          audit_id: string | null
+          created_at: string
+          destination_id: string
+          error: string | null
+          event_name: string
+          http_code: number | null
+          id: string
+          latency_ms: number | null
+          org_id: string
+          response_snippet: string | null
+          status: Database["public"]["Enums"]["siem_delivery_status"]
+        }
+        Insert: {
+          attempt?: number
+          audit_id?: string | null
+          created_at?: string
+          destination_id: string
+          error?: string | null
+          event_name: string
+          http_code?: number | null
+          id?: string
+          latency_ms?: number | null
+          org_id: string
+          response_snippet?: string | null
+          status?: Database["public"]["Enums"]["siem_delivery_status"]
+        }
+        Update: {
+          attempt?: number
+          audit_id?: string | null
+          created_at?: string
+          destination_id?: string
+          error?: string | null
+          event_name?: string
+          http_code?: number | null
+          id?: string
+          latency_ms?: number | null
+          org_id?: string
+          response_snippet?: string | null
+          status?: Database["public"]["Enums"]["siem_delivery_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siem_deliveries_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audit_log"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siem_deliveries_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "siem_destinations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siem_deliveries_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siem_destinations: {
+        Row: {
+          created_at: string
+          created_by: string
+          enabled: boolean
+          endpoint_url: string
+          event_filter: string[]
+          id: string
+          last_delivery_at: string | null
+          last_error: string | null
+          last_status:
+            | Database["public"]["Enums"]["siem_delivery_status"]
+            | null
+          name: string
+          org_id: string
+          provider: Database["public"]["Enums"]["siem_provider"]
+          secret_hash: string
+          secret_hint: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          enabled?: boolean
+          endpoint_url: string
+          event_filter?: string[]
+          id?: string
+          last_delivery_at?: string | null
+          last_error?: string | null
+          last_status?:
+            | Database["public"]["Enums"]["siem_delivery_status"]
+            | null
+          name: string
+          org_id: string
+          provider: Database["public"]["Enums"]["siem_provider"]
+          secret_hash: string
+          secret_hint?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          endpoint_url?: string
+          event_filter?: string[]
+          id?: string
+          last_delivery_at?: string | null
+          last_error?: string | null
+          last_status?:
+            | Database["public"]["Enums"]["siem_delivery_status"]
+            | null
+          name?: string
+          org_id?: string
+          provider?: Database["public"]["Enums"]["siem_provider"]
+          secret_hash?: string
+          secret_hint?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siem_destinations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sso_connections: {
         Row: {
           attribute_map: Json
@@ -2774,6 +3035,13 @@ export type Database = {
       next_deployment_version: { Args: { _slug: string }; Returns: number }
     }
     Enums: {
+      a2a_agent_status: "active" | "paused" | "revoked"
+      a2a_message_status:
+        | "pending"
+        | "delivered"
+        | "acknowledged"
+        | "failed"
+        | "rejected"
       gate_kind: "lighthouse" | "smoke" | "a11y"
       gate_status: "pending" | "passed" | "failed" | "error"
       guardrail_action: "block" | "warn" | "redact"
@@ -2792,6 +3060,8 @@ export type Database = {
       project_role: "owner" | "editor" | "viewer"
       push_status: "draft" | "scheduled" | "sending" | "sent" | "failed"
       push_target: "all" | "user" | "segment"
+      siem_delivery_status: "pending" | "success" | "failed" | "retrying"
+      siem_provider: "splunk_hec" | "datadog" | "generic_webhook"
       skill_kind: "mcp" | "http_tool" | "prompt"
       skill_visibility: "private" | "public"
       sso_provider:
@@ -2929,6 +3199,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      a2a_agent_status: ["active", "paused", "revoked"],
+      a2a_message_status: [
+        "pending",
+        "delivered",
+        "acknowledged",
+        "failed",
+        "rejected",
+      ],
       gate_kind: ["lighthouse", "smoke", "a11y"],
       gate_status: ["pending", "passed", "failed", "error"],
       guardrail_action: ["block", "warn", "redact"],
@@ -2948,6 +3226,8 @@ export const Constants = {
       project_role: ["owner", "editor", "viewer"],
       push_status: ["draft", "scheduled", "sending", "sent", "failed"],
       push_target: ["all", "user", "segment"],
+      siem_delivery_status: ["pending", "success", "failed", "retrying"],
+      siem_provider: ["splunk_hec", "datadog", "generic_webhook"],
       skill_kind: ["mcp", "http_tool", "prompt"],
       skill_visibility: ["private", "public"],
       sso_provider: [
