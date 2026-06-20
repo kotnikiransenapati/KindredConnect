@@ -168,7 +168,6 @@ function ProjectWorkspace() {
                 <SsoConnectionsPanel />
                 <GuardrailsPanel projectId={projectId} />
                 <ScimPanel />
-                <MarketplacePanel />
                 <SiemStreamingPanel />
                 <A2APanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
