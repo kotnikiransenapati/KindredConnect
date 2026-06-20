@@ -348,3 +348,17 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `AuditLogPanel.tsx`: time-window + action filter, expandable JSON metadata, one-click CSV/JSON download (Blob → object URL). Mounted in workspace.
 
 **Phase 5 batches remaining: 0** — enterprise data phase delivered.
+
+
+### Phase 6 — Enterprise trust & AI safety
+### P13 — Enterprise SSO (SAML 2.0) ✅
+- DB: `sso_connections` (org_id, provider enum [okta/azure_ad/google_workspace/onelogin/jumpcloud/generic_saml], display_name, domain UNIQUE-per-org, entity_id, sso_url, x509 certificate PEM, attribute_map jsonb, status enum [pending/active/disabled/error], last_tested_at, last_error). Role-scoped RLS via `has_org_role` — admins read/write, owners delete.
+- `src/lib/sso.functions.ts`: `listSsoConnections`, `upsertSsoConnection` (RFC-1123 domain validation, HTTPS-only SSO URL, PEM cert regex, rate-limited 10/min), `testSsoConnection` (HEAD probe with 8s timeout + cert sanity check, persists active/error + last_error), `setSsoEnabled`, `deleteSsoConnection`.
+- `SsoConnectionsPanel.tsx`: org switcher (admin/owner orgs only), provider-keyed connection form, status icons (ShieldCheck/Alert/disabled/pending), per-row test/enable-disable/delete. Mounted in workspace.
+
+### P14 — AI Safety Guardrails ✅
+- DB: `ai_guardrails` (project, name UNIQUE-per-project, type enum [pii_redact/secret_leak/prompt_injection/toxicity/topic_filter/rate_cap], action enum [block/warn/redact], config jsonb, enabled) + `ai_guardrail_violations` (append-only log: guardrail_id, type, severity, action_taken, content_hash, snippet, matched_patterns[], metadata). Role-scoped RLS.
+- `src/lib/guardrails.functions.ts`: zero-dep pure-JS scanner with PII (email/SSN/CC/phone/IPv4), secret leak (AWS/OpenAI/Stripe/Google/GitHub/JWT/PEM private key), prompt-injection (ignore-previous/system-override/role-swap/data-exfil), toxicity, configurable topic filter (banned terms), and per-rule rate cap via `check_rate_limit`. `scanContent` walks every enabled rule, redacts in-place when action='redact', short-circuits with `allowed=false` when any rule blocks, records all hits to `ai_guardrail_violations` with SHA-256 content hash + 280-char snippet. CRUD + `listGuardrailViolations` (14-day rolling).
+- `GuardrailsPanel.tsx`: three-tab UI — Rules (kind-aware default-action + config templates, toggle, delete), Playground (live scanner with severity badges + after-redaction preview), Violations (10s auto-refresh, severity-colored timeline). Mounted in workspace.
+
+**Phase 6 batches remaining: 0** — full enterprise trust & AI safety phase delivered.

@@ -38,6 +38,8 @@ import { SelfHealPanel } from "@/components/workspace/SelfHealPanel";
 import { OrganizationsPanel } from "@/components/workspace/OrganizationsPanel";
 import { AnalyticsPanel } from "@/components/workspace/AnalyticsPanel";
 import { AuditLogPanel } from "@/components/workspace/AuditLogPanel";
+import { SsoConnectionsPanel } from "@/components/workspace/SsoConnectionsPanel";
+import { GuardrailsPanel } from "@/components/workspace/GuardrailsPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -159,6 +161,8 @@ function ProjectWorkspace() {
                 <OrganizationsPanel />
                 <AnalyticsPanel projectId={projectId} />
                 <AuditLogPanel projectId={projectId} />
+                <SsoConnectionsPanel />
+                <GuardrailsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
