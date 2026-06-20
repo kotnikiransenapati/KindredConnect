@@ -237,3 +237,36 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
     </Card>
   );
 }
+
+function TaskTranscript({ taskId }: { taskId: string }) {
+  const fetchMsgs = useServerFn(listTaskMessages);
+  const q = useQuery({
+    queryKey: ["agent-task-messages", taskId],
+    queryFn: () => fetchMsgs({ data: { taskId } }),
+    refetchInterval: 4000,
+  });
+  if (q.isLoading) {
+    return <div className="px-3 pb-3 text-[11px] text-muted-foreground">Loading transcript…</div>;
+  }
+  const msgs = q.data?.messages ?? [];
+  if (msgs.length === 0) {
+    return <div className="px-3 pb-3 text-[11px] text-muted-foreground">No output yet.</div>;
+  }
+  return (
+    <div className="space-y-2 border-t border-border/30 bg-background/40 px-3 py-2">
+      {msgs.map((m) => {
+        const text = (Array.isArray(m.parts) ? m.parts : [])
+          .map((p: { type?: string; text?: string }) => (p.type === "text" ? p.text ?? "" : ""))
+          .join("");
+        return (
+          <pre
+            key={m.id}
+            className="max-h-72 overflow-auto whitespace-pre-wrap rounded-md bg-muted/40 p-2 font-mono text-[11px] leading-relaxed text-foreground/90"
+          >
+            {text}
+          </pre>
+        );
+      })}
+    </div>
+  );
+}
