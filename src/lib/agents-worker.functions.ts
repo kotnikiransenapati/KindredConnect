@@ -184,20 +184,28 @@ export const runQueuedTasks = createServerFn({ method: "POST" })
         })
         .join("\n\n---\n\n");
 
-      const { data: reviewerTask } = await supabase
-        .from("agent_tasks")
-        .insert({
-          run_id: data.runId,
-          project_id: (await supabase.from("agent_runs").select("project_id").eq("id", data.runId).single()).data?.project_id,
-          role: "reviewer",
-          title: "Critic review of specialist outputs",
-          status: "queued",
-          input: { goal: transcript.slice(0, 24_000) },
-        })
-        .select("id")
+      const { data: runRow } = await supabase
+        .from("agent_runs")
+        .select("project_id")
+        .eq("id", data.runId)
         .single();
-      if (reviewerTask?.id) {
-        await runOneTask(supabase, userId, reviewerTask.id, apiKey);
+      const projectId = runRow?.project_id;
+      if (projectId) {
+        const { data: reviewerTask } = await supabase
+          .from("agent_tasks")
+          .insert({
+            run_id: data.runId,
+            project_id: projectId,
+            role: "reviewer",
+            title: "Critic review of specialist outputs",
+            status: "queued",
+            input: { goal: transcript.slice(0, 24_000) },
+          })
+          .select("id")
+          .single();
+        if (reviewerTask?.id) {
+          await runOneTask(supabase, userId, reviewerTask.id, apiKey);
+        }
       }
     }
 
