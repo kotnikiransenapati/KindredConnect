@@ -119,3 +119,31 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
       .from("subscriptions").update({ cancel_at_period_end: true }).eq("user_id", userId);
     return { ok: true as const };
   });
+
+export const getMyUsage = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from("usage_ledger")
+      .select("kind, tokens, cost_cents, created_at, project_id")
+      .eq("user_id", userId)
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error(error.message);
+    const rows = data ?? [];
+    const totals = rows.reduce(
+      (acc, r) => {
+        acc.tokens += r.tokens ?? 0;
+        acc.cost_cents += r.cost_cents ?? 0;
+        acc.requests += 1;
+        const k = r.kind ?? "other";
+        acc.byKind[k] = (acc.byKind[k] ?? 0) + (r.tokens ?? 0);
+        return acc;
+      },
+      { tokens: 0, cost_cents: 0, requests: 0, byKind: {} as Record<string, number> },
+    );
+    return { totals, recent: rows.slice(0, 20) };
+  });
