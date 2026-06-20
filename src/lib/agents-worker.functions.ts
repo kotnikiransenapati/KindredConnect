@@ -153,6 +153,7 @@ export const runQueuedTasks = createServerFn({ method: "POST" })
     async function worker() {
       while (cursor < ids.length) {
         const id = ids[cursor++];
+        if (!id) break;
         const r = await runOneTask(supabase, userId, id, key);
         results.push({ ok: r.ok });
       }
