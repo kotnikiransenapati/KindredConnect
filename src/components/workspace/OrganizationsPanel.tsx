@@ -202,11 +202,13 @@ function InviteForm({ orgId }: { orgId: string }) {
   const qc = useQueryClient();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"admin" | "editor" | "viewer">("editor");
+  const inviteFn = useServerFn(inviteMember);
   const mu = useMutation({
-    mutationFn: () => useServerFn(inviteMember)({ data: { orgId, email, role } }),
+    mutationFn: () => inviteFn({ data: { orgId, email, role } }),
     onSuccess: () => { setEmail(""); qc.invalidateQueries({ queryKey: ["org-invites", orgId] }); toast.success("Invitation sent"); },
     onError: (e: any) => toast.error(e.message),
   });
+
   return (
     <div className="flex gap-2">
       <Input placeholder="teammate@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-8 text-xs" />
