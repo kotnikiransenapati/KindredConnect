@@ -55,9 +55,12 @@ STACK:
 - Keep components small (<200 lines), split into /components/* when appropriate.
 - No secrets, no backend code, no network calls to private APIs.
 
-MOBILE (iOS / Android):
+MOBILE (iOS / Android / PWA):
 - If the user asks for a mobile app or wants to ship to iOS/Android, call scaffoldCapacitor once.
   This adds capacitor.config.ts + /docs/MOBILE.md with the exact 'npx cap add ios/android' steps.
+- If the user wants "installable" / "add to home screen" / offline, call scaffoldPWA once — it writes
+  /public/manifest.webmanifest, /public/sw.js (offline cache), and the registration snippet doc.
+- After major UI work on a mobile target, call runMobileAudit and fix any findings before declaring done.
 - Design touch-first: 44px+ tap targets, safe-area padding (env(safe-area-inset-*)), no hover-only states.
 - Prefer system fonts on mobile; avoid fixed pixel widths; use clamp() / responsive units.
 
@@ -303,6 +306,128 @@ ${platforms.includes("ios") ? "npx cap open ios       # Xcode → Run on device 
                 await supabase.from("project_files").insert({ project_id: projectId, path: "/docs/MOBILE.md", content: next });
               }
               return { ok: true, plugin, pkg, installCommand: `npm i ${pkg} && npx cap sync` };
+            },
+          }),
+          scaffoldPWA: tool({
+            description: "Make this app installable on iOS / Android / desktop as a PWA. Writes /public/manifest.webmanifest, /public/sw.js (offline-first cache), and /docs/PWA.md with the <head> snippet to add. Call ONCE per project.",
+            inputSchema: z.object({
+              appName: z.string().min(1).max(80),
+              shortName: z.string().min(1).max(20),
+              themeColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#0b0b10"),
+              backgroundColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#0b0b10"),
+              startUrl: z.string().default("/"),
+            }),
+            execute: async ({ appName, shortName, themeColor, backgroundColor, startUrl }) => {
+              const manifest = JSON.stringify({
+                name: appName,
+                short_name: shortName,
+                start_url: startUrl,
+                scope: "/",
+                display: "standalone",
+                orientation: "portrait",
+                theme_color: themeColor,
+                background_color: backgroundColor,
+                icons: [
+                  { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+                  { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+                ],
+              }, null, 2);
+              const sw = `// Foundry PWA service worker — offline-first with stale-while-revalidate
+const CACHE = 'foundry-v1';
+const CORE = ['/', '/index.html', '/manifest.webmanifest'];
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', (e) => {
+  e.waitUntil(caches.keys().then((keys) =>
+    Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+  ).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    const cached = await cache.match(req);
+    const network = fetch(req).then((res) => {
+      if (res.ok && new URL(req.url).origin === location.origin) cache.put(req, res.clone());
+      return res;
+    }).catch(() => cached);
+    return cached || network;
+  })());
+});`;
+              const docs = `# ${appName} — Progressive Web App
+
+This project is installable on iOS, Android and desktop.
+
+## Add to your \`index.html\` <head>
+
+\`\`\`html
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="${themeColor}" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="/icons/icon-192.png" />
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+  }
+</script>
+\`\`\`
+
+## Icons
+Place \`/public/icons/icon-192.png\` and \`/public/icons/icon-512.png\` (maskable, square).
+
+## Install prompts
+- iOS Safari: Share → Add to Home Screen.
+- Android Chrome: address bar → Install app.
+- Desktop Chrome/Edge: install icon in the URL bar.
+`;
+              const writeOne = async (p: string, c: string) => {
+                const { data: ex } = await supabase.from("project_files")
+                  .select("id, version").eq("project_id", projectId).eq("path", p).maybeSingle();
+                if (ex) await supabase.from("project_files").update({ content: c, version: ex.version + 1 }).eq("id", ex.id);
+                else await supabase.from("project_files").insert({ project_id: projectId, path: p, content: c });
+              };
+              await writeOne("/public/manifest.webmanifest", manifest);
+              await writeOne("/public/sw.js", sw);
+              await writeOne("/docs/PWA.md", docs);
+              return { ok: true, files: ["/public/manifest.webmanifest", "/public/sw.js", "/docs/PWA.md"] };
+            },
+          }),
+          runMobileAudit: tool({
+            description: "Scan all project files for mobile UX issues: hover-only states, fixed pixel widths, missing safe-area insets, tiny tap targets, viewport meta. Returns a findings list. Call before declaring a mobile build done.",
+            inputSchema: z.object({}),
+            execute: async () => {
+              const { data: files } = await supabase.from("project_files")
+                .select("path, content").eq("project_id", projectId);
+              const findings: Array<{ path: string; rule: string; hint: string; count: number }> = [];
+              let viewportOk = false;
+              for (const f of files ?? []) {
+                const c = f.content ?? "";
+                if (/<meta[^>]+name=["']viewport["']/i.test(c)) viewportOk = true;
+                const push = (rule: string, hint: string, count: number) => {
+                  if (count > 0) findings.push({ path: f.path, rule, hint, count });
+                };
+                push("hover-only-interaction",
+                  "Wrap hover styles with @media (hover: hover) — touch devices skip them.",
+                  (c.match(/\bhover:/g) ?? []).length > 0 && !/@media\s*\(hover:\s*hover\)/.test(c)
+                    ? (c.match(/\bhover:/g) ?? []).length : 0);
+                push("fixed-pixel-width",
+                  "Replace fixed widths (>=360px) with max-w-*, clamp() or responsive units.",
+                  (c.match(/\bw-\[(?:3[6-9]\d|[4-9]\d{2,}|\d{4,})px\]/g) ?? []).length);
+                push("missing-safe-area",
+                  "Add padding for env(safe-area-inset-top/bottom) on fixed top/bottom bars.",
+                  /position:\s*fixed|fixed\s+(?:top-0|bottom-0)/.test(c) && !/safe-area-inset/.test(c) ? 1 : 0);
+                push("tiny-tap-target",
+                  "Buttons / links must be >= 44x44px (use min-h-11 min-w-11 or p-3).",
+                  (c.match(/<button[^>]*className=["'][^"']*\b(?:h-[1-7]|w-[1-7])\b/g) ?? []).length);
+              }
+              if (!viewportOk && (files ?? []).some((f) => f.path.endsWith(".html"))) {
+                findings.push({ path: "/index.html", rule: "missing-viewport-meta",
+                  hint: 'Add <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />', count: 1 });
+              }
+              return { ok: true, findings, totalFiles: files?.length ?? 0, totalFindings: findings.length };
             },
           }),
           lintFile: tool({

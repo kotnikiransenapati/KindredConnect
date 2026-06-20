@@ -25,6 +25,7 @@ Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-lan
 - **Phase 12B (part)** ✅ `/docs` site with sectioned content; first-run onboarding tour in project workspace
 - **Phase M (parts 3–4)** ✅ `bundleMobileProject` server fn (zips project → downloadable iOS/Android source), `MobileBuilderPanel` UI, `addCapacitorPlugin` agent tool with snippets for 12 native plugins
 - **Phase 12B (final)** ✅ Cloudflare Turnstile widget + `verifyTurnstile` server fn on sign-up (auto no-ops when `VITE_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` unset)
+- **Phase M (PWA)** ✅ `scaffoldPWA` agent tool (manifest + offline service worker + install docs) and `runMobileAudit` tool that scans for hover-only states, fixed widths, missing safe-area, tiny tap targets, viewport meta — both wired into the system prompt
 
 ## Phase M — Mobile (iOS / Android) track
 1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).
