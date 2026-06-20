@@ -246,3 +246,19 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `DomainsPanel.tsx`: add form with region picker, status icons (Shield/ShieldCheck/ShieldAlert), copy-token, verify button, per-row TXT instructions.
 
 **Batches remaining: 2** (B17 agent skill marketplace + per-project MCP connectors, B18 Playwright E2E + Lighthouse CI deploy gate).
+
+### Batch 17 — Agent skill marketplace + MCP/tool registry ✅
+- New `agent_skills` table (name, kind ∈ {mcp,http_tool,prompt}, visibility ∈ {private,public}, jsonb config, enabled, install_count) with viewer read + public anon read, editor write, owner delete via `has_project_role`.
+- `src/lib/skills.functions.ts`: `listProjectSkills`, `listMarketplaceSkills` (server publishable client, no auth — powers public discovery), `upsertSkill` (regex-validated name, JSON config), `deleteSkill`, `installSkill` (copies a public skill into your project with auto-deduped name).
+- `SkillsMarketplacePanel.tsx`: tabbed Installed/Marketplace UI with create form (kind-aware JSON template), search + kind filter for the public catalog, one-click install. Mounted in the workspace.
+
+### Batch 18 — CI gates: Lighthouse + smoke E2E + a11y ✅
+- New `ci_gates` table (kind, status pending→passed/failed/error, score, threshold, target_url, jsonb report, duration_ms, optional deployment_id) with role-scoped RLS.
+- `src/lib/ci-gates.functions.ts`: `runCiGate` enqueues a pending row then runs in-Worker:
+  - **lighthouse** → Google PageSpeed Insights v5 API (mobile strategy, perf+a11y+best-practices+seo), averaged score + top failing audits.
+  - **smoke** → fetches target URL and asserts each substring exists in the rendered HTML.
+  - **a11y** → fetch + heuristic rules (missing alt, missing `<html lang>`, missing `<title>`, multi-H1, empty buttons/links, unlabeled inputs).
+  - Updates the row to passed/failed/error with score, full report, duration. Rate-limited (6/min, 200/day).
+- `CiGatesPanel.tsx`: composer (kind / URL / threshold / smoke assertions), live-refreshing history (5s), expandable JSON report viewer, color-coded shield status. Mounted in the workspace.
+
+**Batches remaining: 0** — all 18 batches of the Forge plan delivered.
