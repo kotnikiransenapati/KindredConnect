@@ -26,6 +26,8 @@ import { SecretsVaultPanel } from "@/components/workspace/SecretsVaultPanel";
 import { DomainsPanel } from "@/components/workspace/DomainsPanel";
 import { SkillsMarketplacePanel } from "@/components/workspace/SkillsMarketplacePanel";
 import { CiGatesPanel } from "@/components/workspace/CiGatesPanel";
+import { NativeBuildsPanel } from "@/components/workspace/NativeBuildsPanel";
+import { MobileScreensPanel } from "@/components/workspace/MobileScreensPanel";
 import { AgentsPanel } from "@/components/workspace/AgentsPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
