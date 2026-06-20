@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { startAgentRun, listAgentRuns, getAgentRun, cancelAgentRun } from "@/lib/agents.functions";
+import { runQueuedTasks } from "@/lib/agents-worker.functions";
 import { AGENTS, AGENT_BY_ROLE, type AgentRole } from "@/lib/agents.catalog";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
