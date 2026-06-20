@@ -320,3 +320,18 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `SelfHealPanel.tsx`: failed-gate picker (live), mode select (Auto/Rollback/Proposal), Heal button, healing-event timeline with status icons.
 
 **Phase 3 batches remaining: 0** — AI autonomy phase delivered.
+
+
+### Phase 4 — Collaboration & growth
+### P9 — Live collaborative editing (multi-cursor + co-edit) ✅
+- `src/lib/collab.functions.ts`: `upsertProjectFile` server fn (RLS as user, 120/min rate limit) — authoritative persistence for collaborative writes.
+- `src/components/workspace/CollabEditor.tsx`: Supabase broadcast channel `collab-doc:<projectId>:<path>` carries `doc` (text + monotonic rev — last-writer-wins on higher rev) and `cursor` (user_id, color, caret position) events. Debounced (250 ms) text broadcasts, 8 s presence decay, deterministic per-user color, save button hitting `upsertProjectFile`, stacked avatars + caret-position chips for remote editors. Mounted in `FileViewer` behind a "Live edit" toggle.
+
+### P10 — Team workspaces + org billing ✅
+- DB: `organizations` (slug-unique, plan_id, seats, owner), `organization_members` (org_role enum: owner/admin/editor/viewer), `organization_invitations` (token, expiry, accepted_at). Trigger `org_seed_owner_member` auto-adds creator as owner. `has_org_role()` SECURITY DEFINER helper (no RLS recursion), role-scoped policies on every table, plus updated_at trigger.
+- `src/lib/organizations.functions.ts`: `list/create/updatePlan/delete`, `listMembers/updateRole/removeMember`, `listInvitations/inviteMember/revokeInvitation`, `acceptInvitation` (admin-bypass lookup by token, email match enforced via JWT claims, idempotent member upsert). Rate-limited (5 orgs/day, 50 invites/day) and seat-capped at invite time.
+- `src/components/workspace/OrganizationsPanel.tsx`: workspace switcher, member list with role-edit dropdown + remove, invitation manager (email + role + copy invite link), three-tab layout (Members / Invitations / Billing) with plan picker (Hobby / Pro / Team / Enterprise). Mounted in workspace.
+- `src/routes/_authenticated/invite.tsx`: token-driven landing that calls `acceptInvitation` on mount and redirects to /app on success.
+
+**Phase 4 batches remaining: 0** — full collaboration & growth phase delivered.
+
