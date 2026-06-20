@@ -191,4 +191,14 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 ### Batch 6 — Reviewer/Critic loop ✅
 `runQueuedTasks` now spawns a Reviewer task after specialists finish, feeds it the concatenated transcript, and runs it through the same worker for an approve/request-changes verdict.
 
-**Batches remaining: 6** (B7 mobile OTA, B8 QA/Security/Perf gates, B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).
+### Batch 7 — Mobile OTA pipeline ✅
+- New `ota_bundles` table (versioned per channel: production/beta/internal) + storage bucket `ota-bundles` with project-scoped RLS on `storage.objects`.
+- `src/lib/ota.functions.ts`: `publishOtaBundle` (zips project_files, sha256-hashes, uploads, inserts immutable version row; rate-limited 3/min · 30/day), `listOtaBundles`, `getOtaBundleUrl` (10-min signed URL).
+- `OtaPanel.tsx` mounted in workspace: channel picker, release notes, publish, version history with signed downloads.
+
+### Batch 8 — QA / Security / Performance gates ✅
+- New `quality_reports` table (kind: qa|security|performance, score, status, findings).
+- `src/lib/quality.functions.ts`: `runQualityGates` statically scans project_files for hardcoded secrets (AWS/Stripe/OpenAI/Google/JWT/PEM), XSS sinks, eval, plain-HTTP, TODOs, leftover console.logs, `any` density, low test coverage, oversized modules/images, full-lodash imports, non-lazy `<img>`. Scoring rules: error=-20, warn=-5, info=-1; status pass≥80, warn≥50, else fail.
+- `QualityGatesPanel.tsx` mounted in workspace: three live scorecards (QA / Security / Performance), expandable finding lists with severity icons + file:line.
+
+**Batches remaining: 4** (B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).

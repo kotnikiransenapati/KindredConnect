@@ -19,6 +19,8 @@ import { CommentsPanel } from "@/components/workspace/CommentsPanel";
 import { IntegrationsPanel } from "@/components/workspace/IntegrationsPanel";
 import { PublishTemplateDialog } from "@/components/workspace/PublishTemplateDialog";
 import { MobileBuilderPanel } from "@/components/workspace/MobileBuilderPanel";
+import { OtaPanel } from "@/components/workspace/OtaPanel";
+import { QualityGatesPanel } from "@/components/workspace/QualityGatesPanel";
 import { AgentsPanel } from "@/components/workspace/AgentsPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
@@ -118,7 +120,9 @@ function ProjectWorkspace() {
                 <KnowledgePanel projectId={projectId} />
                 <IntegrationsPanel projectId={projectId} />
                 <AgentsPanel projectId={projectId} />
+                <QualityGatesPanel projectId={projectId} />
                 <MobileBuilderPanel projectId={projectId} />
+                <OtaPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
             </div>
