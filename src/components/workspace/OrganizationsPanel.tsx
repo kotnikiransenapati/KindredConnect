@@ -160,16 +160,19 @@ function OrgDetail({ org }: { org: any }) {
 
 function MemberRow({ member, canManage, orgId }: { member: any; canManage: boolean; orgId: string }) {
   const qc = useQueryClient();
+  const updateFn = useServerFn(updateMemberRole);
+  const removeFn = useServerFn(removeMember);
   const roleMu = useMutation({
-    mutationFn: (role: any) => useServerFn(updateMemberRole)({ data: { memberId: member.id, role } }),
+    mutationFn: (role: any) => updateFn({ data: { memberId: member.id, role } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["org-members", orgId] }),
     onError: (e: any) => toast.error(e.message),
   });
   const removeMu = useMutation({
-    mutationFn: () => useServerFn(removeMember)({ data: { memberId: member.id } }),
+    mutationFn: () => removeFn({ data: { memberId: member.id } }),
     onSuccess: () => { toast.success("Removed"); qc.invalidateQueries({ queryKey: ["org-members", orgId] }); },
     onError: (e: any) => toast.error(e.message),
   });
+
   return (
     <div className="flex items-center gap-2 rounded-lg border border-border/60 p-2 text-xs">
       {member.role === "owner" ? <Crown className="h-3.5 w-3.5 text-amber-400" /> : <Shield className="h-3.5 w-3.5 text-muted-foreground" />}
