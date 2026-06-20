@@ -58,12 +58,12 @@ export const upsertAgent = createServerFn({ method: "POST" })
       metadata: data.metadata,
     };
     if (data.id) {
-      const { error } = await context.supabase.from("a2a_agents").update(base).eq("id", data.id);
+      const { error } = await context.supabase.from("a2a_agents").update(base as any).eq("id", data.id);
       if (error) throw error;
       return { id: data.id };
     }
     base.created_by = context.userId;
-    const { data: row, error } = await context.supabase.from("a2a_agents").insert(base).select("id").single();
+    const { data: row, error } = await context.supabase.from("a2a_agents").insert(base as any).select("id").single();
     if (error) throw error;
     return { id: row.id };
   });
