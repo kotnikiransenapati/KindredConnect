@@ -95,17 +95,18 @@ function OrgDetail({ org }: { org: any }) {
   const qc = useQueryClient();
   const membersFn = useServerFn(listOrganizationMembers);
   const invitesFn = useServerFn(listInvitations);
+  const planFn = useServerFn(updateOrganizationPlan);
   const membersQ = useQuery({ queryKey: ["org-members", org.id], queryFn: () => membersFn({ data: { orgId: org.id } }) });
   const invitesQ = useQuery({ queryKey: ["org-invites", org.id], queryFn: () => invitesFn({ data: { orgId: org.id } }) });
 
   const isAdmin = org.my_role === "owner" || org.my_role === "admin";
 
   const planMu = useMutation({
-    mutationFn: (p: { planId: any; seats: number }) =>
-      useServerFn(updateOrganizationPlan)({ data: { orgId: org.id, ...p } }),
+    mutationFn: (p: { planId: any; seats: number }) => planFn({ data: { orgId: org.id, ...p } }),
     onSuccess: () => { toast.success("Plan updated"); qc.invalidateQueries({ queryKey: ["orgs"] }); },
     onError: (e: any) => toast.error(e.message),
   });
+
 
   return (
     <Tabs defaultValue="members">
