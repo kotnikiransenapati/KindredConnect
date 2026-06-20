@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getMySubscription, cancelMySubscription, listPlans } from "@/lib/billing.functions";
+import { getMySubscription, cancelMySubscription, listPlans, getMyUsage } from "@/lib/billing.functions";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
