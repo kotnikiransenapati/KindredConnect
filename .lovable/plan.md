@@ -306,3 +306,17 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `ModelRoutingPanel.tsx`: per-task-kind editor with preferred-model dropdown, fallback chips, cost cap (USD/M tokens), quality tier, enable toggle.
 
 **Phase 3 batches remaining: 2** (P7 Playwright test generation from user stories, P8 self-healing deploys with auto-rollback + regenerate).
+
+### P7 — Visual test generation (Playwright from user stories) ✅
+- New table `e2e_tests` (project, name, user_story, spec_path, spec_code, status idle/generating/ready/error, last_run_status, model, error) with role-scoped RLS + `(project_id, spec_path)` unique.
+- `src/lib/e2e-tests.functions.ts`: `generateE2eTest` calls Lovable AI Gateway (`google/gemini-3-pro-preview`) with a strict QA system prompt that returns ONLY a `.spec.ts` body, strips stray code fences, writes the spec into `project_files` at `tests/e2e/<slug>.spec.ts`, then flips status → ready (or → error w/ message). Rate-limited 5/min · 100/day. `recordE2eRun` accepts external runner results into `last_run_status`/`last_run_report`.
+- `E2ETestsPanel.tsx`: feature name + user-story composer, live-refreshing list with file path chip, run-result badge, delete.
+
+### P8 — Self-healing deploys (auto-rollback + AI fix proposal) ✅
+- New table `deploy_healing` (project, deployment_id, ci_gate_id, action rollback/proposal/noop, status, rollback_to_deployment_id, proposal_id → agent_proposals, summary, detail) with role-scoped RLS.
+- `src/lib/self-heal.functions.ts`: `triggerSelfHeal(mode=auto|rollback|proposal)` rate-limited 6/min · 100/day:
+  - **rollback** → finds the most recent successful previous deployment for the slug, clears `is_current` on the slug, flips it to the previous, and audits in `deploy_healing`. Fails cleanly when no prior healthy version exists.
+  - **proposal** → asks Gemini Flash for a minimal one-paragraph remediation summary based on the failing gate report, drafts an `agent_proposals` row (pending), and audits the action — user reviews/applies it from the Background Agents panel.
+- `SelfHealPanel.tsx`: failed-gate picker (live), mode select (Auto/Rollback/Proposal), Heal button, healing-event timeline with status icons.
+
+**Phase 3 batches remaining: 0** — AI autonomy phase delivered.
