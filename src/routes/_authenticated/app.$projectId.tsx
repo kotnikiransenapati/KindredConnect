@@ -42,6 +42,8 @@ import { SsoConnectionsPanel } from "@/components/workspace/SsoConnectionsPanel"
 import { GuardrailsPanel } from "@/components/workspace/GuardrailsPanel";
 import { ScimPanel } from "@/components/workspace/ScimPanel";
 import { MarketplacePanel } from "@/components/workspace/MarketplacePanel";
+import { SiemStreamingPanel } from "@/components/workspace/SiemStreamingPanel";
+import { A2APanel } from "@/components/workspace/A2APanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
