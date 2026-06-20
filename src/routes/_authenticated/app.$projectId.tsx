@@ -157,7 +157,10 @@ function ProjectWorkspace() {
                 <E2ETestsPanel projectId={projectId} />
                 <SelfHealPanel projectId={projectId} />
                 <OrganizationsPanel />
+                <AnalyticsPanel projectId={projectId} />
+                <AuditLogPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
+
 
 
               </div>
