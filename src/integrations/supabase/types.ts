@@ -97,6 +97,67 @@ export type Database = {
           },
         ]
       }
+      agent_proposals: {
+        Row: {
+          created_at: string
+          diff: Json
+          id: string
+          project_id: string
+          run_id: string | null
+          schedule_id: string | null
+          status: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          diff?: Json
+          id?: string
+          project_id: string
+          run_id?: string | null
+          schedule_id?: string | null
+          status?: string
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          diff?: Json
+          id?: string
+          project_id?: string
+          run_id?: string | null
+          schedule_id?: string | null
+          status?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_proposals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_proposals_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "agent_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_proposals_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "agent_schedules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_runs: {
         Row: {
           created_at: string
@@ -149,6 +210,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "agent_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_schedules: {
+        Row: {
+          created_at: string
+          cron: string
+          enabled: boolean
+          goal: string
+          id: string
+          last_run_at: string | null
+          last_run_id: string | null
+          name: string
+          next_run_at: string
+          project_id: string
+          roles: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          cron: string
+          enabled?: boolean
+          goal: string
+          id?: string
+          last_run_at?: string | null
+          last_run_id?: string | null
+          name: string
+          next_run_at?: string
+          project_id: string
+          roles?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          cron?: string
+          enabled?: boolean
+          goal?: string
+          id?: string
+          last_run_at?: string | null
+          last_run_id?: string | null
+          name?: string
+          next_run_at?: string
+          project_id?: string
+          roles?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_schedules_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -742,6 +859,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "mobile_signing_profiles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      model_routes: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          fallback_models: string[]
+          id: string
+          max_cost_usd: number
+          preferred_model: string
+          project_id: string
+          quality_tier: string
+          task_kind: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          fallback_models?: string[]
+          id?: string
+          max_cost_usd?: number
+          preferred_model: string
+          project_id: string
+          quality_tier?: string
+          task_kind: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          fallback_models?: string[]
+          id?: string
+          max_cost_usd?: number
+          preferred_model?: string
+          project_id?: string
+          quality_tier?: string
+          task_kind?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "model_routes_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"

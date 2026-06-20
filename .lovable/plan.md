@@ -290,3 +290,19 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 
 **Phase 2 batches remaining: 0** — full mobile-first dominance phase delivered.
 
+
+### Phase 3 — AI autonomy
+### P5 — Background agent runs (cron + PR-style proposals) ✅
+- New tables `agent_schedules` (project, name, goal, cron, roles[], enabled, next_run_at) and `agent_proposals` (run_id, schedule_id, title, summary, diff[], status pending→approved→applied/rejected) with role-scoped RLS.
+- `src/lib/cron-parser.server.ts`: dependency-free 5-field cron parser with `@hourly|@daily|@weekly|@monthly` macros + `nextCronFire(expr, from)`.
+- `src/lib/agent-schedules.functions.ts`: `upsertAgentSchedule` (validates cron eagerly, computes next_run_at), `list/delete/triggerScheduleNow` (rate-limited), `listProposals`, `reviewProposal` (approve/reject; **apply** writes every diff entry into `project_files` via RLS — only editors can apply).
+- `src/routes/api/public/agents.tick.ts`: secret-gated cron endpoint (`?secret=AGENT_TICK_SECRET`, constant-time compare). Picks up due schedules, creates an `agent_runs` row + orchestrator/specialist `agent_tasks`, advances `next_run_at`. Errors skip the schedule by 60s instead of hot-looping.
+- `AgentSchedulesPanel.tsx`: composer with cron presets, role chips, enable toggle, run-now button + live proposal review with Apply/Approve/Reject.
+
+### P6 — Multi-model routing ✅
+- New table `model_routes` (one row per project+task_kind: chat/code/reasoning/cheap/vision/embedding) with preferred_model, fallback_models[], max_cost_usd, quality_tier, enabled.
+- `src/lib/models.catalog.ts`: curated catalog (Gemini 3 Pro/Flash/Lite, GPT-5/Mini/Nano, text-embedding-3-small) with vendor, context, input/output cost per 1M tokens, quality tier, `goodFor` tags + pure `pickModelFromCatalog` solver.
+- `src/lib/model-routing.functions.ts`: `list/upsert/delete` + `resolveModelForTask` (per-project override → catalog default → auto-pick cheapest model that meets the quality bar). Validates model IDs against the catalog.
+- `ModelRoutingPanel.tsx`: per-task-kind editor with preferred-model dropdown, fallback chips, cost cap (USD/M tokens), quality tier, enable toggle.
+
+**Phase 3 batches remaining: 2** (P7 Playwright test generation from user stories, P8 self-healing deploys with auto-rollback + regenerate).
