@@ -13,6 +13,7 @@ export function FileViewer({ projectId, path, slug }: Props) {
     queryFn: () => fetchFiles({ data: { projectId } }),
     refetchInterval: 4000,
   });
+  const cursors = useCollabCursors(projectId, path);
 
   const file = data?.files.find((f) => f.path === path);
 
