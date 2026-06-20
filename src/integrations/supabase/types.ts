@@ -2047,6 +2047,148 @@ export type Database = {
         }
         Relationships: []
       }
+      scim_audit: {
+        Row: {
+          created_at: string
+          detail: Json
+          external_id: string | null
+          id: string
+          method: string
+          org_id: string
+          path: string
+          status_code: number
+          token_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: Json
+          external_id?: string | null
+          id?: string
+          method: string
+          org_id: string
+          path: string
+          status_code: number
+          token_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: Json
+          external_id?: string | null
+          id?: string
+          method?: string
+          org_id?: string
+          path?: string
+          status_code?: number
+          token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scim_audit_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scim_audit_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "scim_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scim_provisioned_users: {
+        Row: {
+          active: boolean
+          created_at: string
+          display_name: string | null
+          email: string
+          external_id: string
+          id: string
+          org_id: string
+          raw: Json
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          display_name?: string | null
+          email: string
+          external_id: string
+          id?: string
+          org_id: string
+          raw?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          external_id?: string
+          id?: string
+          org_id?: string
+          raw?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scim_provisioned_users_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scim_tokens: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          last_used_at: string | null
+          name: string
+          org_id: string
+          revoked_at: string | null
+          token_hash: string
+          token_prefix: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          org_id: string
+          revoked_at?: string | null
+          token_hash: string
+          token_prefix: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          org_id?: string
+          revoked_at?: string | null
+          token_hash?: string
+          token_prefix?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scim_tokens_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sso_connections: {
         Row: {
           attribute_map: Json
@@ -2229,6 +2371,163 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_listings: {
+        Row: {
+          author_id: string
+          created_at: string
+          currency: string
+          id: string
+          payout_pct: number
+          price_minor: number
+          status: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payout_pct?: number
+          price_minor: number
+          status?: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payout_pct?: number
+          price_minor?: number
+          status?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_listings_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: true
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_payouts: {
+        Row: {
+          author_id: string
+          created_at: string
+          currency: string
+          fee_minor: number
+          gross_minor: number
+          id: string
+          net_minor: number
+          paid_at: string | null
+          purchase_id: string
+          status: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          currency: string
+          fee_minor: number
+          gross_minor: number
+          id?: string
+          net_minor: number
+          paid_at?: string | null
+          purchase_id: string
+          status?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          currency?: string
+          fee_minor?: number
+          gross_minor?: number
+          id?: string
+          net_minor?: number
+          paid_at?: string | null
+          purchase_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_payouts_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: true
+            referencedRelation: "template_purchases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_purchases: {
+        Row: {
+          amount_minor: number
+          author_id: string
+          buyer_id: string
+          created_at: string
+          currency: string
+          id: string
+          intent_id: string
+          listing_id: string
+          provider: string
+          receipt_url: string | null
+          refunded: boolean
+          status: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_minor: number
+          author_id: string
+          buyer_id: string
+          created_at?: string
+          currency: string
+          id?: string
+          intent_id: string
+          listing_id: string
+          provider?: string
+          receipt_url?: string | null
+          refunded?: boolean
+          status?: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount_minor?: number
+          author_id?: string
+          buyer_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          intent_id?: string
+          listing_id?: string
+          provider?: string
+          receipt_url?: string | null
+          refunded?: boolean
+          status?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_purchases_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "template_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "template_purchases_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
             referencedColumns: ["id"]
           },
         ]

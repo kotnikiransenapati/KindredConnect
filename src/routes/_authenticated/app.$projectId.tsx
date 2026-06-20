@@ -40,6 +40,8 @@ import { AnalyticsPanel } from "@/components/workspace/AnalyticsPanel";
 import { AuditLogPanel } from "@/components/workspace/AuditLogPanel";
 import { SsoConnectionsPanel } from "@/components/workspace/SsoConnectionsPanel";
 import { GuardrailsPanel } from "@/components/workspace/GuardrailsPanel";
+import { ScimPanel } from "@/components/workspace/ScimPanel";
+import { MarketplacePanel } from "@/components/workspace/MarketplacePanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -163,6 +165,8 @@ function ProjectWorkspace() {
                 <AuditLogPanel projectId={projectId} />
                 <SsoConnectionsPanel />
                 <GuardrailsPanel projectId={projectId} />
+                <ScimPanel />
+                <MarketplacePanel />
                 <ActivityFeed projectId={projectId} />
 
 

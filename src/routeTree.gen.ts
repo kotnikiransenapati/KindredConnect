@@ -28,6 +28,7 @@ import { Route as ApiPublicRobotsRouteImport } from './routes/api/public/robots'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAppProjectIdRouteImport } from './routes/_authenticated/app.$projectId'
 import { Route as ApiPublicAgentsTickRouteImport } from './routes/api/public/agents.tick'
+import { Route as ApiPublicScimV2SplatRouteImport } from './routes/api/public/scim/v2/$'
 
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
@@ -125,6 +126,11 @@ const ApiPublicAgentsTickRoute = ApiPublicAgentsTickRouteImport.update({
   path: '/api/public/agents/tick',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicScimV2SplatRoute = ApiPublicScimV2SplatRouteImport.update({
+  id: '/api/public/scim/v2/$',
+  path: '/api/public/scim/v2/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
   '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
+  '/api/public/scim/v2/$': typeof ApiPublicScimV2SplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
   '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
+  '/api/public/scim/v2/$': typeof ApiPublicScimV2SplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
   '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
+  '/api/public/scim/v2/$': typeof ApiPublicScimV2SplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/p/$slug/$version'
     | '/api/public/agents/tick'
+    | '/api/public/scim/v2/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/p/$slug/$version'
     | '/api/public/agents/tick'
+    | '/api/public/scim/v2/$'
   id:
     | '__root__'
     | '/'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/p/$slug/$version'
     | '/api/public/agents/tick'
+    | '/api/public/scim/v2/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,6 +278,7 @@ export interface RootRouteChildren {
   ApiPublicRobotsRoute: typeof ApiPublicRobotsRoute
   ApiPublicSitemapRoute: typeof ApiPublicSitemapRoute
   ApiPublicAgentsTickRoute: typeof ApiPublicAgentsTickRoute
+  ApiPublicScimV2SplatRoute: typeof ApiPublicScimV2SplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -403,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAgentsTickRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/scim/v2/$': {
+      id: '/api/public/scim/v2/$'
+      path: '/api/public/scim/v2/$'
+      fullPath: '/api/public/scim/v2/$'
+      preLoaderRoute: typeof ApiPublicScimV2SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -458,6 +478,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicRobotsRoute: ApiPublicRobotsRoute,
   ApiPublicSitemapRoute: ApiPublicSitemapRoute,
   ApiPublicAgentsTickRoute: ApiPublicAgentsTickRoute,
+  ApiPublicScimV2SplatRoute: ApiPublicScimV2SplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
