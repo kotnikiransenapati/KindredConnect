@@ -28,6 +28,7 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
   const fetchRun = useServerFn(getAgentRun);
   const startFn = useServerFn(startAgentRun);
   const cancelFn = useServerFn(cancelAgentRun);
+  const runWorker = useServerFn(runQueuedTasks);
 
   const [goal, setGoal] = useState("");
   const [selected, setSelected] = useState<Set<AgentRole>>(
