@@ -201,24 +201,30 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
                 </Button>
               )}
             </div>
-            <ScrollArea className="h-56">
+            <ScrollArea className="h-72">
               <ol className="space-y-0">
                 {runQ.data.tasks.map((t) => {
                   const def = AGENT_BY_ROLE[t.role as AgentRole];
                   return (
-                    <li key={t.id} className="flex items-start gap-2 border-b border-border/30 px-3 py-2 last:border-b-0">
-                      <span className="mt-0.5">{STATUS_ICON[t.status] ?? STATUS_ICON.queued}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 text-xs">
-                          <span>{def?.emoji}</span>
-                          <span className="font-medium">{def?.name ?? t.role}</span>
-                          <span className="text-muted-foreground">— {t.title}</span>
+                    <li key={t.id} className="border-b border-border/30 last:border-b-0">
+                      <button
+                        onClick={() => setOpenTask(openTask === t.id ? null : t.id)}
+                        className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-accent/30"
+                      >
+                        <span className="mt-0.5">{STATUS_ICON[t.status] ?? STATUS_ICON.queued}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 text-xs">
+                            <span>{def?.emoji}</span>
+                            <span className="font-medium">{def?.name ?? t.role}</span>
+                            <span className="text-muted-foreground">— {t.title}</span>
+                          </div>
+                          {t.error && <div className="mt-0.5 text-[11px] text-destructive">{t.error}</div>}
                         </div>
-                        {t.error && <div className="mt-0.5 text-[11px] text-destructive">{t.error}</div>}
-                      </div>
-                      {t.tokens > 0 && (
-                        <span className="text-[10px] text-muted-foreground">{t.tokens} tok</span>
-                      )}
+                        {t.tokens > 0 && (
+                          <span className="text-[10px] text-muted-foreground">{t.tokens} tok</span>
+                        )}
+                      </button>
+                      {openTask === t.id && <TaskTranscript taskId={t.id} />}
                     </li>
                   );
                 })}
