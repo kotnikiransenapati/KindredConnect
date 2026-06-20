@@ -149,11 +149,12 @@ export const runCiGate = createServerFn({ method: "POST" })
         .update({
           status,
           score,
-          report,
+          report: report as never,
           duration_ms: Date.now() - startedAt,
         })
         .eq("id", pending.id);
-      return { id: pending.id, status, score, report };
+      return { id: pending.id, status, score, report: report as Record<string, any> };
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       await context.supabase
