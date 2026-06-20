@@ -171,9 +171,18 @@ Answer these and I'll start at Batch 1.
 Added `agent_runs`, `agent_tasks`, `agent_messages`, `usage_ledger` with full RLS + GRANTs scoped via `has_project_role()`. Types auto-regenerated.
 
 ### Batch 2 — Orchestrator core + Agents UI ✅
-- `src/lib/agents.catalog.ts` — 13 specialist agent definitions (orchestrator → release).
-- `src/lib/agents.functions.ts` — `startAgentRun`, `listAgentRuns`, `getAgentRun`, `cancelAgentRun`, `listAgentCatalog`. Rate-limited (5/min, 200/day per user).
-- `src/components/workspace/AgentsPanel.tsx` — goal input, per-agent toggles, runs list, live-polling task timeline (statuses, tokens, cancel).
-- Mounted in workspace sidebar above the Mobile builder.
+- `src/lib/agents.catalog.ts` — 13 specialist agent definitions.
+- `src/lib/agents.functions.ts` — `startAgentRun`, `listAgentRuns`, `getAgentRun`, `cancelAgentRun` (5/min, 200/day).
+- `src/components/workspace/AgentsPanel.tsx` mounted in workspace sidebar.
 
-**Batches remaining: 10** (B3 worker execution loop, B4 realtime stream, B5 IDE polish, B6 web deploy, B7 mobile OTA, B8 QA/Security/Perf gates, B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).
+### Batch 3 — Worker execution loop ✅
+- `src/lib/agents-worker.functions.ts` — `executeAgentTask` (atomic claim → AI Gateway call → message + token persistence → ledger row) and `runQueuedTasks` (bounded concurrency = 3, marks run succeeded/failed).
+- Uses `google/gemini-3-flash-preview` for fast agents, `google/gemini-3-pro-preview` for capable (Architect, Backend, Reviewer, Orchestrator).
+- Per-role system prompt enforces Plan/Deliverables/Risks structure.
+- AgentsPanel kicks off the worker fire-and-forget after `startAgentRun`.
+
+### Batch 4 — Realtime activity stream ✅
+- AgentsPanel subscribes to Supabase realtime `postgres_changes` on `agent_tasks` (filtered by `run_id`) and `agent_runs` (filtered by `id`), invalidating the query cache on every event for sub-second timeline updates.
+- Channel torn down on unmount or active-run change.
+
+**Batches remaining: 8** (B5 IDE polish, B6 web deploy, B7 mobile OTA, B8 QA/Security/Perf gates, B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).

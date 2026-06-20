@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { startAgentRun, listAgentRuns, getAgentRun, cancelAgentRun } from "@/lib/agents.functions";
+import { runQueuedTasks } from "@/lib/agents-worker.functions";
 import { AGENTS, AGENT_BY_ROLE, type AgentRole } from "@/lib/agents.catalog";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +28,7 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
   const fetchRun = useServerFn(getAgentRun);
   const startFn = useServerFn(startAgentRun);
   const cancelFn = useServerFn(cancelAgentRun);
+  const runWorker = useServerFn(runQueuedTasks);
 
   const [goal, setGoal] = useState("");
   const [selected, setSelected] = useState<Set<AgentRole>>(
@@ -53,6 +56,16 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
       setGoal("");
       setActiveRun(res.runId);
       qc.invalidateQueries({ queryKey: ["agent-runs", projectId] });
+      // Kick off the worker loop (fire-and-forget — the UI streams progress).
+      runWorker({ data: { runId: res.runId } })
+        .then((r) =>
+          toast.success(`Swarm complete — ${r.total - r.failed}/${r.total} succeeded`),
+        )
+        .catch((e: Error) => toast.error(`Swarm failed: ${e.message}`))
+        .finally(() => {
+          qc.invalidateQueries({ queryKey: ["agent-runs", projectId] });
+          qc.invalidateQueries({ queryKey: ["agent-run", res.runId] });
+        });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -71,6 +84,30 @@ export function AgentsPanel({ projectId }: { projectId: string }) {
     next.has(r) ? next.delete(r) : next.add(r);
     setSelected(next);
   };
+
+  // Realtime: invalidate the active run query on any agent_tasks change for it.
+  useEffect(() => {
+    if (!activeRun) return;
+    const channel = supabase
+      .channel(`agent-run-${activeRun}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "agent_tasks", filter: `run_id=eq.${activeRun}` },
+        () => qc.invalidateQueries({ queryKey: ["agent-run", activeRun] }),
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "agent_runs", filter: `id=eq.${activeRun}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["agent-run", activeRun] });
+          qc.invalidateQueries({ queryKey: ["agent-runs", projectId] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeRun, projectId, qc]);
 
   return (
     <Card className="border-border/60 bg-card/40 backdrop-blur">
