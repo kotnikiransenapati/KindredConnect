@@ -26,6 +26,7 @@ export function FileViewer({ projectId, path, slug }: Props) {
         <span className="ml-3 font-mono text-xs text-muted-foreground">
           {file ? file.path : `${slug}.foundry.app`}
         </span>
+        {path && <CollabFileIndicator cursors={cursors} path={path} />}
         {file && <span className="ml-auto text-[10px] text-muted-foreground">v{file.version}</span>}
       </div>
       {file ? (
