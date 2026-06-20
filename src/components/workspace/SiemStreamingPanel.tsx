@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listSiemDestinations, upsertSiemDestination, deleteSiemDestination, dispatchSiemEvent, listSiemDeliveries } from "@/lib/siem.functions";
-import { listOrganizations } from "@/lib/organizations.functions";
+import { listMyOrganizations } from "@/lib/organizations.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
