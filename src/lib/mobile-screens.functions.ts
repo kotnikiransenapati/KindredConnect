@@ -22,11 +22,12 @@ const NodeSchema: z.ZodType<ScreenNode> = z.lazy(() =>
   z.object({
     id: z.string().min(1).max(64),
     kind: z.enum(["Header", "Text", "Button", "Image", "Input", "List", "Card", "Spacer", "Icon"]),
-    props: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).default({}),
+    props: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
     children: z.array(NodeSchema).optional(),
   }),
-);
+) as z.ZodType<ScreenNode>;
 const LayoutSchema = z.object({ nodes: z.array(NodeSchema).max(200) });
+
 
 export const listScreens = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
