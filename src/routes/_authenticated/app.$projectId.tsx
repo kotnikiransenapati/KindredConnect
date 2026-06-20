@@ -31,6 +31,8 @@ import { MobileScreensPanel } from "@/components/workspace/MobileScreensPanel";
 import { PushPanel } from "@/components/workspace/PushPanel";
 import { StoreListingsPanel } from "@/components/workspace/StoreListingsPanel";
 import { AgentsPanel } from "@/components/workspace/AgentsPanel";
+import { AgentSchedulesPanel } from "@/components/workspace/AgentSchedulesPanel";
+import { ModelRoutingPanel } from "@/components/workspace/ModelRoutingPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -129,6 +131,8 @@ function ProjectWorkspace() {
                 <KnowledgePanel projectId={projectId} />
                 <IntegrationsPanel projectId={projectId} />
                 <AgentsPanel projectId={projectId} />
+                <AgentSchedulesPanel projectId={projectId} />
+                <ModelRoutingPanel projectId={projectId} />
                 <QualityGatesPanel projectId={projectId} />
                 <MobileBuilderPanel projectId={projectId} />
                 <MobileScreensPanel projectId={projectId} />
