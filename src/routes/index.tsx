@@ -40,8 +40,6 @@ function Hero() {
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-aurora opacity-60" aria-hidden />
       <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
-      <div className="absolute inset-0 bg-aurora opacity-60" aria-hidden />
-      <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
       <div className="pointer-events-none absolute inset-0 h-[640px]" aria-hidden>
         <Suspense fallback={null}><HeroScene3D /></Suspense>
       </div>
