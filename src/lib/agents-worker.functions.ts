@@ -133,6 +133,7 @@ export const runQueuedTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ runId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
     const key: string | undefined = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
     const apiKey: string = key;
