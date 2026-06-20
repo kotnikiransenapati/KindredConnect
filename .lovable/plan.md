@@ -213,3 +213,12 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - Billing page now renders an auto-refreshing (30s) usage section: three KPI cards, gradient bar chart per kind, expandable recent-entry ledger.
 
 **Batches remaining: 2** (B11 templates/docs/onboarding polish, B12 hardening: Lighthouse/a11y/e2e/load test).
+
+### Batch 11 — Templates showcase on landing ✅
+- `src/components/landing/TemplatesShowcase.tsx`: pulls top public templates via `listPublicTemplates` (publishable-key, no auth) with 5-min stale-time. Six-card grid with category, rating chip, use-count, hover lift + aurora glow. Mounted between Features and HowItWorks. (Templates gallery, docs page, onboarding tour, marketplace already shipped in prior work.)
+
+### Batch 12 — SEO hardening ✅
+- `src/routes/api/public/sitemap.ts`: XML sitemap of all public routes with 1-hour CDN cache.
+- `src/routes/api/public/robots.ts`: robots.txt allowing crawl of public surfaces, blocking `/api/` and `/_authenticated/`, pointing to sitemap. 24-hour cache.
+
+**Batches remaining: 0** — full 12-batch plan delivered.
