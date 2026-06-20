@@ -33,6 +33,8 @@ import { StoreListingsPanel } from "@/components/workspace/StoreListingsPanel";
 import { AgentsPanel } from "@/components/workspace/AgentsPanel";
 import { AgentSchedulesPanel } from "@/components/workspace/AgentSchedulesPanel";
 import { ModelRoutingPanel } from "@/components/workspace/ModelRoutingPanel";
+import { E2ETestsPanel } from "@/components/workspace/E2ETestsPanel";
+import { SelfHealPanel } from "@/components/workspace/SelfHealPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
