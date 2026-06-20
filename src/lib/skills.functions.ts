@@ -140,12 +140,6 @@ export const installSkill = createServerFn({ method: "POST" })
       enabled: true,
     });
     if (iErr) throw iErr;
-    // best-effort counter bump (RLS-safe because visibility=public is readable & editor on source projects can update; ignore failure)
-    await context.supabase.rpc as unknown;
-    await context.supabase
-      .from("agent_skills")
-      .update({ install_count: (Number.MAX_SAFE_INTEGER) }) // placeholder; will be ignored if not editor
-      .eq("id", data.sourceId)
-      .then(() => undefined, () => undefined);
     return { ok: true };
   });
+
