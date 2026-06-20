@@ -129,7 +129,10 @@ function ProjectWorkspace() {
                 <AgentsPanel projectId={projectId} />
                 <QualityGatesPanel projectId={projectId} />
                 <MobileBuilderPanel projectId={projectId} />
+                <MobileScreensPanel projectId={projectId} />
+                <NativeBuildsPanel projectId={projectId} />
                 <OtaPanel projectId={projectId} />
+
                 <SecretsVaultPanel projectId={projectId} />
                 <DomainsPanel projectId={projectId} />
                 <VersionsPanel projectId={projectId} />
