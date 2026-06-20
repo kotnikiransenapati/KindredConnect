@@ -222,3 +222,15 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `src/routes/api/public/robots.ts`: robots.txt allowing crawl of public surfaces, blocking `/api/` and `/_authenticated/`, pointing to sitemap. 24-hour cache.
 
 **Batches remaining: 0** — full 12-batch plan delivered.
+
+### Batch 13 — Realtime collab cursors ✅
+- `src/components/workspace/CollabCursors.tsx`: `useCollabCursors(projectId, activePath)` hook opens a Supabase broadcast channel `collab:<projectId>`, publishes the current viewer's `{user_id, name, color, path, ts}` on every file switch (150 ms debounce), and garbage-collects entries older than 30 s.
+- `CollabFileIndicator` renders stacked colored avatars next to the file header for every collaborator viewing the same path.
+- Mounted in `FileViewer` so the IDE shell now shows who else is on which file in sub-second realtime.
+
+### Batch 14 — Project versions + diff viewer + rollback ✅
+- `src/lib/versions.functions.ts`: added `getVersionDiff` (compares two snapshots or snapshot-vs-current; returns per-file status `added|removed|modified|unchanged` with +/− line stats via multiset count) and `getFileDiff` (uses the `diff` package's `diffLines` for unified hunks).
+- `src/components/workspace/VersionsPanel.tsx`: snapshot list, A/B selectors, totals header (+lines/−lines), expandable per-file unified diff with green/red gutters, one-click restore. Mounted in the workspace sidebar.
+- Installed `diff` + `@types/diff` for the line diff engine.
+
+**Batches remaining: 4** (B15 secrets vault, B16 multi-region deploy + custom domains, B17 agent skill marketplace + MCP, B18 Playwright E2E + Lighthouse CI gate).

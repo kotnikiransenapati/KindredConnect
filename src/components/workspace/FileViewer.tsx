@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listProjectFiles } from "@/lib/chat.functions";
 import { Sparkles } from "lucide-react";
+import { useCollabCursors, CollabFileIndicator } from "./CollabCursors";
 
 interface Props { projectId: string; path: string | null; slug: string; }
 
@@ -12,6 +13,7 @@ export function FileViewer({ projectId, path, slug }: Props) {
     queryFn: () => fetchFiles({ data: { projectId } }),
     refetchInterval: 4000,
   });
+  const cursors = useCollabCursors(projectId, path);
 
   const file = data?.files.find((f) => f.path === path);
 
@@ -24,6 +26,7 @@ export function FileViewer({ projectId, path, slug }: Props) {
         <span className="ml-3 font-mono text-xs text-muted-foreground">
           {file ? file.path : `${slug}.foundry.app`}
         </span>
+        {path && <CollabFileIndicator cursors={cursors} path={path} />}
         {file && <span className="ml-auto text-[10px] text-muted-foreground">v{file.version}</span>}
       </div>
       {file ? (
