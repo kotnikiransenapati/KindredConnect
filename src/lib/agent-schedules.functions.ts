@@ -134,7 +134,7 @@ export const reviewProposal = createServerFn({ method: "POST" })
       const { error: upErr } = await context.supabase
         .from("project_files")
         .upsert(
-          { project_id: prop.project_id, path: change.path, content: change.content, updated_by: context.userId },
+          { project_id: prop.project_id, path: change.path, content: change.content },
           { onConflict: "project_id,path" },
         );
       if (upErr) throw new Error(`Apply failed at ${change.path}: ${upErr.message}`);
