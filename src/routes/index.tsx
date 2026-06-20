@@ -28,6 +28,7 @@ function Landing() {
         <Hero />
         <Logos />
         <Features />
+        <TemplatesShowcase />
         <HowItWorks />
         <CTA />
       </main>
