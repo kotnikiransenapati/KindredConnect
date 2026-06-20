@@ -123,9 +123,9 @@ export const revealProjectSecret = createServerFn({ method: "POST" })
       .eq("id", data.id).eq("project_id", data.projectId).maybeSingle();
     if (error || !row) throw new Error("Secret not found");
     const value = await decrypt(
-      Buffer.from(row.ciphertext as ArrayBuffer),
-      Buffer.from(row.iv as ArrayBuffer),
-      Buffer.from(row.auth_tag as ArrayBuffer),
+      fromBytea(row.ciphertext as unknown as string),
+      fromBytea(row.iv as unknown as string),
+      fromBytea(row.auth_tag as unknown as string),
     );
     return { name: row.name, value };
   });
