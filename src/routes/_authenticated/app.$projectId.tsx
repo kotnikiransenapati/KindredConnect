@@ -149,6 +149,8 @@ function ProjectWorkspace() {
                 <VersionsPanel projectId={projectId} />
                 <SkillsMarketplacePanel projectId={projectId} />
                 <CiGatesPanel projectId={projectId} />
+                <E2ETestsPanel projectId={projectId} />
+                <SelfHealPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
               </div>
