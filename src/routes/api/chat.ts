@@ -55,9 +55,12 @@ STACK:
 - Keep components small (<200 lines), split into /components/* when appropriate.
 - No secrets, no backend code, no network calls to private APIs.
 
-MOBILE (iOS / Android):
+MOBILE (iOS / Android / PWA):
 - If the user asks for a mobile app or wants to ship to iOS/Android, call scaffoldCapacitor once.
   This adds capacitor.config.ts + /docs/MOBILE.md with the exact 'npx cap add ios/android' steps.
+- If the user wants "installable" / "add to home screen" / offline, call scaffoldPWA once — it writes
+  /public/manifest.webmanifest, /public/sw.js (offline cache), and the registration snippet doc.
+- After major UI work on a mobile target, call runMobileAudit and fix any findings before declaring done.
 - Design touch-first: 44px+ tap targets, safe-area padding (env(safe-area-inset-*)), no hover-only states.
 - Prefer system fonts on mobile; avoid fixed pixel widths; use clamp() / responsive units.
 
