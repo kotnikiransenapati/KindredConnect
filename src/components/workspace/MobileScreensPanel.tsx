@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Layers, Plus, Trash2, Save, Wand2, Loader2,
-  Type, Heading1, Image as ImageIcon, MousePointerSquare, TextCursorInput, List as ListIcon, Square, ArrowUpDown,
+  Type, Heading1, Image as ImageIcon, MousePointer, TextCursorInput, List as ListIcon, Square, ArrowUpDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
