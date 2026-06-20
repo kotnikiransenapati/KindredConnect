@@ -46,10 +46,10 @@ export function TemplatesShowcase() {
                   <div className="text-xs uppercase tracking-wide text-muted-foreground">{t.category ?? "App"}</div>
                   <div className="mt-1 truncate font-display text-lg">{t.name}</div>
                 </div>
-                {t.avg_rating > 0 && (
+                {(t.avg_rating ?? 0) > 0 && (
                   <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5 text-xs">
                     <Star className="h-3 w-3 fill-brand text-brand" />
-                    {t.avg_rating.toFixed(1)}
+                    {(t.avg_rating ?? 0).toFixed(1)}
                   </span>
                 )}
               </div>
