@@ -1,90 +1,179 @@
-# Foundry — Emergent-class AI Website Builder Roadmap
+# Plan: "Forge" — Multi-Agent AI Website & App Builder
 
-Goal: ship a Lovable / Emergent-class autonomous web app builder — natural-language prompt → multi-step agent that plans, writes, lints, previews, deploys, and learns from a per-project knowledge base.
+A next-gen builder where a swarm of specialized AI agents collaborate to design, code, test, and ship full-stack apps to **Web, iOS, and Android**. Inspired by Emergent's agentic-coding model + a stunning 3D marketing surface.
 
-## Done ✅
-- Auth (email + Google OAuth), profiles, RLS-scoped projects
-- Streaming chat with tool calls (writeFile, deleteFile, readFile, listFiles, searchFiles, renameFile, lintFile)
-- Agent loop via `stopWhen: stepCountIs(50)` + Babel-based lint + auto-fix retry guidance
-- Per-message unified-diff viewer with lint status badges
-- File tree, file viewer, Sandpack live preview, project versions + restore, share links
-- Members + roles (`has_project_role`), invites, activity log, notifications
-- Templates gallery + fork
-- Razorpay subscription scaffold (inactive — keys pending)
-- AI usage metering + plan quota
-- **Phase 8A** ✅ pgvector knowledge base + per-project chunks
-- **Phase 8B** ✅ RAG retrieval into system prompt + URL/note ingestion UI
-- **Phase 8C** ✅ auto-embed `project_files` on writeFile (fire-and-forget), multimodal image attachments in chat, Capacitor mobile-shell `scaffoldCapacitor` tool
-- **Phase 9A/B** ✅ `deployments` table + versioned public URLs (`/p/$slug`, `/p/$slug/$version`) + deploy / rollback UI
-- **Phase 10A** ✅ Supabase Realtime presence: live avatars of collaborators viewing the same project
-- **Phase 10B** ✅ comments + @mentions: per-project + per-file threads, realtime sync, mention → notification fan-out
-- **Phase 11A** ✅ public template marketplace: publish project → template, public `/marketplace`, 1–5 star ratings with trigger-maintained averages
-- **Phase 11B** ✅ integrations catalog (Stripe / Resend / OpenAI / Maps / PostHog) + `installIntegration` agent tool + sidebar Install panel
-- **Phase 12A (part)** ✅ shared `assertRateLimit` helper + rate limits on deploy / invite / ingest / publish-template (chat already limited); CI RLS/anon-access audit script
-- **Phase 8 (remaining)** ✅ diversity rerank pass on top-20 vector hits → top-6; long-term per-user `user_preferences` memory injected into every chat
-- **Phase 12B (part)** ✅ `/docs` site with sectioned content; first-run onboarding tour in project workspace
-- **Phase M (parts 3–4)** ✅ `bundleMobileProject` server fn (zips project → downloadable iOS/Android source), `MobileBuilderPanel` UI, `addCapacitorPlugin` agent tool with snippets for 12 native plugins
-- **Phase 12B (final)** ✅ Cloudflare Turnstile widget + `verifyTurnstile` server fn on sign-up (auto no-ops when `VITE_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` unset)
-- **Phase M (PWA)** ✅ `scaffoldPWA` agent tool (manifest + offline service worker + install docs) and `runMobileAudit` tool that scans for hover-only states, fixed widths, missing safe-area, tiny tap targets, viewport meta — both wired into the system prompt
+---
 
-## Phase M — Mobile (iOS / Android) track
-1. Capacitor wrapper produced by the agent: `capacitor.config.ts` + `/docs/MOBILE.md` with exact `npx cap add ios/android` steps (done as a tool).
-2. Mobile-first design rules baked into the system prompt (44px tap targets, safe-area insets, no hover-only states).
-3. Future: one-click "Download Xcode/Android Studio project" — server bundles `dist/` + `ios/` + `android/` into a zip via storage.
-4. Future: native plugin catalog tool (`addCapacitorPlugin('camera'|'push'|'geolocation'|...)`).
-5. Future: EAS-style cloud build webhook (Codemagic or Bitrise) so users get `.ipa`/`.aab` without a local toolchain.
+## 1. Product Pillars
 
-## Phase 8 — Knowledge & retrieval (remaining)
-1. Re-ranker pass: top-20 vector hits → rerank via cheap LLM judge → top-6 into prompt.
-2. Long-term memory: per-user "preferences" namespace (writing style, framework choice).
+1. **Multi-agent orchestration** — purpose-built agents collaborate via a shared task graph instead of a single monolithic LLM.
+2. **Universal target** — every project compiles to Web (TanStack Start) + Mobile (Capacitor iOS/Android) + PWA from the same source.
+3. **Production-grade pipeline** — CI, tests, security scans, Lighthouse, mobile audit, native bundles, OTA updates.
+4. **Cinematic 3D marketing** — landing page with WebGL hero conveying "agents at work."
 
-## Phase 9 — Real preview & deploy
-1. Server-side bundle pipeline using esbuild-wasm in a Worker (Sandpack stays for instant inner-loop preview).
-2. Storage bucket `published/{project_slug}/{version}/` for static output.
-3. Public route `/p/$slug` proxies storage; CDN-style cache headers.
-4. `deployments` table + rollback UI; per-version preview URLs at `/p/$slug/$version`.
-5. Future: `{slug}.foundry.app` subdomain mapping table.
+---
 
-## Phase 10 — Collaboration & realtime
-1. Supabase Realtime channel per project: presence + live cursors.
-2. CRDT-lite file co-editing: broadcast last-writer-wins patches keyed by path + version.
-3. Thread comments anchored to files / chat messages.
-4. @mentions → in-app notification + email (Resend via Lovable Email).
+## 2. The Agent Swarm (multi-agent architecture)
 
-## Phase 11 — Marketplace & extensions
-1. Public template marketplace: publish/rate/fork counters.
-2. Integrations catalog: pre-wired Stripe/Resend/OpenAI/Maps snippets the agent can install.
-3. Component installer tool: `addShadcnComponent(name)` calls a server task.
-4. Plugin SDK for community tools (sandboxed via JSON-schema input + RLS-scoped DB).
+A central **Orchestrator** decomposes user intent into a DAG of tasks, dispatches them to specialist agents, merges results, and runs critique loops.
 
-## Phase 12 — Security, ops & polish
-1. Rate limits via `check_rate_limit` on chat, publish, invite, ingest.
-2. Cloudflare Turnstile on signup + abuse log.
-3. RLS audit script in CI; deny new `TO anon` policies unless flagged.
-4. Observability: server-fn structured logs → activity table; client error reporting wired.
-5. Performance: route-level code split, image opt, Lighthouse ≥ 95.
-6. `/docs` site with MDX (lazy).
-7. First-run onboarding tour, prompt-chip suggestions, polished empty states.
+| Agent | Role | Primary tools |
+|---|---|---|
+| **Orchestrator** | Plans DAG, routes tasks, manages budget/retries | task graph, memory store |
+| **Architect** | Tech choices, schema, route map, file plan | search docs, write plan |
+| **Designer** | Design tokens, layout, 3D/motion direction | design tokens, image gen |
+| **Frontend Coder** | React/TanStack pages & components | write/edit files |
+| **Backend Coder** | Server functions, RLS, migrations | SQL, server-fn writer |
+| **Mobile Coder** | Capacitor config, native plugins, PWA | mobile bundler, plugin catalog |
+| **Data Agent** | Schema design, seed data, migrations | SQL migration tool |
+| **Integrations Agent** | Stripe, OAuth, email, AI providers | connector tools |
+| **QA / Tester** | Vitest, Playwright smoke, mobile audit | test runner, audit |
+| **Security Agent** | RLS audit, secret scan, dep scan | security scanner |
+| **Performance Agent** | Lighthouse, bundle, image opt | lighthouse, sharp/wasm |
+| **Reviewer / Critic** | Diff review, rejects bad outputs, requests rework | read repo, comment |
+| **Release Agent** | Build, version, publish web + mobile bundles | bundler, store metadata |
 
-## Architectural commitments
-- **Server logic**: every app-internal call is a `createServerFn` + `requireSupabaseAuth`; admin client only behind explicit role checks.
-- **Database**: every public table → `GRANT` + RLS + policies scoped to `auth.uid()` or `has_project_role`; pgvector lives in `extensions` schema.
-- **AI**: AI Gateway via `@ai-sdk/openai-compatible`; chat = `google/gemini-3-flash-preview`, embeddings = `google/text-embedding-004`; `LOVABLE_API_KEY` server-only.
-- **Streaming**: `streamText` + `toUIMessageStreamResponse`; tool parts rendered via `message.parts`.
-- **Storage**: `project-assets` (user uploads), `published` (built bundles).
-- **Billing**: Razorpay stays inactive until user provides keys; quota enforced via `get_user_plan`.
+**Coordination protocol**: shared `AgentTask` table (status, parent, artifacts, cost), event bus via Postgres LISTEN/NOTIFY, structured handoff messages (JSON), and a `Critic → Coder` loop until acceptance criteria pass.
 
-## Execution order (2 batches at a time)
-- **Batch 7A** ✅ agent tools + step-limited loop + tool-part rendering
-- **Batch 7B** ✅ lint tool + auto-fix loop + diff viewer
-- **Batch 8A** ✅ pgvector `knowledge_chunks` + match RPC
-- **Batch 8B** ✅ retrieval into prompt + URL/note ingestion UI
-- **Batch 8C** ⏭ auto-embed on writeFile + multimodal image input
-- **Batch 9A** server bundle + `published` bucket + `/p/$slug/*`
-- **Batch 9B** deployments table + rollback UI + versioned preview URLs
-- **Batch 10A** realtime presence + cursors
-- **Batch 10B** comments + @mentions + email
-- **Batch 11A** public template marketplace (publish + ratings)
-- **Batch 11B** integrations catalog + component installer tool
-- **Batch 12A** rate limits + Turnstile + RLS audit fixes
-- **Batch 12B** docs site + onboarding tour + Lighthouse pass
+---
+
+## 3. Architecture
+
+```text
+┌────────────────────── Web App (TanStack Start) ──────────────────────┐
+│  Marketing (3D hero) │ Auth │ Workspace │ Project IDE │ Deploy UI    │
+└──────────────────────────────┬───────────────────────────────────────┘
+                               │ server functions / SSE
+┌──────────────────────────────▼───────────────────────────────────────┐
+│  Orchestrator Service  ──►  Agent Workers (per-role queues)          │
+│        │                                                             │
+│        ├─ Task Graph (Postgres)   ├─ Artifact Store (Storage)        │
+│        ├─ Vector Memory (pgvector)├─ Run Logs / Traces               │
+│        └─ Tool Registry (MCP-like, typed)                            │
+└──────────────────────────────┬───────────────────────────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
+  Lovable AI Gateway     Sandboxed Build         Mobile Pipeline
+  (multi-model)          (Vite + tests)          (Capacitor + EAS-like)
+```
+
+- **Web**: TanStack Start v1, React 19, Tailwind v4, shadcn, Three.js/R3F for 3D.
+- **Backend**: Lovable Cloud (Supabase). Server functions for app logic; `/api/public/*` for webhooks (Stripe, build callbacks).
+- **AI**: AI SDK + Lovable AI Gateway. Default `google/gemini-3-flash-preview`, escalate to capable model for Architect/Critic.
+- **Realtime**: Supabase realtime channel per project for agent activity stream.
+- **Mobile**: Capacitor wrap; OTA updates via signed JS bundle hosted in Storage.
+
+---
+
+## 4. Database (key tables, all with RLS + GRANTs)
+
+- `projects` (owner, slug, target_platforms[])
+- `project_files` (path, content, sha)
+- `agent_runs` (project_id, status, cost, model)
+- `agent_tasks` (run_id, role, parent_id, status, input, output, artifacts)
+- `agent_messages` (task_id, role, parts jsonb) — agent-to-agent chat
+- `deployments` (project_id, target: web|ios|android|pwa, status, url, build_log)
+- `integrations` (project_id, kind, config jsonb)
+- `user_roles` (separate table, `app_role` enum, `has_role()` SECURITY DEFINER) — already pattern in repo
+- `usage_ledger` (user_id, tokens, credits) for billing
+
+Policies: owner-only on projects + cascading "is project member" helper function.
+
+---
+
+## 5. Project IDE (in-app)
+
+- **Left**: file tree + agent activity timeline (live SSE).
+- **Center**: Monaco editor + live preview iframe (web) + device frame toggles (iPhone/Pixel/Desktop).
+- **Right**: Chat with Orchestrator; tabs for Tasks, Logs, Diffs, Tests, Lighthouse, Mobile Audit.
+- **Bottom**: terminal-style stream of tool calls with cost meter.
+- One-click: **Deploy Web**, **Build iOS .ipa**, **Build Android .aab**, **Install PWA**.
+
+---
+
+## 6. Pipeline (per generation)
+
+1. User prompt → Orchestrator drafts plan + acceptance criteria.
+2. Architect produces file plan + schema diff.
+3. Parallel fanout: Frontend / Backend / Data / Mobile / Designer.
+4. Reviewer diffs each PR-style batch; rejects → loop (max N).
+5. QA runs `vitest`, type-check, Playwright smoke, `runMobileAudit`, Lighthouse.
+6. Security Agent: RLS audit, dep scan, secret scan, Turnstile check.
+7. Release Agent: web deploy, mobile bundle (ZIP + signed OTA), changelog.
+8. Usage ledger updated; user notified.
+
+---
+
+## 7. Marketing Site (3D look)
+
+- **Hero**: React-Three-Fiber scene — floating glass shards forming a phone+laptop, orbiting agent "nodes" connected by animated lines, subtle aurora background, mouse-parallax.
+- **Sections**: Agents (interactive cards), Live Demo (autoplaying terminal of agents collaborating), Targets (Web/iOS/Android toggle morph), Pricing, FAQ, CTA.
+- **Style**: dark theme, oklch tokens, glass + grain, Space Grotesk + Inter, generous spacing.
+- Performance: lazy-load R3F, prefers-reduced-motion fallback to static hero image.
+
+---
+
+## 8. Security & Production-Readiness
+
+- RLS on every table + explicit GRANTs (project convention).
+- Server-side rate limiting per agent/tool (already scaffolded).
+- Cloudflare Turnstile on signup (already wired).
+- Per-project sandbox: agents can only touch files inside their project_id.
+- Secret vault per project (encrypted at rest via Supabase Vault).
+- Audit log of every agent action; immutable.
+- CI: GitHub Actions — typecheck, lint, vitest, security-audit, dep-scan.
+
+---
+
+## 9. Build Order (phased, ~ batches)
+
+1. **B1** — DB schema (projects, tasks, runs, messages, deployments) + RLS + types.
+2. **B2** — Orchestrator service + task DAG executor + tool registry.
+3. **B3** — Agent role definitions (system prompts, tools per role) + AI SDK wiring.
+4. **B4** — Realtime activity stream + cost ledger.
+5. **B5** — Project IDE shell (tree, editor, preview, chat).
+6. **B6** — Web deploy pipeline + preview iframe.
+7. **B7** — Mobile pipeline (Capacitor bundler exists; add signed OTA + store metadata).
+8. **B8** — QA/Security/Perf agents wired into pipeline gates.
+9. **B9** — 3D marketing landing (R3F hero + sections).
+10. **B10** — Billing (Stripe), usage ledger UI, plans.
+11. **B11** — Polish: onboarding tour, templates gallery, docs.
+12. **B12** — Hardening: Lighthouse, a11y, e2e, load test.
+
+---
+
+## 10. Technical Details (for engineers)
+
+- Agent runtime: each role = `createServerFn` taking `{taskId}`; worker loop polls `agent_tasks` where `status='queued' AND role=X`.
+- Streaming: `streamText` with `stopWhen: stepCountIs(50)`, tool calls persisted as `agent_messages` parts.
+- Tool registry: typed Zod schemas; tools gated by `role` + `needsApproval` for destructive ops.
+- File writes go through a `vfs` layer that diffs against `project_files` and emits a `Reviewer` task.
+- 3D: `@react-three/fiber`, `@react-three/drei`, `three`, postprocessing for bloom; lazy `React.lazy` + Suspense fallback.
+- Mobile OTA: bundle JS to `dist/`, zip, upload to Storage, Capacitor app fetches manifest on launch.
+
+---
+
+## 11. Open Questions
+
+1. Target the **first MVP slice** at Web-only, or include Mobile bundle from day 1? (current repo already has Capacitor scaffolding)
+2. Billing model: **per-token usage** vs **flat plans** vs hybrid?
+3. Should agents support **user-bring-your-own-keys** (OpenAI/Anthropic), or Lovable AI Gateway only?
+4. Marketing 3D: **full R3F scene** (heavier) vs **shader-only aurora + CSS 3D cards** (lighter, faster)?
+
+Answer these and I'll start at Batch 1.
+
+---
+
+## Progress Log
+
+### Batch 1 — DB schema for agent swarm ✅
+Added `agent_runs`, `agent_tasks`, `agent_messages`, `usage_ledger` with full RLS + GRANTs scoped via `has_project_role()`. Types auto-regenerated.
+
+### Batch 2 — Orchestrator core + Agents UI ✅
+- `src/lib/agents.catalog.ts` — 13 specialist agent definitions (orchestrator → release).
+- `src/lib/agents.functions.ts` — `startAgentRun`, `listAgentRuns`, `getAgentRun`, `cancelAgentRun`, `listAgentCatalog`. Rate-limited (5/min, 200/day per user).
+- `src/components/workspace/AgentsPanel.tsx` — goal input, per-agent toggles, runs list, live-polling task timeline (statuses, tokens, cancel).
+- Mounted in workspace sidebar above the Mobile builder.
+
+**Batches remaining: 10** (B3 worker execution loop, B4 realtime stream, B5 IDE polish, B6 web deploy, B7 mobile OTA, B8 QA/Security/Perf gates, B9 3D landing, B10 billing, B11 templates/docs, B12 hardening).

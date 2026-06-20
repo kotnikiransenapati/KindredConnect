@@ -19,6 +19,7 @@ import { CommentsPanel } from "@/components/workspace/CommentsPanel";
 import { IntegrationsPanel } from "@/components/workspace/IntegrationsPanel";
 import { PublishTemplateDialog } from "@/components/workspace/PublishTemplateDialog";
 import { MobileBuilderPanel } from "@/components/workspace/MobileBuilderPanel";
+import { AgentsPanel } from "@/components/workspace/AgentsPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -116,6 +117,7 @@ function ProjectWorkspace() {
                 <CommentsPanel projectId={projectId} anchorPath={selectedPath} />
                 <KnowledgePanel projectId={projectId} />
                 <IntegrationsPanel projectId={projectId} />
+                <AgentsPanel projectId={projectId} />
                 <MobileBuilderPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
