@@ -24,6 +24,8 @@ import { QualityGatesPanel } from "@/components/workspace/QualityGatesPanel";
 import { VersionsPanel } from "@/components/workspace/VersionsPanel";
 import { SecretsVaultPanel } from "@/components/workspace/SecretsVaultPanel";
 import { DomainsPanel } from "@/components/workspace/DomainsPanel";
+import { SkillsMarketplacePanel } from "@/components/workspace/SkillsMarketplacePanel";
+import { CiGatesPanel } from "@/components/workspace/CiGatesPanel";
 import { AgentsPanel } from "@/components/workspace/AgentsPanel";
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
@@ -129,7 +131,10 @@ function ProjectWorkspace() {
                 <SecretsVaultPanel projectId={projectId} />
                 <DomainsPanel projectId={projectId} />
                 <VersionsPanel projectId={projectId} />
+                <SkillsMarketplacePanel projectId={projectId} />
+                <CiGatesPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
+
               </div>
             </div>
           </>

@@ -156,6 +156,59 @@ export type Database = {
           },
         ]
       }
+      agent_skills: {
+        Row: {
+          config: Json
+          created_at: string
+          created_by: string | null
+          description: string
+          enabled: boolean
+          id: string
+          install_count: number
+          kind: Database["public"]["Enums"]["skill_kind"]
+          name: string
+          project_id: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["skill_visibility"]
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          enabled?: boolean
+          id?: string
+          install_count?: number
+          kind: Database["public"]["Enums"]["skill_kind"]
+          name: string
+          project_id: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["skill_visibility"]
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          enabled?: boolean
+          id?: string
+          install_count?: number
+          kind?: Database["public"]["Enums"]["skill_kind"]
+          name?: string
+          project_id?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["skill_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_skills_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_tasks: {
         Row: {
           artifacts: Json
@@ -275,6 +328,69 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ai_usage_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ci_gates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deployment_id: string | null
+          duration_ms: number | null
+          error: string | null
+          id: string
+          kind: Database["public"]["Enums"]["gate_kind"]
+          project_id: string
+          report: Json
+          score: number | null
+          status: Database["public"]["Enums"]["gate_status"]
+          target_url: string | null
+          threshold: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deployment_id?: string | null
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["gate_kind"]
+          project_id: string
+          report?: Json
+          score?: number | null
+          status?: Database["public"]["Enums"]["gate_status"]
+          target_url?: string | null
+          threshold?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deployment_id?: string | null
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["gate_kind"]
+          project_id?: string
+          report?: Json
+          score?: number | null
+          status?: Database["public"]["Enums"]["gate_status"]
+          target_url?: string | null
+          threshold?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ci_gates_deployment_id_fkey"
+            columns: ["deployment_id"]
+            isOneToOne: false
+            referencedRelation: "deployments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ci_gates_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -1256,7 +1372,11 @@ export type Database = {
       next_deployment_version: { Args: { _slug: string }; Returns: number }
     }
     Enums: {
+      gate_kind: "lighthouse" | "smoke" | "a11y"
+      gate_status: "pending" | "passed" | "failed" | "error"
       project_role: "owner" | "editor" | "viewer"
+      skill_kind: "mcp" | "http_tool" | "prompt"
+      skill_visibility: "private" | "public"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1384,7 +1504,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      gate_kind: ["lighthouse", "smoke", "a11y"],
+      gate_status: ["pending", "passed", "failed", "error"],
       project_role: ["owner", "editor", "viewer"],
+      skill_kind: ["mcp", "http_tool", "prompt"],
+      skill_visibility: ["private", "public"],
     },
   },
 } as const
