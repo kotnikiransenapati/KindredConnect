@@ -26,6 +26,7 @@ import { Route as ApiPublicSitemapRouteImport } from './routes/api/public/sitema
 import { Route as ApiPublicRobotsRouteImport } from './routes/api/public/robots'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAppProjectIdRouteImport } from './routes/_authenticated/app.$projectId'
+import { Route as ApiPublicAgentsTickRouteImport } from './routes/api/public/agents.tick'
 
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
@@ -113,6 +114,11 @@ const AuthenticatedAppProjectIdRoute =
     path: '/$projectId',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const ApiPublicAgentsTickRoute = ApiPublicAgentsTickRouteImport.update({
+  id: '/api/public/agents/tick',
+  path: '/api/public/agents/tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/api/public/robots': typeof ApiPublicRobotsRoute
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
+  '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/api/public/robots': typeof ApiPublicRobotsRoute
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
+  '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/api/public/robots': typeof ApiPublicRobotsRoute
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
+  '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/api/public/robots'
     | '/api/public/sitemap'
     | '/p/$slug/$version'
+    | '/api/public/agents/tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/api/public/robots'
     | '/api/public/sitemap'
     | '/p/$slug/$version'
+    | '/api/public/agents/tick'
   id:
     | '__root__'
     | '/'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/api/public/robots'
     | '/api/public/sitemap'
     | '/p/$slug/$version'
+    | '/api/public/agents/tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,6 +253,7 @@ export interface RootRouteChildren {
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
   ApiPublicRobotsRoute: typeof ApiPublicRobotsRoute
   ApiPublicSitemapRoute: typeof ApiPublicSitemapRoute
+  ApiPublicAgentsTickRoute: typeof ApiPublicAgentsTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppProjectIdRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/api/public/agents/tick': {
+      id: '/api/public/agents/tick'
+      path: '/api/public/agents/tick'
+      fullPath: '/api/public/agents/tick'
+      preLoaderRoute: typeof ApiPublicAgentsTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -416,6 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
   ApiPublicRobotsRoute: ApiPublicRobotsRoute,
   ApiPublicSitemapRoute: ApiPublicSitemapRoute,
+  ApiPublicAgentsTickRoute: ApiPublicAgentsTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
