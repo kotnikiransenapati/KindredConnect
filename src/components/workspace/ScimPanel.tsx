@@ -15,9 +15,11 @@ import { toast } from "sonner";
 export function ScimPanel() {
   const list = useServerFn(listMyOrganizations);
   const orgsQ = useQuery({ queryKey: ["orgs"], queryFn: () => list() });
-  const orgs = useMemo(() =>
-    (orgsQ.data ?? []).filter((o: any) => ["owner", "admin"].includes(o.role)),
-    [orgsQ.data]);
+  const orgs = useMemo(() => {
+    const raw: any = orgsQ.data;
+    const all = Array.isArray(raw) ? raw : (raw?.organizations ?? []);
+    return all.filter((o: any) => ["owner", "admin"].includes(o.role));
+  }, [orgsQ.data]);
   const [orgId, setOrgId] = useState<string>("");
   useEffect(() => { if (!orgId && orgs[0]) setOrgId(orgs[0].id); }, [orgs, orgId]);
 
