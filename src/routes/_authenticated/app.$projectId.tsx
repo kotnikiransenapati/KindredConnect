@@ -120,7 +120,9 @@ function ProjectWorkspace() {
                 <KnowledgePanel projectId={projectId} />
                 <IntegrationsPanel projectId={projectId} />
                 <AgentsPanel projectId={projectId} />
+                <QualityGatesPanel projectId={projectId} />
                 <MobileBuilderPanel projectId={projectId} />
+                <OtaPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
               </div>
             </div>
