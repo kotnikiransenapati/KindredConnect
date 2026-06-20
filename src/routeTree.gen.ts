@@ -19,6 +19,7 @@ import { Route as ShareTokenRouteImport } from './routes/share.$token'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
+import { Route as AuthenticatedInviteRouteImport } from './routes/_authenticated/invite'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as PSlugVersionRouteImport } from './routes/p.$slug.$version'
@@ -77,6 +78,11 @@ const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInviteRoute = AuthenticatedInviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBillingRoute = AuthenticatedBillingRouteImport.update({
   id: '/billing',
   path: '/billing',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/billing': typeof AuthenticatedBillingRoute
+  '/invite': typeof AuthenticatedInviteRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/api/chat': typeof ApiChatRoute
   '/p/$slug': typeof PSlugRouteWithChildren
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/billing': typeof AuthenticatedBillingRoute
+  '/invite': typeof AuthenticatedInviteRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/api/chat': typeof ApiChatRoute
   '/p/$slug': typeof PSlugRouteWithChildren
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
+  '/_authenticated/invite': typeof AuthenticatedInviteRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/api/chat': typeof ApiChatRoute
   '/p/$slug': typeof PSlugRouteWithChildren
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/app'
     | '/billing'
+    | '/invite'
     | '/templates'
     | '/api/chat'
     | '/p/$slug'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/app'
     | '/billing'
+    | '/invite'
     | '/templates'
     | '/api/chat'
     | '/p/$slug'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/_authenticated/app'
     | '/_authenticated/billing'
+    | '/_authenticated/invite'
     | '/_authenticated/templates'
     | '/api/chat'
     | '/p/$slug'
@@ -328,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTemplatesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/invite': {
+      id: '/_authenticated/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof AuthenticatedInviteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/billing': {
       id: '/_authenticated/billing'
       path: '/billing'
@@ -401,12 +420,14 @@ const AuthenticatedAppRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedBillingRoute: typeof AuthenticatedBillingRoute
+  AuthenticatedInviteRoute: typeof AuthenticatedInviteRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedBillingRoute: AuthenticatedBillingRoute,
+  AuthenticatedInviteRoute: AuthenticatedInviteRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
 }
 
