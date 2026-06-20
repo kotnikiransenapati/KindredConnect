@@ -461,6 +461,53 @@ export type Database = {
           },
         ]
       }
+      ota_bundles: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          manifest: Json
+          project_id: string
+          published_by: string
+          sha256: string
+          size_bytes: number
+          storage_path: string
+          version: number
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          id?: string
+          manifest?: Json
+          project_id: string
+          published_by: string
+          sha256: string
+          size_bytes: number
+          storage_path: string
+          version: number
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          manifest?: Json
+          project_id?: string
+          published_by?: string
+          sha256?: string
+          size_bytes?: number
+          storage_path?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ota_bundles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_events: {
         Row: {
           event_id: string
@@ -772,6 +819,50 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quality_reports: {
+        Row: {
+          created_at: string
+          created_by: string
+          findings: Json
+          id: string
+          kind: string
+          project_id: string
+          score: number
+          status: string
+          summary: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          findings?: Json
+          id?: string
+          kind: string
+          project_id: string
+          score: number
+          status: string
+          summary?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          findings?: Json
+          id?: string
+          kind?: string
+          project_id?: string
+          score?: number
+          status?: string
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quality_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
