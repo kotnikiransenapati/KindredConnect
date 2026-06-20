@@ -262,3 +262,18 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `CiGatesPanel.tsx`: composer (kind / URL / threshold / smoke assertions), live-refreshing history (5s), expandable JSON report viewer, color-coded shield status. Mounted in the workspace.
 
 **Batches remaining: 0** — all 18 batches of the Forge plan delivered.
+
+### Phase 2 — Mobile-first dominance
+### P1 — Native build pipeline (iOS .ipa / Android .aab) + signing-key vault ✅
+- New tables: `mobile_signing_profiles` (encrypted bytea ciphertext/iv/auth_tag, alias, masked last_four) and `mobile_builds` (platform, build_type debug/release, status queued→building→success/failed, version_name/code, signing_profile_id, artifact_path, log, duration_ms).
+- New private storage bucket `mobile-builds` with project-scoped RLS via `has_project_role` on `<project_id>/<build_id>/…`.
+- `src/lib/vault-crypto.server.ts`: shared AES-256-GCM (scrypt → SUPABASE_SERVICE_ROLE_KEY) helpers — reused by secrets vault and signing vault.
+- `src/lib/native-builds.functions.ts`: `uploadSigningProfile` (keystore + optional password bundled, encrypted), `revealSigningProfile` (owner-only, 5/min), `requestMobileBuild` (validates reverse-DNS bundleId, semver, version code; release ⇒ matching signing profile required; generates `capacitor.config.ts` + build manifest; snapshots all project_files; uploads workspace bundle for the native runner; rate-limited 2/min · 30/day), `getBuildArtifactUrl` (15-min signed URL).
+- `NativeBuildsPanel.tsx`: signing-profile manager (file picker, password, alias, per-platform list) + build composer (platform/type/bundleId/version) + live-refreshing history with status icons and per-row download.
+
+### P2 — Visual mobile layout editor ✅
+- New table `mobile_screens` (name, unique slug, route, layout jsonb, position) with role-scoped RLS.
+- `src/lib/mobile-screens.functions.ts`: typed node tree (`Header|Text|Button|Image|Input|List|Card|Spacer|Icon`) validated by a recursive Zod schema; `generateScreenComponent` materializes the tree into a real `src/mobile/screens/<slug>.tsx` file written to `project_files` so it ships with the rest of the codebase.
+- `MobileScreensPanel.tsx`: tabbed screen list, drag-free composer with per-kind palette, prop-inspector per node, up/down reordering, **live phone-frame preview** rendering the same tree, "Generate .tsx" action that writes the React component into the project. Mounted in the workspace.
+
+**Phase 2 batches remaining: 2** (P3 push + deep-linking, P4 store metadata + screenshot generator + submission checklist).

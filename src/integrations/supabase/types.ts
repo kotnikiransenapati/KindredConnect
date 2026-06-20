@@ -533,6 +533,178 @@ export type Database = {
           },
         ]
       }
+      mobile_builds: {
+        Row: {
+          artifact_path: string | null
+          build_type: Database["public"]["Enums"]["mobile_build_type"]
+          bundle_id: string | null
+          created_at: string
+          created_by: string | null
+          duration_ms: number | null
+          id: string
+          log: string
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          project_id: string
+          signing_profile_id: string | null
+          status: Database["public"]["Enums"]["mobile_build_status"]
+          updated_at: string
+          version_code: number
+          version_name: string
+        }
+        Insert: {
+          artifact_path?: string | null
+          build_type?: Database["public"]["Enums"]["mobile_build_type"]
+          bundle_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration_ms?: number | null
+          id?: string
+          log?: string
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          project_id: string
+          signing_profile_id?: string | null
+          status?: Database["public"]["Enums"]["mobile_build_status"]
+          updated_at?: string
+          version_code?: number
+          version_name?: string
+        }
+        Update: {
+          artifact_path?: string | null
+          build_type?: Database["public"]["Enums"]["mobile_build_type"]
+          bundle_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          duration_ms?: number | null
+          id?: string
+          log?: string
+          platform?: Database["public"]["Enums"]["mobile_platform"]
+          project_id?: string
+          signing_profile_id?: string | null
+          status?: Database["public"]["Enums"]["mobile_build_status"]
+          updated_at?: string
+          version_code?: number
+          version_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mobile_builds_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mobile_builds_signing_profile_id_fkey"
+            columns: ["signing_profile_id"]
+            isOneToOne: false
+            referencedRelation: "mobile_signing_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mobile_screens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          layout: Json
+          name: string
+          position: number
+          project_id: string
+          route: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          layout?: Json
+          name: string
+          position?: number
+          project_id: string
+          route?: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          layout?: Json
+          name?: string
+          position?: number
+          project_id?: string
+          route?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mobile_screens_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mobile_signing_profiles: {
+        Row: {
+          alias: string | null
+          auth_tag: string
+          ciphertext: string
+          created_at: string
+          created_by: string | null
+          filename: string | null
+          id: string
+          iv: string
+          last_four: string | null
+          name: string
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          alias?: string | null
+          auth_tag: string
+          ciphertext: string
+          created_at?: string
+          created_by?: string | null
+          filename?: string | null
+          id?: string
+          iv: string
+          last_four?: string | null
+          name: string
+          platform: Database["public"]["Enums"]["mobile_platform"]
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          alias?: string | null
+          auth_tag?: string
+          ciphertext?: string
+          created_at?: string
+          created_by?: string | null
+          filename?: string | null
+          id?: string
+          iv?: string
+          last_four?: string | null
+          name?: string
+          platform?: Database["public"]["Enums"]["mobile_platform"]
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mobile_signing_profiles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1374,6 +1546,9 @@ export type Database = {
     Enums: {
       gate_kind: "lighthouse" | "smoke" | "a11y"
       gate_status: "pending" | "passed" | "failed" | "error"
+      mobile_build_status: "queued" | "building" | "success" | "failed"
+      mobile_build_type: "debug" | "release"
+      mobile_platform: "ios" | "android"
       project_role: "owner" | "editor" | "viewer"
       skill_kind: "mcp" | "http_tool" | "prompt"
       skill_visibility: "private" | "public"
@@ -1506,6 +1681,9 @@ export const Constants = {
     Enums: {
       gate_kind: ["lighthouse", "smoke", "a11y"],
       gate_status: ["pending", "passed", "failed", "error"],
+      mobile_build_status: ["queued", "building", "success", "failed"],
+      mobile_build_type: ["debug", "release"],
+      mobile_platform: ["ios", "android"],
       project_role: ["owner", "editor", "viewer"],
       skill_kind: ["mcp", "http_tool", "prompt"],
       skill_visibility: ["private", "public"],
