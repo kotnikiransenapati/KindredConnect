@@ -452,6 +452,113 @@ export type Database = {
           },
         ]
       }
+      analytics_events: {
+        Row: {
+          country: string | null
+          created_at: string
+          event_name: string
+          id: string
+          occurred_at: string
+          path: string | null
+          project_id: string
+          properties: Json
+          referrer: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          event_name: string
+          id?: string
+          occurred_at?: string
+          path?: string | null
+          project_id: string
+          properties?: Json
+          referrer?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          event_name?: string
+          id?: string
+          occurred_at?: string
+          path?: string | null
+          project_id?: string
+          properties?: Json
+          referrer?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip: unknown
+          metadata: Json
+          org_id: string | null
+          project_id: string | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: unknown
+          metadata?: Json
+          org_id?: string | null
+          project_id?: string | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: unknown
+          metadata?: Json
+          org_id?: string | null
+          project_id?: string | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ci_gates: {
         Row: {
           created_at: string
@@ -2135,6 +2242,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      analytics_daily_counts: {
+        Args: {
+          _from: string
+          _project_id: string
+          _to: string
+          _user_id: string
+        }
+        Returns: {
+          count: number
+          day: string
+          event_name: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           _bucket: string
