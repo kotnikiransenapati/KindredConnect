@@ -1097,6 +1097,115 @@ export type Database = {
           },
         ]
       }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          org_id: string
+          role: Database["public"]["Enums"]["org_role"]
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          org_id: string
+          role?: Database["public"]["Enums"]["org_role"]
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_role"]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          org_id: string
+          role: Database["public"]["Enums"]["org_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          org_id: string
+          role?: Database["public"]["Enums"]["org_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          plan_id: string
+          seats: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          plan_id?: string
+          seats?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          plan_id?: string
+          seats?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ota_bundles: {
         Row: {
           channel: string
@@ -2043,6 +2152,14 @@ export type Database = {
           status: string
         }[]
       }
+      has_org_role: {
+        Args: {
+          _min_role: Database["public"]["Enums"]["org_role"]
+          _org_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_project_role: {
         Args: {
           _min_role: Database["public"]["Enums"]["project_role"]
@@ -2074,6 +2191,7 @@ export type Database = {
       mobile_build_status: "queued" | "building" | "success" | "failed"
       mobile_build_type: "debug" | "release"
       mobile_platform: "ios" | "android"
+      org_role: "owner" | "admin" | "editor" | "viewer"
       project_role: "owner" | "editor" | "viewer"
       push_status: "draft" | "scheduled" | "sending" | "sent" | "failed"
       push_target: "all" | "user" | "segment"
@@ -2211,6 +2329,7 @@ export const Constants = {
       mobile_build_status: ["queued", "building", "success", "failed"],
       mobile_build_type: ["debug", "release"],
       mobile_platform: ["ios", "android"],
+      org_role: ["owner", "admin", "editor", "viewer"],
       project_role: ["owner", "editor", "viewer"],
       push_status: ["draft", "scheduled", "sending", "sent", "failed"],
       push_target: ["all", "user", "segment"],

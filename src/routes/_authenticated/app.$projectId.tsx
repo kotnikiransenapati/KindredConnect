@@ -35,6 +35,8 @@ import { AgentSchedulesPanel } from "@/components/workspace/AgentSchedulesPanel"
 import { ModelRoutingPanel } from "@/components/workspace/ModelRoutingPanel";
 import { E2ETestsPanel } from "@/components/workspace/E2ETestsPanel";
 import { SelfHealPanel } from "@/components/workspace/SelfHealPanel";
+import { OrganizationsPanel } from "@/components/workspace/OrganizationsPanel";
+
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -151,7 +153,9 @@ function ProjectWorkspace() {
                 <CiGatesPanel projectId={projectId} />
                 <E2ETestsPanel projectId={projectId} />
                 <SelfHealPanel projectId={projectId} />
+                <OrganizationsPanel />
                 <ActivityFeed projectId={projectId} />
+
 
               </div>
             </div>
