@@ -72,13 +72,13 @@ export const upsertSiemDestination = createServerFn({ method: "POST" })
     }
 
     if (data.id) {
-      const { error } = await context.supabase.from("siem_destinations").update(base).eq("id", data.id);
+      const { error } = await context.supabase.from("siem_destinations").update(base as any).eq("id", data.id);
       if (error) throw error;
       return { id: data.id };
     }
     if (!data.secret) throw new Error("Secret required for new destinations");
     base.created_by = context.userId;
-    const { data: row, error } = await context.supabase.from("siem_destinations").insert(base).select("id").single();
+    const { data: row, error } = await context.supabase.from("siem_destinations").insert(base as any).select("id").single();
     if (error) throw error;
     return { id: row.id };
   });
