@@ -166,7 +166,7 @@ export const advanceRun = createServerFn({ method: "POST" })
     const startedAt = run.started_at ?? new Date().toISOString();
     let advanced = 0;
     for (const stage of runnable) {
-      const existing = jobsArr.find(j => j.stage_key === stage.key);
+      const existing = jobsArr.find((j: any) => j.stage_key === stage.key);
       const attempt = (existing?.attempt ?? 0) + 1;
       const outcome = simulateOutcome(stage.key, attempt);
       const startedAtStage = new Date().toISOString();
