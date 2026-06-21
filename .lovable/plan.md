@@ -415,3 +415,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `StoreSubmissionsPanel.tsx`: composer (platform/track/version/build code/notes → draft), per-submission card with status badge + finding list (error/warn/info icons), Validate → Submit → status-transition buttons gated by FSM, live timeline of every event (8s poll).
 
 **Phase 11 batches remaining: 0** — crash telemetry + store submission automation delivered. The mobile builder now ships an app from idea → preview → device → build → signed → validated → submitted → released with crash feedback flowing back in.
+
+### Phase 12 — Growth & on-device shrink
+### P25 — In-app A/B Experiments + Feature Flags ✅
+- DB: `feature_flags` (project-scoped, key UNIQUE-per-project, rollout_percent 0–100, rules jsonb), `experiments` (status FSM draft→running→paused→completed→archived, traffic_percent, variants jsonb), `experiment_assignments` (sticky UNIQUE per (exp, subject)), `experiment_exposures` (append-only metric events, indexed for time + metric). SECURITY DEFINER `experiment_results()` aggregates exposures, conversions, conversion_rate %, total_value per variant — gated by `has_project_role`.
+- `src/lib/experiments.functions.ts`: deterministic SHA-256(seed:subject) bucketing → traffic gate → weighted variant pick, sticky assignment, rate-limited (600/min) exposure tracking, idempotent flag/exp upserts, FSM-guarded `transitionExperiment` with auto-stamped started_at/ended_at, `evaluateFlag` for rollout-percent flags.
+- `ExperimentsPanel.tsx`: 3-tab UI — Feature flags (CRUD with rollout slider), Experiments (form + per-experiment row with Start/Pause/Resume/Complete/Archive + on-demand results table), Playground (assign subject → log conversion → evaluate flag).
+
+### P26 — App-size optimizer / bundle analyzer ✅
+- DB: `bundle_snapshots` (project+platform+version+build, total/download/install bytes), `bundle_assets` (per-asset path/kind/bytes/compressed; chunk-inserted 1k rows at a time). Role-scoped RLS.
+- `src/lib/bundle-analysis.functions.ts`: `createSnapshot` rate-limited 10/min, server-side total bytes recompute, `snapshotDetail` returns kind-breakdown + recommendations (large-asset detector >1 MB, unconverted PNG/JPG >200 KB → WebP/AVIF, JS payload >4 MB → split, fonts >600 KB → subset), `diffSnapshots` produces per-asset Δ list sorted by abs delta.
+- `BundleAnalyzerPanel.tsx`: platform switcher (ios/android/web), snapshots list with expandable breakdown chips + recommendations + top-100 assets table, capture tab (pipe-delimited paste of `path|kind|bytes|compressed?`), diff tab (base vs head with green/red delta totals).
+
+**Phase 12 batches remaining: 0** — growth experimentation + on-device shrink delivered.
