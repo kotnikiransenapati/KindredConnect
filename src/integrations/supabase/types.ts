@@ -792,6 +792,107 @@ export type Database = {
           },
         ]
       }
+      bundle_assets: {
+        Row: {
+          bytes: number
+          compressed_bytes: number | null
+          id: number
+          kind: string
+          metadata: Json
+          path: string
+          project_id: string
+          snapshot_id: string
+        }
+        Insert: {
+          bytes?: number
+          compressed_bytes?: number | null
+          id?: number
+          kind: string
+          metadata?: Json
+          path: string
+          project_id: string
+          snapshot_id: string
+        }
+        Update: {
+          bytes?: number
+          compressed_bytes?: number | null
+          id?: number
+          kind?: string
+          metadata?: Json
+          path?: string
+          project_id?: string
+          snapshot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundle_assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundle_assets_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "bundle_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bundle_snapshots: {
+        Row: {
+          build_number: number | null
+          created_at: string
+          created_by: string | null
+          download_bytes: number | null
+          id: string
+          install_bytes: number | null
+          notes: string | null
+          platform: string
+          project_id: string
+          source: string
+          total_bytes: number
+          version_name: string
+        }
+        Insert: {
+          build_number?: number | null
+          created_at?: string
+          created_by?: string | null
+          download_bytes?: number | null
+          id?: string
+          install_bytes?: number | null
+          notes?: string | null
+          platform: string
+          project_id: string
+          source?: string
+          total_bytes?: number
+          version_name: string
+        }
+        Update: {
+          build_number?: number | null
+          created_at?: string
+          created_by?: string | null
+          download_bytes?: number | null
+          id?: string
+          install_bytes?: number | null
+          notes?: string | null
+          platform?: string
+          project_id?: string
+          source?: string
+          total_bytes?: number
+          version_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundle_snapshots_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ci_gates: {
         Row: {
           created_at: string
@@ -1215,6 +1316,205 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "e2e_tests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiment_assignments: {
+        Row: {
+          assigned_at: string
+          experiment_id: string
+          id: number
+          project_id: string
+          subject_id: string
+          variant: string
+        }
+        Insert: {
+          assigned_at?: string
+          experiment_id: string
+          id?: number
+          project_id: string
+          subject_id: string
+          variant: string
+        }
+        Update: {
+          assigned_at?: string
+          experiment_id?: string
+          id?: number
+          project_id?: string
+          subject_id?: string
+          variant?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experiment_assignments_experiment_id_fkey"
+            columns: ["experiment_id"]
+            isOneToOne: false
+            referencedRelation: "experiments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experiment_assignments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiment_exposures: {
+        Row: {
+          experiment_id: string
+          id: number
+          is_conversion: boolean
+          metric_key: string
+          metric_value: number
+          occurred_at: string
+          project_id: string
+          properties: Json
+          subject_id: string
+          variant: string
+        }
+        Insert: {
+          experiment_id: string
+          id?: number
+          is_conversion?: boolean
+          metric_key: string
+          metric_value?: number
+          occurred_at?: string
+          project_id: string
+          properties?: Json
+          subject_id: string
+          variant: string
+        }
+        Update: {
+          experiment_id?: string
+          id?: number
+          is_conversion?: boolean
+          metric_key?: string
+          metric_value?: number
+          occurred_at?: string
+          project_id?: string
+          properties?: Json
+          subject_id?: string
+          variant?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experiment_exposures_experiment_id_fkey"
+            columns: ["experiment_id"]
+            isOneToOne: false
+            referencedRelation: "experiments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experiment_exposures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          ended_at: string | null
+          hypothesis: string | null
+          id: string
+          key: string
+          primary_metric: string
+          project_id: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["experiment_status"]
+          traffic_percent: number
+          updated_at: string
+          variants: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          ended_at?: string | null
+          hypothesis?: string | null
+          id?: string
+          key: string
+          primary_metric: string
+          project_id: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["experiment_status"]
+          traffic_percent?: number
+          updated_at?: string
+          variants?: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          ended_at?: string | null
+          hypothesis?: string | null
+          id?: string
+          key?: string
+          primary_metric?: string
+          project_id?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["experiment_status"]
+          traffic_percent?: number
+          updated_at?: string
+          variants?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experiments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_flags: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          enabled: boolean
+          id: string
+          key: string
+          project_id: string
+          rollout_percent: number
+          rules: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          key: string
+          project_id: string
+          rollout_percent?: number
+          rules?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          key?: string
+          project_id?: string
+          rollout_percent?: number
+          rules?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_flags_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -3795,6 +4095,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      experiment_results: {
+        Args: { _exp_id: string; _user_id: string }
+        Returns: {
+          conversion_rate: number
+          conversions: number
+          exposures: number
+          total_value: number
+          variant: string
+        }[]
+      }
       get_user_plan: {
         Args: { _user_id: string }
         Returns: {
@@ -3855,6 +4165,12 @@ export type Database = {
       cap_platform: "ios" | "android" | "both"
       cap_risk: "low" | "medium" | "high"
       device_platform: "ios" | "android" | "web"
+      experiment_status:
+        | "draft"
+        | "running"
+        | "paused"
+        | "completed"
+        | "archived"
       gate_kind: "lighthouse" | "smoke" | "a11y"
       gate_status: "pending" | "passed" | "failed" | "error"
       guardrail_action: "block" | "warn" | "redact"
@@ -4028,6 +4344,13 @@ export const Constants = {
       cap_platform: ["ios", "android", "both"],
       cap_risk: ["low", "medium", "high"],
       device_platform: ["ios", "android", "web"],
+      experiment_status: [
+        "draft",
+        "running",
+        "paused",
+        "completed",
+        "archived",
+      ],
       gate_kind: ["lighthouse", "smoke", "a11y"],
       gate_status: ["pending", "passed", "failed", "error"],
       guardrail_action: ["block", "warn", "redact"],
