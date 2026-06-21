@@ -78,12 +78,13 @@ export const summary = createServerFn({ method: "GET" })
       .select("status,original_bytes,compressed_bytes,savings_bytes,output_format")
       .eq("project_id", data.projectId);
     if (error) throw new Error(error.message);
-    const totals = { queued: 0, running: 0, succeeded: 0, failed: 0, skipped: 0,
-      original: 0, compressed: 0, savings: 0, jobs: rows?.length ?? 0 };
+    const totals: { queued: number; running: number; succeeded: number; failed: number; skipped: number;
+      original: number; compressed: number; savings: number; jobs: number } =
+      { queued: 0, running: 0, succeeded: 0, failed: 0, skipped: 0, original: 0, compressed: 0, savings: 0, jobs: rows?.length ?? 0 };
     const byFormat: Record<string, { count: number; savings: number }> = {};
     for (const r of rows ?? []) {
-      // @ts-expect-error narrow
-      totals[r.status as keyof typeof totals] = (totals[r.status as keyof typeof totals] as number) + 1;
+      const st = r.status as "queued"|"running"|"succeeded"|"failed"|"skipped";
+      if (st in totals) (totals as any)[st] += 1;
       totals.original += Number(r.original_bytes ?? 0);
       totals.compressed += Number(r.compressed_bytes ?? 0);
       totals.savings += Number(r.savings_bytes ?? 0);
