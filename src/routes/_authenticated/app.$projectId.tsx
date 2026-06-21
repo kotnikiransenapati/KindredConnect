@@ -72,6 +72,9 @@ import { ProvenancePanel } from "@/components/workspace/ProvenancePanel";
 import { EdgeAiRouterPanel } from "@/components/workspace/EdgeAiRouterPanel";
 import { ImpactAnalysisPanel } from "@/components/workspace/ImpactAnalysisPanel";
 import { FleetPanel } from "@/components/workspace/FleetPanel";
+import { WhiteboardPanel } from "@/components/workspace/WhiteboardPanel";
+import { CostGuardrailsPanel } from "@/components/workspace/CostGuardrailsPanel";
+import { PluginsPanel } from "@/components/workspace/PluginsPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -227,6 +230,9 @@ function ProjectWorkspace() {
                 <EdgeAiRouterPanel projectId={projectId} />
                 <ImpactAnalysisPanel projectId={projectId} />
                 <FleetPanel projectId={projectId} />
+                <WhiteboardPanel projectId={projectId} />
+                <CostGuardrailsPanel projectId={projectId} />
+                <PluginsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

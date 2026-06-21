@@ -561,3 +561,22 @@ Say **next phase** for Phase 18 (e.g., per-tenant KMS rotation, ML-powered anoma
 - `FleetPanel.tsx`: KPI strip (devices/commands/active/quarantined), Devices tab (heartbeat + delete + last-seen), Enroll tab (multi-platform), Command tab (destructive confirmation switch), Queue tab (advance/cancel).
 
 **Phase 21 batches remaining: 0** — operations intelligence layer delivered.
+
+### Phase 22 — Realtime canvas, cost control & extensibility
+### P47 — Realtime collaborative whiteboard ✅
+- DB: `whiteboards` (width/height/background + version), `whiteboard_strokes` (append-only with bigserial `seq`, tool pen/marker/highlighter/eraser/rect/ellipse/line/arrow/text/sticky, color hex, stroke_width, points jsonb). Project-role RLS.
+- `whiteboard.functions.ts`: `appendStroke` rate-limited 600/min, bumps board version on every stroke; `listStrokes` supports `sinceSeq` for delta replay; `clearBoard` purges and `deleteBoard` is owner-only.
+- `WhiteboardPanel.tsx`: live canvas with pen/marker/highlighter/eraser, 6-color palette, variable stroke width, 4s delta sync (renders all strokes server-side), clear + delete board.
+
+### P48 — AI cost guardrails ✅
+- DB: `ai_cost_budgets` (period hourly/daily/weekly/monthly, scope project/org/user/route, soft/hard %, action alert/throttle/block), `ai_cost_ledger` (append-only spend), `ai_cost_alerts` (soft/hard breach records with acknowledgment).
+- `cost-guardrails.server.ts`: `evaluateBudget` returns pct + level (ok/soft/hard); `periodWindow` maps period to lookback. `recordSpend` re-evaluates per-budget spend before insert, emits alert rows on soft/hard breach, and rejects on `block` action when hard threshold crossed.
+- `CostGuardrailsPanel.tsx`: KPI strip (30d spend / budgets / unack alerts), Budgets tab (per-budget progress bar + level chip + delete), Record tab (provider/model/tokens/cost form), Alerts tab (acknowledge), Ledger tab (per-model rollup chips + recent entries).
+
+### P49 — Sandboxed plugin runtime ✅
+- DB: `plugins` (slug+version unique-per-project, publisher, https entry_url, manifest, permissions[], status draft/approved/suspended/revoked), `plugin_installations` (per-project enabled + config + granted_permissions), `plugin_invocations` (append-only audit with sha256 input/output hashes + duration + outcome).
+- `plugins.server.ts`: 10-permission allowlist (files/secrets/deploy/ai/db/network/ui/analytics), `validatePermissions` rejects unknown perms, `authorize` returns missing+sensitive lists, `sha256Hex` via Web Crypto, `isHttpsUrl` enforces HTTPS for entry URL.
+- `plugins.functions.ts`: register requires HTTPS + permission validation; install rejects revoked/suspended plugins and disallows granting permissions not declared in manifest; invoke rejects non-approved plugins and disabled installs, audits denied calls with reason. Rate-limited 20/30/120 per minute across register/install/invoke.
+- `PluginsPanel.tsx`: Catalog tab (status switch + perm chips + delete), Register tab (slug/name/version/publisher/HTTPS URL + permission toggles), Installed tab (manifest-scoped permission grants, enable switch, uninstall), Invoke tab (required-perm picker), History tab (outcome + duration + error stream).
+
+**Phase 22 batches remaining: 0** — realtime canvas, cost control, and extensibility delivered.
