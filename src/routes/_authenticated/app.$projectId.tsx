@@ -218,6 +218,9 @@ function ProjectWorkspace() {
                 <AnomalyDetectionPanel projectId={projectId} />
                 <CollabEditorPanel projectId={projectId} />
                 <BuildPipelinePanel projectId={projectId} />
+                <AiTestsPanel projectId={projectId} />
+                <FailoverPanel projectId={projectId} />
+                <ProvenancePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
