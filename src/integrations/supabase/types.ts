@@ -2141,6 +2141,173 @@ export type Database = {
           },
         ]
       }
+      kms_key_audit: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          id: string
+          key_id: string
+          metadata: Json
+          project_id: string
+          reason: string | null
+          version: number | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          id?: string
+          key_id: string
+          metadata?: Json
+          project_id: string
+          reason?: string | null
+          version?: number | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          id?: string
+          key_id?: string
+          metadata?: Json
+          project_id?: string
+          reason?: string | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kms_key_audit_key_id_fkey"
+            columns: ["key_id"]
+            isOneToOne: false
+            referencedRelation: "kms_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kms_key_audit_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kms_key_versions: {
+        Row: {
+          activated_at: string
+          algorithm: string
+          created_at: string
+          destroyed_at: string | null
+          fingerprint: string
+          id: string
+          key_id: string
+          project_id: string
+          public_jwk: Json | null
+          retired_at: string | null
+          state: string
+          version: number
+          wrapped_dek: string
+        }
+        Insert: {
+          activated_at?: string
+          algorithm: string
+          created_at?: string
+          destroyed_at?: string | null
+          fingerprint: string
+          id?: string
+          key_id: string
+          project_id: string
+          public_jwk?: Json | null
+          retired_at?: string | null
+          state?: string
+          version: number
+          wrapped_dek: string
+        }
+        Update: {
+          activated_at?: string
+          algorithm?: string
+          created_at?: string
+          destroyed_at?: string | null
+          fingerprint?: string
+          id?: string
+          key_id?: string
+          project_id?: string
+          public_jwk?: Json | null
+          retired_at?: string | null
+          state?: string
+          version?: number
+          wrapped_dek?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kms_key_versions_key_id_fkey"
+            columns: ["key_id"]
+            isOneToOne: false
+            referencedRelation: "kms_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kms_key_versions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kms_keys: {
+        Row: {
+          algorithm: string
+          alias: string
+          created_at: string
+          created_by: string | null
+          current_version: number
+          id: string
+          next_rotation_at: string
+          project_id: string
+          purpose: string
+          rotation_days: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          algorithm?: string
+          alias: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          id?: string
+          next_rotation_at?: string
+          project_id: string
+          purpose?: string
+          rotation_days?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          algorithm?: string
+          alias?: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          id?: string
+          next_rotation_at?: string
+          project_id?: string
+          purpose?: string
+          rotation_days?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kms_keys_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_chunks: {
         Row: {
           chunk_index: number
