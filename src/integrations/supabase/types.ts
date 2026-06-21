@@ -1030,6 +1030,68 @@ export type Database = {
           },
         ]
       }
+      device_pairings: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          device_model: string | null
+          device_name: string | null
+          expires_at: string
+          id: string
+          last_seen_at: string | null
+          os_version: string | null
+          paired_at: string | null
+          platform: Database["public"]["Enums"]["device_platform"] | null
+          project_id: string
+          status: Database["public"]["Enums"]["pairing_status"]
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          device_model?: string | null
+          device_name?: string | null
+          expires_at?: string
+          id?: string
+          last_seen_at?: string | null
+          os_version?: string | null
+          paired_at?: string | null
+          platform?: Database["public"]["Enums"]["device_platform"] | null
+          project_id: string
+          status?: Database["public"]["Enums"]["pairing_status"]
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          device_model?: string | null
+          device_name?: string | null
+          expires_at?: string
+          id?: string
+          last_seen_at?: string | null
+          os_version?: string | null
+          paired_at?: string | null
+          platform?: Database["public"]["Enums"]["device_platform"] | null
+          project_id?: string
+          status?: Database["public"]["Enums"]["pairing_status"]
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_pairings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       e2e_tests: {
         Row: {
           created_at: string
@@ -1393,6 +1455,56 @@ export type Database = {
           },
         ]
       }
+      native_capabilities: {
+        Row: {
+          capability_key: string
+          config: Json
+          created_at: string
+          enabled: boolean
+          id: string
+          justification: string | null
+          platform: Database["public"]["Enums"]["cap_platform"]
+          project_id: string
+          risk: Database["public"]["Enums"]["cap_risk"]
+          updated_at: string
+          usage_description: string
+        }
+        Insert: {
+          capability_key: string
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          justification?: string | null
+          platform?: Database["public"]["Enums"]["cap_platform"]
+          project_id: string
+          risk?: Database["public"]["Enums"]["cap_risk"]
+          updated_at?: string
+          usage_description?: string
+        }
+        Update: {
+          capability_key?: string
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          justification?: string | null
+          platform?: Database["public"]["Enums"]["cap_platform"]
+          project_id?: string
+          risk?: Database["public"]["Enums"]["cap_risk"]
+          updated_at?: string
+          usage_description?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "native_capabilities_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1675,6 +1787,63 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      preview_sessions: {
+        Row: {
+          bundle_url: string | null
+          bundle_version: string | null
+          created_at: string
+          error: string | null
+          event_count: number
+          id: string
+          last_event_at: string | null
+          pairing_id: string | null
+          project_id: string
+          status: Database["public"]["Enums"]["preview_status"]
+          updated_at: string
+        }
+        Insert: {
+          bundle_url?: string | null
+          bundle_version?: string | null
+          created_at?: string
+          error?: string | null
+          event_count?: number
+          id?: string
+          last_event_at?: string | null
+          pairing_id?: string | null
+          project_id: string
+          status?: Database["public"]["Enums"]["preview_status"]
+          updated_at?: string
+        }
+        Update: {
+          bundle_url?: string | null
+          bundle_version?: string | null
+          created_at?: string
+          error?: string | null
+          event_count?: number
+          id?: string
+          last_event_at?: string | null
+          pairing_id?: string | null
+          project_id?: string
+          status?: Database["public"]["Enums"]["preview_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preview_sessions_pairing_id_fkey"
+            columns: ["pairing_id"]
+            isOneToOne: false
+            referencedRelation: "device_pairings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "preview_sessions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -3426,6 +3595,9 @@ export type Database = {
         | "acknowledged"
         | "failed"
         | "rejected"
+      cap_platform: "ios" | "android" | "both"
+      cap_risk: "low" | "medium" | "high"
+      device_platform: "ios" | "android" | "web"
       gate_kind: "lighthouse" | "smoke" | "a11y"
       gate_status: "pending" | "passed" | "failed" | "error"
       guardrail_action: "block" | "warn" | "redact"
@@ -3442,7 +3614,9 @@ export type Database = {
       mobile_build_type: "debug" | "release"
       mobile_platform: "ios" | "android"
       org_role: "owner" | "admin" | "editor" | "viewer"
+      pairing_status: "pending" | "paired" | "revoked" | "expired"
       policy_effect: "allow" | "deny"
+      preview_status: "idle" | "connecting" | "live" | "error"
       project_role: "owner" | "editor" | "viewer"
       push_status: "draft" | "scheduled" | "sending" | "sent" | "failed"
       push_target: "all" | "user" | "segment"
@@ -3594,6 +3768,9 @@ export const Constants = {
         "failed",
         "rejected",
       ],
+      cap_platform: ["ios", "android", "both"],
+      cap_risk: ["low", "medium", "high"],
+      device_platform: ["ios", "android", "web"],
       gate_kind: ["lighthouse", "smoke", "a11y"],
       gate_status: ["pending", "passed", "failed", "error"],
       guardrail_action: ["block", "warn", "redact"],
@@ -3611,7 +3788,9 @@ export const Constants = {
       mobile_build_type: ["debug", "release"],
       mobile_platform: ["ios", "android"],
       org_role: ["owner", "admin", "editor", "viewer"],
+      pairing_status: ["pending", "paired", "revoked", "expired"],
       policy_effect: ["allow", "deny"],
+      preview_status: ["idle", "connecting", "live", "error"],
       project_role: ["owner", "editor", "viewer"],
       push_status: ["draft", "scheduled", "sending", "sent", "failed"],
       push_target: ["all", "user", "segment"],
