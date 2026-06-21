@@ -537,6 +537,167 @@ export type Database = {
           },
         ]
       }
+      ai_cost_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          budget_id: string
+          created_at: string
+          current_spend: number
+          id: string
+          limit_usd: number
+          project_id: string
+          threshold: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          budget_id: string
+          created_at?: string
+          current_spend: number
+          id?: string
+          limit_usd: number
+          project_id: string
+          threshold: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          budget_id?: string
+          created_at?: string
+          current_spend?: number
+          id?: string
+          limit_usd?: number
+          project_id?: string
+          threshold?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_cost_alerts_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "ai_cost_budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_cost_alerts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_cost_budgets: {
+        Row: {
+          action: string
+          created_at: string
+          enabled: boolean
+          hard_pct: number
+          id: string
+          limit_usd: number
+          name: string
+          period: string
+          project_id: string
+          scope: string
+          soft_pct: number
+          updated_at: string
+        }
+        Insert: {
+          action?: string
+          created_at?: string
+          enabled?: boolean
+          hard_pct?: number
+          id?: string
+          limit_usd: number
+          name: string
+          period?: string
+          project_id: string
+          scope?: string
+          soft_pct?: number
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          enabled?: boolean
+          hard_pct?: number
+          id?: string
+          limit_usd?: number
+          name?: string
+          period?: string
+          project_id?: string
+          scope?: string
+          soft_pct?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_cost_budgets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_cost_ledger: {
+        Row: {
+          budget_id: string | null
+          cost_usd: number
+          id: string
+          input_tokens: number
+          model: string
+          occurred_at: string
+          output_tokens: number
+          project_id: string
+          provider: string
+          route: string | null
+          user_id: string | null
+        }
+        Insert: {
+          budget_id?: string | null
+          cost_usd?: number
+          id?: string
+          input_tokens?: number
+          model: string
+          occurred_at?: string
+          output_tokens?: number
+          project_id: string
+          provider: string
+          route?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          budget_id?: string | null
+          cost_usd?: number
+          id?: string
+          input_tokens?: number
+          model?: string
+          occurred_at?: string
+          output_tokens?: number
+          project_id?: string
+          provider?: string
+          route?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_cost_ledger_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "ai_cost_budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_cost_ledger_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_guardrail_violations: {
         Row: {
           action_taken: Database["public"]["Enums"]["guardrail_action"]
@@ -4625,6 +4786,167 @@ export type Database = {
         }
         Relationships: []
       }
+      plugin_installations: {
+        Row: {
+          config: Json
+          enabled: boolean
+          granted_permissions: Json
+          id: string
+          installed_at: string
+          installed_by: string
+          plugin_id: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          enabled?: boolean
+          granted_permissions?: Json
+          id?: string
+          installed_at?: string
+          installed_by?: string
+          plugin_id: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          enabled?: boolean
+          granted_permissions?: Json
+          id?: string
+          installed_at?: string
+          installed_by?: string
+          plugin_id?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plugin_installations_plugin_id_fkey"
+            columns: ["plugin_id"]
+            isOneToOne: false
+            referencedRelation: "plugins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plugin_installations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plugin_invocations: {
+        Row: {
+          action: string
+          created_at: string
+          duration_ms: number
+          error_message: string | null
+          id: string
+          input_hash: string | null
+          installation_id: string
+          invoked_by: string | null
+          outcome: string
+          output_hash: string | null
+          project_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          duration_ms?: number
+          error_message?: string | null
+          id?: string
+          input_hash?: string | null
+          installation_id: string
+          invoked_by?: string | null
+          outcome?: string
+          output_hash?: string | null
+          project_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          duration_ms?: number
+          error_message?: string | null
+          id?: string
+          input_hash?: string | null
+          installation_id?: string
+          invoked_by?: string | null
+          outcome?: string
+          output_hash?: string | null
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plugin_invocations_installation_id_fkey"
+            columns: ["installation_id"]
+            isOneToOne: false
+            referencedRelation: "plugin_installations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plugin_invocations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plugins: {
+        Row: {
+          created_at: string
+          entry_url: string
+          id: string
+          manifest: Json
+          name: string
+          permissions: Json
+          project_id: string
+          publisher: string
+          slug: string
+          status: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          entry_url: string
+          id?: string
+          manifest?: Json
+          name: string
+          permissions?: Json
+          project_id: string
+          publisher?: string
+          slug: string
+          status?: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          created_at?: string
+          entry_url?: string
+          id?: string
+          manifest?: Json
+          name?: string
+          permissions?: Json
+          project_id?: string
+          publisher?: string
+          slug?: string
+          status?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plugins_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       preview_sessions: {
         Row: {
           bundle_url: string | null
@@ -6804,6 +7126,110 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      whiteboard_strokes: {
+        Row: {
+          author_id: string
+          board_id: string
+          color: string
+          created_at: string
+          id: string
+          metadata: Json
+          points: Json
+          project_id: string
+          seq: number
+          stroke_width: number
+          tool: string
+        }
+        Insert: {
+          author_id?: string
+          board_id: string
+          color?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          points?: Json
+          project_id: string
+          seq?: number
+          stroke_width?: number
+          tool: string
+        }
+        Update: {
+          author_id?: string
+          board_id?: string
+          color?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          points?: Json
+          project_id?: string
+          seq?: number
+          stroke_width?: number
+          tool?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whiteboard_strokes_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "whiteboards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whiteboard_strokes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whiteboards: {
+        Row: {
+          background: string
+          created_at: string
+          created_by: string
+          height: number
+          id: string
+          name: string
+          project_id: string
+          updated_at: string
+          version: number
+          width: number
+        }
+        Insert: {
+          background?: string
+          created_at?: string
+          created_by?: string
+          height?: number
+          id?: string
+          name: string
+          project_id: string
+          updated_at?: string
+          version?: number
+          width?: number
+        }
+        Update: {
+          background?: string
+          created_at?: string
+          created_by?: string
+          height?: number
+          id?: string
+          name?: string
+          project_id?: string
+          updated_at?: string
+          version?: number
+          width?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whiteboards_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       zt_access_tokens: {
         Row: {
