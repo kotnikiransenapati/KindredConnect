@@ -52,6 +52,8 @@ import { CrashReportsPanel } from "@/components/workspace/CrashReportsPanel";
 import { StoreSubmissionsPanel } from "@/components/workspace/StoreSubmissionsPanel";
 import { ExperimentsPanel } from "@/components/workspace/ExperimentsPanel";
 import { BundleAnalyzerPanel } from "@/components/workspace/BundleAnalyzerPanel";
+import { HotReloadPanel } from "@/components/workspace/HotReloadPanel";
+import { CanaryPanel } from "@/components/workspace/CanaryPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
