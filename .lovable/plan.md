@@ -428,3 +428,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `BundleAnalyzerPanel.tsx`: platform switcher (ios/android/web), snapshots list with expandable breakdown chips + recommendations + top-100 assets table, capture tab (pipe-delimited paste of `path|kind|bytes|compressed?`), diff tab (base vs head with green/red delta totals).
 
 **Phase 12 batches remaining: 0** — growth experimentation + on-device shrink delivered.
+
+### Phase 13 — Live bridge & safe ship
+### P27 — Hot-reload bridge ✅
+- DB: `hot_reload_clients` (project-scoped, sha256-hashed client token, status idle/connected/reloading/error/disconnected, last_seq tracking, last_seen heartbeat), `hot_reload_bundles` (monotonic seq UNIQUE-per-project, kind full/delta/asset, checksum + size + changed_paths jsonb), `hot_reload_events` (append-only timeline). Role-scoped RLS.
+- `src/lib/hot-reload.functions.ts`: `registerClient` mints one-time `hrk_…` token (32 hex bytes, returned once, hashed at rest), `publishBundle` computes next monotonic seq atomically, hex-validates checksum, caps 500 MB, rate-limited 60/min, auto-logs publish event; `ackReload` flips client status + advances `last_seq` based on bundle metadata.
+- `HotReloadPanel.tsx`: 4-tab UI — Devices (pair w/ 60s auto-clearing token reveal + copy, per-device Reload/Revoke), Push (kind selector + checksum/size/paths/notes), Bundles (seq list), Events (8s poll).
+
+### P28 — Canary rollouts w/ auto-rollback ✅
+- DB: `canary_rollouts` (status FSM draft→active→paused→promoting→promoted/rolled_back/aborted, stages jsonb w/ percent+hold_minutes, crash_budget_ppm & error_budget_ppm), `canary_metrics` (per-stage sessions/crashes/errors/p95), `canary_events` (timeline). Role-scoped RLS.
+- `src/lib/canary.functions.ts`: validates stages strictly increasing, FSM-guarded transitions, `evaluateRollout(apply)` aggregates metrics for current stage → computes ppm → decisions advance | hold | rollback | complete | stale (low-sample <50 sessions = hold), `apply=true` auto-advances stage/promotes/rolls-back and records every change to `canary_events`.
+- `CanaryPanel.tsx`: new-rollout form (artifact + baseline + stages csv `percent:hold_min` + budgets), per-rollout row w/ Start/Pause/Resume/Rollback/Abort, inline metric recorder + Evaluate/Apply buttons w/ decision badge + ppm chips, expandable Metrics & Events drawer.
+
+**Phase 13 batches remaining: 0** — live bridge to devices + safe staged ship delivered.
