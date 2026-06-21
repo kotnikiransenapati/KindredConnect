@@ -7,6 +7,29 @@ import { applyOp, assertProjectRole, colorForUser, enforceRateLimit } from "./co
 const db = (ctx: any) => ctx.supabase as any;
 const OpKindZ = z.enum(["insert", "delete", "retain", "format", "annotation"]);
 
+// Legacy: per-file save used by the older CollabEditor realtime panel.
+export const upsertProjectFile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      projectId: z.string().uuid(),
+      path: z.string().min(1).max(400),
+      content: z.string().max(2_000_000),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const rl = await context.supabase.rpc("check_rate_limit", {
+      _user_id: context.userId, _bucket: "file_upsert", _window: "1 minute", _max: 120,
+    });
+    if (rl.data === false) throw new Error("Rate limit exceeded on file saves.");
+    const { error } = await context.supabase.from("project_files").upsert(
+      { project_id: data.projectId, path: data.path, content: data.content },
+      { onConflict: "project_id,path" },
+    );
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const listSessions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ projectId: z.string().uuid() }).parse(d))

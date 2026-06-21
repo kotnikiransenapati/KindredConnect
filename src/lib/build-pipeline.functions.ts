@@ -180,9 +180,9 @@ export const advanceRun = createServerFn({ method: "POST" })
 
     // Re-load jobs to compute new run status
     const { data: latest } = await db(context).from("build_pipeline_jobs").select("status, max_attempts, attempt").eq("run_id", data.runId);
-    const all = latest ?? [];
-    const anyFailedTerminally = all.some(j => j.status === "failed" && j.attempt >= j.max_attempts);
-    const allDone = all.every(j => ["succeeded", "skipped", "cancelled"].includes(j.status));
+    const all = (latest ?? []) as Array<{ status: string; max_attempts: number; attempt: number }>;
+    const anyFailedTerminally = all.some((j) => j.status === "failed" && j.attempt >= j.max_attempts);
+    const allDone = all.every((j) => ["succeeded", "skipped", "cancelled"].includes(j.status));
     let newStatus = run.status;
     let finished: string | null = null;
     if (anyFailedTerminally) { newStatus = "failed"; finished = new Date().toISOString(); }
