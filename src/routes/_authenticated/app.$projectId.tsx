@@ -64,6 +64,8 @@ import { AppClipsPanel } from "@/components/workspace/AppClipsPanel";
 import { OnDeviceLlmPanel } from "@/components/workspace/OnDeviceLlmPanel";
 import { KmsPanel } from "@/components/workspace/KmsPanel";
 import { AnomalyDetectionPanel } from "@/components/workspace/AnomalyDetectionPanel";
+import { CollabEditorPanel } from "@/components/workspace/CollabEditorPanel";
+import { BuildPipelinePanel } from "@/components/workspace/BuildPipelinePanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -211,6 +213,8 @@ function ProjectWorkspace() {
                 <OnDeviceLlmPanel projectId={projectId} />
                 <KmsPanel projectId={projectId} />
                 <AnomalyDetectionPanel projectId={projectId} />
+                <CollabEditorPanel projectId={projectId} />
+                <BuildPipelinePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

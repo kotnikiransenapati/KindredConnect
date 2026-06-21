@@ -512,3 +512,16 @@ Say **next phase** for Phase 18 (e.g., per-tenant KMS rotation, ML-powered anoma
 - `AnomalyDetectionPanel.tsx`: KPI strip, detector composer/list, sample simulator with immediate evaluation, incident triage board, and source/severity breakdowns. Mounted in the workspace.
 
 **Phase 18 batches remaining: 0** — sovereign cryptography + ML anomaly response delivered.
+
+### Phase 19 — Realtime collaboration & build orchestration
+### P39 — Live multiplayer collaborative editor ✅
+- DB: `collab_sessions` (per-(project,document_path) unique, status active/locked/archived, monotonic head_version, snapshot jsonb), `collab_participants` (user-scoped, color, cursor/selection jsonb, status, last_seen), `collab_ops` (UNIQUE (session,version), op_kind insert/delete/retain/format/annotation, parent_version, actor, client_id), `collab_comments` (anchor, body, thread parent, resolved_at). Viewer read, editor write.
+- `src/lib/collab.functions.ts` + `.server.ts`: `createSession` upserts on document_path; `joinSession` mints participant + deterministic color from sha-like user-id hash; `presenceHeartbeat` rate-limited 600/min; `submitOp` atomically computes next version (UNIQUE collision → "Version conflict — refresh"), applies retain/insert/delete to snapshot text; `listOps` with `sinceVersion` cursor; comments thread + resolve.
+- `CollabEditorPanel.tsx`: 4-tab UI — Editor (live snapshot + op composer for insert/delete), Presence (join + colored participant chips, auto-heartbeat every 12s), Ops log (v# + payload trail), Comments (thread w/ resolve toggle).
+
+### P40 — Build pipeline orchestrator ✅
+- DB: `build_pipelines` (name unique-per-project, trigger manual/push/schedule/webhook/release, stages jsonb DAG, concurrency 1–20), `build_pipeline_runs` (UNIQUE (pipeline,run_number), status FSM queued→running→succeeded/failed/cancelled/timed_out), `build_pipeline_jobs` (UNIQUE (run,stage_key), depends_on text[], attempt/max_attempts, logs_excerpt), `build_artifacts` (kind apk/aab/ipa/zip/wasm/image/log/sbom/source-map/other, size_bytes ≤8 GB, checksum, storage_path, retention_days 1–3650). Viewer read, editor write.
+- `src/lib/build-pipeline.functions.ts` + `.server.ts`: `validateStages` enforces unique keys + DAG order; `triggerRun` checks concurrency cap and computes next run_number; `advanceRun` calls `nextRunnable` (only stages whose deps all `succeeded`), deterministic `simulateOutcome` (~20% first-attempt flake, retries usually pass), updates job + auto-finalizes run when terminal; `cancelRun` flips pending/queued/running jobs + run to cancelled; `attachArtifact` + 30-day `pipelineStats` (total runs, success rate, failed, avg duration).
+- `BuildPipelinePanel.tsx`: KPI strip + 3-tab UI — Pipelines (list + trigger/delete), Compose (pipe-delimited stages composer w/ live parse), Runs (per-run advance/cancel + expandable jobs & artifacts w/ attach form).
+
+**Phase 19 batches remaining: 0** — live multiplayer editor + build pipeline orchestrator delivered. Say **next phase** for Phase 20 (e.g., agentic test author w/ Playwright + RL retry, multi-region failover orchestrator, or end-to-end signed-build provenance / SLSA).
