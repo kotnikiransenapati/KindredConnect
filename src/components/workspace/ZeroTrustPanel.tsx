@@ -55,9 +55,12 @@ export function ZeroTrustPanel() {
 
 function Body({ orgId, meUserId }: { orgId: string; meUserId: string }) {
   const qc = useQueryClient();
-  const policiesQ = useQuery({ queryKey: ["zt_pol", orgId], queryFn: () => useServerFn(listPolicies)({ data: { orgId } }) });
-  const tokensQ = useQuery({ queryKey: ["zt_tok", orgId], queryFn: () => useServerFn(listAccessTokens)({ data: { orgId } }) });
-  const decisionsQ = useQuery({ queryKey: ["zt_dec", orgId], queryFn: () => useServerFn(listDecisions)({ data: { orgId, limit: 50 } }), refetchInterval: 10_000 });
+  const listP = useServerFn(listPolicies);
+  const listT = useServerFn(listAccessTokens);
+  const listD = useServerFn(listDecisions);
+  const policiesQ = useQuery({ queryKey: ["zt_pol", orgId], queryFn: () => listP({ data: { orgId } }) });
+  const tokensQ = useQuery({ queryKey: ["zt_tok", orgId], queryFn: () => listT({ data: { orgId } }) });
+  const decisionsQ = useQuery({ queryKey: ["zt_dec", orgId], queryFn: () => listD({ data: { orgId, limit: 50 } }), refetchInterval: 10_000 });
 
   const upPol = useServerFn(upsertPolicy);
   const delPol = useServerFn(deletePolicy);
