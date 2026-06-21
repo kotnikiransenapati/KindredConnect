@@ -61,6 +61,7 @@ import { ReviewPromptsPanel } from "@/components/workspace/ReviewPromptsPanel";
 import { ReleaseNotesPanel } from "@/components/workspace/ReleaseNotesPanel";
 import { ResidencyPanel } from "@/components/workspace/ResidencyPanel";
 import { AppClipsPanel } from "@/components/workspace/AppClipsPanel";
+import { OnDeviceLlmPanel } from "@/components/workspace/OnDeviceLlmPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
