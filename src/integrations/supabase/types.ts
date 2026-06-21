@@ -893,6 +893,173 @@ export type Database = {
           },
         ]
       }
+      canary_events: {
+        Row: {
+          actor_id: string | null
+          detail: string | null
+          event: string
+          id: number
+          occurred_at: string
+          project_id: string
+          rollout_id: string
+          stage: number | null
+          status: Database["public"]["Enums"]["canary_status"] | null
+        }
+        Insert: {
+          actor_id?: string | null
+          detail?: string | null
+          event: string
+          id?: number
+          occurred_at?: string
+          project_id: string
+          rollout_id: string
+          stage?: number | null
+          status?: Database["public"]["Enums"]["canary_status"] | null
+        }
+        Update: {
+          actor_id?: string | null
+          detail?: string | null
+          event?: string
+          id?: number
+          occurred_at?: string
+          project_id?: string
+          rollout_id?: string
+          stage?: number | null
+          status?: Database["public"]["Enums"]["canary_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canary_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "canary_events_rollout_id_fkey"
+            columns: ["rollout_id"]
+            isOneToOne: false
+            referencedRelation: "canary_rollouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      canary_metrics: {
+        Row: {
+          crashes: number
+          errors: number
+          id: number
+          p95_latency_ms: number | null
+          project_id: string
+          recorded_at: string
+          rollout_id: string
+          sessions: number
+          source: string
+          stage: number
+        }
+        Insert: {
+          crashes?: number
+          errors?: number
+          id?: number
+          p95_latency_ms?: number | null
+          project_id: string
+          recorded_at?: string
+          rollout_id: string
+          sessions?: number
+          source?: string
+          stage: number
+        }
+        Update: {
+          crashes?: number
+          errors?: number
+          id?: number
+          p95_latency_ms?: number | null
+          project_id?: string
+          recorded_at?: string
+          rollout_id?: string
+          sessions?: number
+          source?: string
+          stage?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canary_metrics_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "canary_metrics_rollout_id_fkey"
+            columns: ["rollout_id"]
+            isOneToOne: false
+            referencedRelation: "canary_rollouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      canary_rollouts: {
+        Row: {
+          artifact_ref: string
+          baseline_ref: string | null
+          crash_budget_ppm: number
+          created_at: string
+          created_by: string | null
+          current_stage: number
+          ended_at: string | null
+          error_budget_ppm: number
+          id: string
+          name: string
+          project_id: string
+          stages: Json
+          started_at: string | null
+          status: Database["public"]["Enums"]["canary_status"]
+          updated_at: string
+        }
+        Insert: {
+          artifact_ref: string
+          baseline_ref?: string | null
+          crash_budget_ppm?: number
+          created_at?: string
+          created_by?: string | null
+          current_stage?: number
+          ended_at?: string | null
+          error_budget_ppm?: number
+          id?: string
+          name: string
+          project_id: string
+          stages?: Json
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["canary_status"]
+          updated_at?: string
+        }
+        Update: {
+          artifact_ref?: string
+          baseline_ref?: string | null
+          crash_budget_ppm?: number
+          created_at?: string
+          created_by?: string | null
+          current_stage?: number
+          ended_at?: string | null
+          error_budget_ppm?: number
+          id?: string
+          name?: string
+          project_id?: string
+          stages?: Json
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["canary_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canary_rollouts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ci_gates: {
         Row: {
           created_at: string
@@ -1515,6 +1682,158 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "feature_flags_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hot_reload_bundles: {
+        Row: {
+          bundle_url: string | null
+          changed_paths: Json
+          checksum: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          notes: string | null
+          project_id: string
+          seq: number
+          size_bytes: number
+        }
+        Insert: {
+          bundle_url?: string | null
+          changed_paths?: Json
+          checksum: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind: string
+          notes?: string | null
+          project_id: string
+          seq: number
+          size_bytes?: number
+        }
+        Update: {
+          bundle_url?: string | null
+          changed_paths?: Json
+          checksum?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          project_id?: string
+          seq?: number
+          size_bytes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hot_reload_bundles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hot_reload_clients: {
+        Row: {
+          client_token_hash: string
+          created_at: string
+          current_bundle_id: string | null
+          device_label: string | null
+          id: string
+          last_seen_at: string
+          last_seq: number
+          platform: string
+          project_id: string
+          status: string
+        }
+        Insert: {
+          client_token_hash: string
+          created_at?: string
+          current_bundle_id?: string | null
+          device_label?: string | null
+          id?: string
+          last_seen_at?: string
+          last_seq?: number
+          platform: string
+          project_id: string
+          status?: string
+        }
+        Update: {
+          client_token_hash?: string
+          created_at?: string
+          current_bundle_id?: string | null
+          device_label?: string | null
+          id?: string
+          last_seen_at?: string
+          last_seq?: number
+          platform?: string
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hot_reload_clients_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hot_reload_events: {
+        Row: {
+          bundle_id: string | null
+          client_id: string | null
+          detail: string | null
+          event: string
+          id: number
+          metadata: Json
+          occurred_at: string
+          project_id: string
+        }
+        Insert: {
+          bundle_id?: string | null
+          client_id?: string | null
+          detail?: string | null
+          event: string
+          id?: number
+          metadata?: Json
+          occurred_at?: string
+          project_id: string
+        }
+        Update: {
+          bundle_id?: string | null
+          client_id?: string | null
+          detail?: string | null
+          event?: string
+          id?: number
+          metadata?: Json
+          occurred_at?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hot_reload_events_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "hot_reload_bundles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hot_reload_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "hot_reload_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hot_reload_events_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -4162,6 +4481,14 @@ export type Database = {
         | "acknowledged"
         | "failed"
         | "rejected"
+      canary_status:
+        | "draft"
+        | "active"
+        | "paused"
+        | "promoting"
+        | "promoted"
+        | "rolled_back"
+        | "aborted"
       cap_platform: "ios" | "android" | "both"
       cap_risk: "low" | "medium" | "high"
       device_platform: "ios" | "android" | "web"
@@ -4340,6 +4667,15 @@ export const Constants = {
         "acknowledged",
         "failed",
         "rejected",
+      ],
+      canary_status: [
+        "draft",
+        "active",
+        "paused",
+        "promoting",
+        "promoted",
+        "rolled_back",
+        "aborted",
       ],
       cap_platform: ["ios", "android", "both"],
       cap_risk: ["low", "medium", "high"],
