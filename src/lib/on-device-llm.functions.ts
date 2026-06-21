@@ -5,6 +5,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+import { estimateBuildSize } from "./on-device-llm.shared";
+
 const FamilyZ = z.enum(["llama","phi","gemma","qwen","mistral","tinyllama","custom"]);
 const QuantZ = z.enum(["q4_k_m","q5_k_m","q8_0","fp16"]);
 const PlatformZ = z.enum(["ios","android","web"]);
@@ -13,27 +15,6 @@ const BuildStatusZ = z.enum(["queued","building","ready","failed","revoked"]);
 const SlugZ = z.string().regex(/^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/);
 const SemverZ = z.string().regex(/^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$/);
 const Sha256Z = z.string().regex(/^[a-f0-9]{64}$/);
-
-// Empirically calibrated multipliers vs fp16 base size.
-const QUANT_FACTOR: Record<string, number> = {
-  q4_k_m: 0.30,
-  q5_k_m: 0.36,
-  q8_0:   0.55,
-  fp16:   1.00,
-};
-// Platform overhead (runtime/tokenizer/metadata).
-const PLATFORM_OVERHEAD_MB: Record<string, number> = {
-  ios: 6,
-  android: 8,
-  web: 12, // WASM runtime
-};
-
-export function estimateBuildSize(baseSizeMb: number, quant: string, platform: string) {
-  const f = QUANT_FACTOR[quant] ?? 1;
-  const overhead = PLATFORM_OVERHEAD_MB[platform] ?? 8;
-  const mb = Math.round(baseSizeMb * f + overhead);
-  return { mb, bytes: mb * 1024 * 1024 };
-}
 
 async function assertRole(ctx: any, projectId: string, role: "viewer"|"editor"|"owner") {
   const { data, error } = await ctx.supabase.rpc("has_project_role", {
