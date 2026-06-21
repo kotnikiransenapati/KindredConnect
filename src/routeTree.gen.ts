@@ -27,6 +27,7 @@ import { Route as ApiPublicSitemapRouteImport } from './routes/api/public/sitema
 import { Route as ApiPublicRobotsRouteImport } from './routes/api/public/robots'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAppProjectIdRouteImport } from './routes/_authenticated/app.$projectId'
+import { Route as ApiPublicCrashIngestRouteImport } from './routes/api/public/crash/ingest'
 import { Route as ApiPublicAgentsTickRouteImport } from './routes/api/public/agents.tick'
 import { Route as ApiPublicScimV2SplatRouteImport } from './routes/api/public/scim/v2/$'
 
@@ -121,6 +122,11 @@ const AuthenticatedAppProjectIdRoute =
     path: '/$projectId',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const ApiPublicCrashIngestRoute = ApiPublicCrashIngestRouteImport.update({
+  id: '/api/public/crash/ingest',
+  path: '/api/public/crash/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAgentsTickRoute = ApiPublicAgentsTickRouteImport.update({
   id: '/api/public/agents/tick',
   path: '/api/public/agents/tick',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
   '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
+  '/api/public/crash/ingest': typeof ApiPublicCrashIngestRoute
   '/api/public/scim/v2/$': typeof ApiPublicScimV2SplatRoute
 }
 export interface FileRoutesByTo {
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
   '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
+  '/api/public/crash/ingest': typeof ApiPublicCrashIngestRoute
   '/api/public/scim/v2/$': typeof ApiPublicScimV2SplatRoute
 }
 export interface FileRoutesById {
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/api/public/sitemap': typeof ApiPublicSitemapRoute
   '/p/$slug/$version': typeof PSlugVersionRoute
   '/api/public/agents/tick': typeof ApiPublicAgentsTickRoute
+  '/api/public/crash/ingest': typeof ApiPublicCrashIngestRoute
   '/api/public/scim/v2/$': typeof ApiPublicScimV2SplatRoute
 }
 export interface FileRouteTypes {
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/p/$slug/$version'
     | '/api/public/agents/tick'
+    | '/api/public/crash/ingest'
     | '/api/public/scim/v2/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/p/$slug/$version'
     | '/api/public/agents/tick'
+    | '/api/public/crash/ingest'
     | '/api/public/scim/v2/$'
   id:
     | '__root__'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap'
     | '/p/$slug/$version'
     | '/api/public/agents/tick'
+    | '/api/public/crash/ingest'
     | '/api/public/scim/v2/$'
   fileRoutesById: FileRoutesById
 }
@@ -278,6 +290,7 @@ export interface RootRouteChildren {
   ApiPublicRobotsRoute: typeof ApiPublicRobotsRoute
   ApiPublicSitemapRoute: typeof ApiPublicSitemapRoute
   ApiPublicAgentsTickRoute: typeof ApiPublicAgentsTickRoute
+  ApiPublicCrashIngestRoute: typeof ApiPublicCrashIngestRoute
   ApiPublicScimV2SplatRoute: typeof ApiPublicScimV2SplatRoute
 }
 
@@ -409,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppProjectIdRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/api/public/crash/ingest': {
+      id: '/api/public/crash/ingest'
+      path: '/api/public/crash/ingest'
+      fullPath: '/api/public/crash/ingest'
+      preLoaderRoute: typeof ApiPublicCrashIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/agents/tick': {
       id: '/api/public/agents/tick'
       path: '/api/public/agents/tick'
@@ -478,6 +498,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicRobotsRoute: ApiPublicRobotsRoute,
   ApiPublicSitemapRoute: ApiPublicSitemapRoute,
   ApiPublicAgentsTickRoute: ApiPublicAgentsTickRoute,
+  ApiPublicCrashIngestRoute: ApiPublicCrashIngestRoute,
   ApiPublicScimV2SplatRoute: ApiPublicScimV2SplatRoute,
 }
 export const routeTree = rootRouteImport
