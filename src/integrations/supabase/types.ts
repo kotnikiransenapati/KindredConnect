@@ -2507,6 +2507,185 @@ export type Database = {
           },
         ]
       }
+      edge_ai_invocations: {
+        Row: {
+          capability: string
+          cost: number
+          created_at: string
+          error_message: string | null
+          id: string
+          input_tokens: number
+          latency_ms: number
+          model_id: string | null
+          outcome: string
+          output_tokens: number
+          project_id: string
+          route_id: string | null
+        }
+        Insert: {
+          capability: string
+          cost?: number
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          input_tokens?: number
+          latency_ms?: number
+          model_id?: string | null
+          outcome?: string
+          output_tokens?: number
+          project_id: string
+          route_id?: string | null
+        }
+        Update: {
+          capability?: string
+          cost?: number
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          input_tokens?: number
+          latency_ms?: number
+          model_id?: string | null
+          outcome?: string
+          output_tokens?: number
+          project_id?: string
+          route_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edge_ai_invocations_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "edge_ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edge_ai_invocations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edge_ai_invocations_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "edge_ai_routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edge_ai_models: {
+        Row: {
+          avg_latency_ms: number
+          capabilities: Json
+          context_window: number
+          cost_per_1k_input: number
+          cost_per_1k_output: number
+          created_at: string
+          id: string
+          model_id: string
+          project_id: string
+          provider: string
+          region: string
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          avg_latency_ms?: number
+          capabilities?: Json
+          context_window?: number
+          cost_per_1k_input?: number
+          cost_per_1k_output?: number
+          created_at?: string
+          id?: string
+          model_id: string
+          project_id: string
+          provider: string
+          region?: string
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          avg_latency_ms?: number
+          capabilities?: Json
+          context_window?: number
+          cost_per_1k_input?: number
+          cost_per_1k_output?: number
+          created_at?: string
+          id?: string
+          model_id?: string
+          project_id?: string
+          provider?: string
+          region?: string
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edge_ai_models_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edge_ai_routes: {
+        Row: {
+          capability: string
+          created_at: string
+          enabled: boolean
+          fallback_chain: Json
+          id: string
+          max_cost_per_1k: number | null
+          max_latency_ms: number | null
+          name: string
+          project_id: string
+          strategy: string
+          updated_at: string
+          weights: Json
+        }
+        Insert: {
+          capability: string
+          created_at?: string
+          enabled?: boolean
+          fallback_chain?: Json
+          id?: string
+          max_cost_per_1k?: number | null
+          max_latency_ms?: number | null
+          name: string
+          project_id: string
+          strategy?: string
+          updated_at?: string
+          weights?: Json
+        }
+        Update: {
+          capability?: string
+          created_at?: string
+          enabled?: boolean
+          fallback_chain?: Json
+          id?: string
+          max_cost_per_1k?: number | null
+          max_latency_ms?: number | null
+          name?: string
+          project_id?: string
+          strategy?: string
+          updated_at?: string
+          weights?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edge_ai_routes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edge_cache_purges: {
         Row: {
           created_at: string
@@ -2961,6 +3140,134 @@ export type Database = {
           },
         ]
       }
+      fleet_commands: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          device_id: string
+          dispatched_at: string | null
+          expires_at: string
+          id: string
+          issued_by: string
+          kind: string
+          payload: Json
+          project_id: string
+          result: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          device_id: string
+          dispatched_at?: string | null
+          expires_at?: string
+          id?: string
+          issued_by?: string
+          kind: string
+          payload?: Json
+          project_id: string
+          result?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          device_id?: string
+          dispatched_at?: string | null
+          expires_at?: string
+          id?: string
+          issued_by?: string
+          kind?: string
+          payload?: Json
+          project_id?: string
+          result?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_commands_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_commands_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_devices: {
+        Row: {
+          app_version: string | null
+          attributes: Json
+          channel: string
+          created_at: string
+          device_id: string
+          enrolled_by: string | null
+          id: string
+          label: string | null
+          last_ip: unknown
+          last_seen_at: string | null
+          os_version: string | null
+          platform: string
+          project_id: string
+          status: string
+          updated_at: string
+          user_label: string | null
+        }
+        Insert: {
+          app_version?: string | null
+          attributes?: Json
+          channel?: string
+          created_at?: string
+          device_id: string
+          enrolled_by?: string | null
+          id?: string
+          label?: string | null
+          last_ip?: unknown
+          last_seen_at?: string | null
+          os_version?: string | null
+          platform: string
+          project_id: string
+          status?: string
+          updated_at?: string
+          user_label?: string | null
+        }
+        Update: {
+          app_version?: string | null
+          attributes?: Json
+          channel?: string
+          created_at?: string
+          device_id?: string
+          enrolled_by?: string | null
+          id?: string
+          label?: string | null
+          last_ip?: unknown
+          last_seen_at?: string | null
+          os_version?: string | null
+          platform?: string
+          project_id?: string
+          status?: string
+          updated_at?: string
+          user_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_devices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hot_reload_bundles: {
         Row: {
           bundle_url: string | null
@@ -3106,6 +3413,116 @@ export type Database = {
           },
           {
             foreignKeyName: "hot_reload_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impact_findings: {
+        Row: {
+          affected_routes: Json
+          blast_radius: number
+          component: string | null
+          created_at: string
+          file_path: string
+          id: string
+          message: string
+          project_id: string
+          scan_id: string
+          severity: string
+        }
+        Insert: {
+          affected_routes?: Json
+          blast_radius?: number
+          component?: string | null
+          created_at?: string
+          file_path: string
+          id?: string
+          message: string
+          project_id: string
+          scan_id: string
+          severity?: string
+        }
+        Update: {
+          affected_routes?: Json
+          blast_radius?: number
+          component?: string | null
+          created_at?: string
+          file_path?: string
+          id?: string
+          message?: string
+          project_id?: string
+          scan_id?: string
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impact_findings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "impact_findings_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "impact_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impact_scans: {
+        Row: {
+          branch: string | null
+          changed_files: Json
+          created_at: string
+          created_by: string
+          id: string
+          project_id: string
+          reviewer_suggestions: Json
+          risk_level: string
+          risk_score: number
+          status: string
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch?: string | null
+          changed_files?: Json
+          created_at?: string
+          created_by?: string
+          id?: string
+          project_id: string
+          reviewer_suggestions?: Json
+          risk_level?: string
+          risk_score?: number
+          status?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch?: string | null
+          changed_files?: Json
+          created_at?: string
+          created_by?: string
+          id?: string
+          project_id?: string
+          reviewer_suggestions?: Json
+          risk_level?: string
+          risk_score?: number
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impact_scans_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"

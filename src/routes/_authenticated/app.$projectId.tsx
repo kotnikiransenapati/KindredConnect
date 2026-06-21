@@ -69,6 +69,9 @@ import { BuildPipelinePanel } from "@/components/workspace/BuildPipelinePanel";
 import { AiTestsPanel } from "@/components/workspace/AiTestsPanel";
 import { FailoverPanel } from "@/components/workspace/FailoverPanel";
 import { ProvenancePanel } from "@/components/workspace/ProvenancePanel";
+import { EdgeAiRouterPanel } from "@/components/workspace/EdgeAiRouterPanel";
+import { ImpactAnalysisPanel } from "@/components/workspace/ImpactAnalysisPanel";
+import { FleetPanel } from "@/components/workspace/FleetPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -221,6 +224,9 @@ function ProjectWorkspace() {
                 <AiTestsPanel projectId={projectId} />
                 <FailoverPanel projectId={projectId} />
                 <ProvenancePanel projectId={projectId} />
+                <EdgeAiRouterPanel projectId={projectId} />
+                <ImpactAnalysisPanel projectId={projectId} />
+                <FleetPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

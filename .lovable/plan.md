@@ -543,3 +543,21 @@ Say **next phase** for Phase 18 (e.g., per-tenant KMS rotation, ML-powered anoma
 - `ProvenancePanel.tsx`: KPI strip (attestations / verified / failed / sboms / critical / high vulns) + 3-tab UI (Attestations w/ Verify+Revoke, Create form w/ hex-digest validation, SBOM ingest w/ `name@version` + `CVE|severity` paste).
 
 **Phase 20 batches remaining: 0** — agentic QA + multi-region resilience + SLSA-signed supply chain delivered. Say **next phase** for Phase 21 (e.g., live edge AI inference router, project-wide impact-analysis bot, or fleet device management).
+
+### Phase 21 — Operations intelligence
+### P44 — Edge AI inference router ✅
+- DB: `edge_ai_models` (provider+model_id+region, cost/1k in/out, avg_latency, context_window, capabilities[]), `edge_ai_routes` (capability, strategy cheapest/fastest/weighted/fallback/round-robin, weights, fallback_chain, max cost/latency caps, enabled), `edge_ai_invocations` (route+model, tokens, latency, cost, outcome success/fallback/error/timeout). Project-role RLS.
+- `edge-ai-router.server.ts`: `selectModel` filters by capability + cost/latency caps then ranks per strategy; weighted uses seeded reservoir; fallback honors explicit chain.
+- `EdgeAiRouterPanel.tsx`: KPI strip (invocations/success/fallbacks/avg latency/30d cost), Models/Routes/Invoke/History tabs with full CRUD + simulated invocations that auto-fallback on primary failure.
+
+### P45 — Impact analysis bot ✅
+- DB: `impact_scans` (changed_files jsonb, risk_score 0–100, risk_level low/medium/high/critical, summary, reviewer_suggestions), `impact_findings` (per-file: component, severity, blast_radius, message, affected_routes). Project-role RLS.
+- `impact-analysis.server.ts`: heuristic classifier — HIGH patterns (migrations/auth/payment/webhook/security) + MED (api/server/functions/config). Severity = pattern × churn, blast radius = base + churn/25. Reviewer suggestions auto-assigned per component touched.
+- `ImpactAnalysisPanel.tsx`: Run-scan tab (title/branch + path|adds|dels textarea), History tab (risk badges + reviewers), Findings tab (per-file severity + blast radius + routes).
+
+### P46 — Fleet device management ✅
+- DB: `fleet_devices` (platform ios/android/web/desktop/wearable/tv, os/app version, channel production/beta/internal/dev, status active/idle/offline/quarantined/retired, attributes jsonb, last_seen_at + last_ip), `fleet_commands` (kind wipe/lock/unlock/refresh-config/push-update/reboot/collect-logs/quarantine/release, status FSM queued→dispatched→acknowledged→succeeded/failed/expired/cancelled, 24h auto-expire). Project-role RLS.
+- `fleet.functions.ts`: `issueCommand` blocks destructive (wipe/lock/quarantine) without explicit confirmation, blocks retired devices; `advanceCommand` enforces FSM with auto-stamped dispatched_at/completed_at; `fleetStats` rolls up by status + platform + cmd status.
+- `FleetPanel.tsx`: KPI strip (devices/commands/active/quarantined), Devices tab (heartbeat + delete + last-seen), Enroll tab (multi-platform), Command tab (destructive confirmation switch), Queue tab (advance/cancel).
+
+**Phase 21 batches remaining: 0** — operations intelligence layer delivered.
