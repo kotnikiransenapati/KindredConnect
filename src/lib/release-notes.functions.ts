@@ -235,7 +235,10 @@ export const updateReleaseNote = createServerFn({ method: "POST" })
   }).parse(i))
   .handler(async ({ data, context }) => {
     await assertEditor(context, data.projectId);
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      summary_md?: string; highlights?: string[]; breaking?: string[];
+      status?: "draft"|"approved"|"published"|"archived"; published_at?: string;
+    } = {};
     if (data.summary_md !== undefined) patch.summary_md = data.summary_md;
     if (data.highlights !== undefined) patch.highlights = data.highlights;
     if (data.breaking !== undefined) patch.breaking = data.breaking;
