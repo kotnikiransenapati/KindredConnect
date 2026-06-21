@@ -735,6 +735,125 @@ export type Database = {
           },
         ]
       }
+      app_clip_invocations: {
+        Row: {
+          clip_id: string
+          converted_to_install: boolean
+          country: string | null
+          created_at: string
+          device_model: string | null
+          id: string
+          platform: string
+          project_id: string
+          session_ms: number
+          source: string
+        }
+        Insert: {
+          clip_id: string
+          converted_to_install?: boolean
+          country?: string | null
+          created_at?: string
+          device_model?: string | null
+          id?: string
+          platform: string
+          project_id: string
+          session_ms?: number
+          source: string
+        }
+        Update: {
+          clip_id?: string
+          converted_to_install?: boolean
+          country?: string | null
+          created_at?: string
+          device_model?: string | null
+          id?: string
+          platform?: string
+          project_id?: string
+          session_ms?: number
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_clip_invocations_clip_id_fkey"
+            columns: ["clip_id"]
+            isOneToOne: false
+            referencedRelation: "app_clips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "app_clip_invocations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      app_clips: {
+        Row: {
+          advance_experience: boolean
+          associations: Json
+          bundle_size_kb: number
+          created_at: string
+          created_by: string | null
+          entry_route: string
+          id: string
+          invocation_url: string
+          platform: string
+          project_id: string
+          settings: Json
+          slug: string
+          status: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          advance_experience?: boolean
+          associations?: Json
+          bundle_size_kb?: number
+          created_at?: string
+          created_by?: string | null
+          entry_route?: string
+          id?: string
+          invocation_url: string
+          platform?: string
+          project_id: string
+          settings?: Json
+          slug: string
+          status?: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          advance_experience?: boolean
+          associations?: Json
+          bundle_size_kb?: number
+          created_at?: string
+          created_by?: string | null
+          entry_route?: string
+          id?: string
+          invocation_url?: string
+          platform?: string
+          project_id?: string
+          settings?: Json
+          slug?: string
+          status?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_clips_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_compression_jobs: {
         Row: {
           attempts: number
