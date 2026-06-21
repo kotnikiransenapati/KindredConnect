@@ -201,6 +201,8 @@ function ProjectWorkspace() {
                 <EdgeCachePanel projectId={projectId} />
                 <PasskeysPanel projectId={projectId} />
                 <ReviewPromptsPanel projectId={projectId} />
+                <ReleaseNotesPanel projectId={projectId} />
+                <ResidencyPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
