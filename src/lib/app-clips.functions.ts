@@ -105,7 +105,7 @@ export const upsertClip = createServerFn({ method: "POST" })
 
     const { data: saved, error } = await context.supabase
       .from("app_clips")
-      .upsert(row, { onConflict: "id" })
+      .upsert(row as any, { onConflict: "id" })
       .select("*")
       .single();
     if (error) throw new Error(error.message);
