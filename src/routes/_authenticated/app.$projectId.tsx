@@ -50,6 +50,8 @@ import { DevicePairingPanel } from "@/components/workspace/DevicePairingPanel";
 import { NativeCapabilitiesPanel } from "@/components/workspace/NativeCapabilitiesPanel";
 import { CrashReportsPanel } from "@/components/workspace/CrashReportsPanel";
 import { StoreSubmissionsPanel } from "@/components/workspace/StoreSubmissionsPanel";
+import { ExperimentsPanel } from "@/components/workspace/ExperimentsPanel";
+import { BundleAnalyzerPanel } from "@/components/workspace/BundleAnalyzerPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
