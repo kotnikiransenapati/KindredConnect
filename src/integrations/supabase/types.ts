@@ -2894,6 +2894,154 @@ export type Database = {
         }
         Relationships: []
       }
+      usage_aggregates: {
+        Row: {
+          computed_at: string
+          day: string
+          event_count: number
+          id: string
+          metric_key: string
+          org_id: string
+          total: number
+        }
+        Insert: {
+          computed_at?: string
+          day: string
+          event_count?: number
+          id?: string
+          metric_key: string
+          org_id: string
+          total?: number
+        }
+        Update: {
+          computed_at?: string
+          day?: string
+          event_count?: number
+          id?: string
+          metric_key?: string
+          org_id?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_aggregates_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          idempotency_key: string | null
+          metric_key: string
+          occurred_at: string
+          org_id: string
+          project_id: string | null
+          properties: Json
+          quantity: number
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string | null
+          metric_key: string
+          occurred_at?: string
+          org_id: string
+          project_id?: string | null
+          properties?: Json
+          quantity: number
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string | null
+          metric_key?: string
+          occurred_at?: string
+          org_id?: string
+          project_id?: string | null
+          properties?: Json
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_invoices: {
+        Row: {
+          created_at: string
+          currency: string
+          generated_at: string
+          generated_by: string | null
+          id: string
+          line_items: Json
+          org_id: string
+          paid_at: string | null
+          period_end: string
+          period_start: string
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          line_items?: Json
+          org_id: string
+          paid_at?: string | null
+          period_end: string
+          period_start: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          line_items?: Json
+          org_id?: string
+          paid_at?: string | null
+          period_end?: string
+          period_start?: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_invoices_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       usage_ledger: {
         Row: {
           cost_cents: number
@@ -2945,6 +3093,59 @@ export type Database = {
           },
         ]
       }
+      usage_meters: {
+        Row: {
+          aggregation: Database["public"]["Enums"]["usage_aggregation"]
+          created_at: string
+          display_name: string
+          enabled: boolean
+          hard_cap: number | null
+          id: string
+          included_quota: number
+          metric_key: string
+          org_id: string
+          price_per_unit_cents: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          aggregation?: Database["public"]["Enums"]["usage_aggregation"]
+          created_at?: string
+          display_name: string
+          enabled?: boolean
+          hard_cap?: number | null
+          id?: string
+          included_quota?: number
+          metric_key: string
+          org_id: string
+          price_per_unit_cents?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          aggregation?: Database["public"]["Enums"]["usage_aggregation"]
+          created_at?: string
+          display_name?: string
+          enabled?: boolean
+          hard_cap?: number | null
+          id?: string
+          included_quota?: number
+          metric_key?: string
+          org_id?: string
+          price_per_unit_cents?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_meters_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_preferences: {
         Row: {
           created_at: string
@@ -2965,6 +3166,181 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      zt_access_tokens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          issued_to_user_id: string
+          label: string
+          last_used_at: string | null
+          org_id: string
+          resource_pattern: string
+          revoked_at: string | null
+          scope: string[]
+          token_hash: string
+          token_hint: string
+          use_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          id?: string
+          issued_to_user_id: string
+          label: string
+          last_used_at?: string | null
+          org_id: string
+          resource_pattern: string
+          revoked_at?: string | null
+          scope?: string[]
+          token_hash: string
+          token_hint: string
+          use_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          issued_to_user_id?: string
+          label?: string
+          last_used_at?: string | null
+          org_id?: string
+          resource_pattern?: string
+          revoked_at?: string | null
+          scope?: string[]
+          token_hash?: string
+          token_hint?: string
+          use_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zt_access_tokens_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zt_decisions: {
+        Row: {
+          action: string
+          context: Json
+          decision: Database["public"]["Enums"]["policy_effect"]
+          id: string
+          matched_policy_id: string | null
+          occurred_at: string
+          org_id: string
+          reason: string | null
+          resource: string
+          subject_id: string | null
+          subject_kind: string
+        }
+        Insert: {
+          action: string
+          context?: Json
+          decision: Database["public"]["Enums"]["policy_effect"]
+          id?: string
+          matched_policy_id?: string | null
+          occurred_at?: string
+          org_id: string
+          reason?: string | null
+          resource: string
+          subject_id?: string | null
+          subject_kind?: string
+        }
+        Update: {
+          action?: string
+          context?: Json
+          decision?: Database["public"]["Enums"]["policy_effect"]
+          id?: string
+          matched_policy_id?: string | null
+          occurred_at?: string
+          org_id?: string
+          reason?: string | null
+          resource?: string
+          subject_id?: string | null
+          subject_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zt_decisions_matched_policy_id_fkey"
+            columns: ["matched_policy_id"]
+            isOneToOne: false
+            referencedRelation: "zt_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zt_decisions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zt_policies: {
+        Row: {
+          action_pattern: string
+          conditions: Json
+          created_at: string
+          created_by: string | null
+          description: string | null
+          effect: Database["public"]["Enums"]["policy_effect"]
+          enabled: boolean
+          id: string
+          name: string
+          org_id: string
+          priority: number
+          resource_pattern: string
+          subject: Json
+          updated_at: string
+        }
+        Insert: {
+          action_pattern: string
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          effect?: Database["public"]["Enums"]["policy_effect"]
+          enabled?: boolean
+          id?: string
+          name: string
+          org_id: string
+          priority?: number
+          resource_pattern: string
+          subject?: Json
+          updated_at?: string
+        }
+        Update: {
+          action_pattern?: string
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          effect?: Database["public"]["Enums"]["policy_effect"]
+          enabled?: boolean
+          id?: string
+          name?: string
+          org_id?: string
+          priority?: number
+          resource_pattern?: string
+          subject?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zt_policies_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -3033,6 +3409,14 @@ export type Database = {
         }[]
       }
       next_deployment_version: { Args: { _slug: string }; Returns: number }
+      usage_period_totals: {
+        Args: { _from: string; _org_id: string; _to: string }
+        Returns: {
+          event_count: number
+          metric_key: string
+          total: number
+        }[]
+      }
     }
     Enums: {
       a2a_agent_status: "active" | "paused" | "revoked"
@@ -3053,10 +3437,12 @@ export type Database = {
         | "topic_filter"
         | "rate_cap"
         | "secret_leak"
+      invoice_status: "draft" | "issued" | "paid" | "void"
       mobile_build_status: "queued" | "building" | "success" | "failed"
       mobile_build_type: "debug" | "release"
       mobile_platform: "ios" | "android"
       org_role: "owner" | "admin" | "editor" | "viewer"
+      policy_effect: "allow" | "deny"
       project_role: "owner" | "editor" | "viewer"
       push_status: "draft" | "scheduled" | "sending" | "sent" | "failed"
       push_target: "all" | "user" | "segment"
@@ -3072,6 +3458,7 @@ export type Database = {
         | "jumpcloud"
         | "generic_saml"
       sso_status: "pending" | "active" | "disabled" | "error"
+      usage_aggregation: "sum" | "max" | "last" | "count"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3219,10 +3606,12 @@ export const Constants = {
         "rate_cap",
         "secret_leak",
       ],
+      invoice_status: ["draft", "issued", "paid", "void"],
       mobile_build_status: ["queued", "building", "success", "failed"],
       mobile_build_type: ["debug", "release"],
       mobile_platform: ["ios", "android"],
       org_role: ["owner", "admin", "editor", "viewer"],
+      policy_effect: ["allow", "deny"],
       project_role: ["owner", "editor", "viewer"],
       push_status: ["draft", "scheduled", "sending", "sent", "failed"],
       push_target: ["all", "user", "segment"],
@@ -3239,6 +3628,7 @@ export const Constants = {
         "generic_saml",
       ],
       sso_status: ["pending", "active", "disabled", "error"],
+      usage_aggregation: ["sum", "max", "last", "count"],
     },
   },
 } as const
