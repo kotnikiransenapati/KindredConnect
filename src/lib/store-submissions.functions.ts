@@ -173,7 +173,8 @@ export const submitToStore = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: sub, error } = await context.supabase.from("store_submissions").select("*").eq("id", data.submissionId).single();
     if (error) throw error;
-    if (!sub.validation_report?.ok) throw new Error("Submission has not passed validation.");
+    const report = (sub.validation_report ?? {}) as { ok?: boolean };
+    if (!report.ok) throw new Error("Submission has not passed validation.");
     if (!ALLOWED_TRANSITIONS.draft.includes("submitted") && sub.status !== "draft") {
       throw new Error(`Cannot submit from status "${sub.status}".`);
     }
