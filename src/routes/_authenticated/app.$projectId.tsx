@@ -48,6 +48,8 @@ import { UsageMeteringPanel } from "@/components/workspace/UsageMeteringPanel";
 import { ZeroTrustPanel } from "@/components/workspace/ZeroTrustPanel";
 import { DevicePairingPanel } from "@/components/workspace/DevicePairingPanel";
 import { NativeCapabilitiesPanel } from "@/components/workspace/NativeCapabilitiesPanel";
+import { CrashReportsPanel } from "@/components/workspace/CrashReportsPanel";
+import { StoreSubmissionsPanel } from "@/components/workspace/StoreSubmissionsPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
