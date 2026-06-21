@@ -165,7 +165,7 @@ function RolloutRow({ ro, projectId, onStart, onEval, onTrans, fetchEvents, fetc
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
           <div>
             <div className="font-semibold mb-1">Metrics</div>
-            {(mQ.data ?? []).slice(0, 20).map((m: any) => (
+            {((mQ.data as any[]) ?? []).slice(0, 20).map((m: any) => (
               <div key={m.id} className="border-b py-1 grid grid-cols-4 gap-1">
                 <span>stage {m.stage}</span>
                 <span>s={m.sessions}</span>
@@ -173,18 +173,18 @@ function RolloutRow({ ro, projectId, onStart, onEval, onTrans, fetchEvents, fetc
                 <span>e={m.errors}</span>
               </div>
             ))}
-            {!mQ.data?.length && <div className="text-muted-foreground">No metrics.</div>}
+            {!((mQ.data as any[]) ?? []).length && <div className="text-muted-foreground">No metrics.</div>}
           </div>
           <div>
             <div className="font-semibold mb-1">Events</div>
-            {(evQ.data ?? []).map((e: any) => (
+            {((evQ.data as any[]) ?? []).map((e: any) => (
               <div key={e.id} className="border-l-2 border-muted pl-2 py-0.5">
                 <span className="font-mono">{e.event}</span>
                 {e.status && <Badge variant="outline" className="ml-1">{e.status}</Badge>}
                 {e.detail && <span className="text-muted-foreground"> — {e.detail}</span>}
               </div>
             ))}
-            {!evQ.data?.length && <div className="text-muted-foreground">No events.</div>}
+            {!((evQ.data as any[]) ?? []).length && <div className="text-muted-foreground">No events.</div>}
           </div>
         </div>
       )}
