@@ -189,6 +189,8 @@ function ProjectWorkspace() {
                 <StoreSubmissionsPanel projectId={projectId} />
                 <ExperimentsPanel projectId={projectId} />
                 <BundleAnalyzerPanel projectId={projectId} />
+                <HotReloadPanel projectId={projectId} />
+                <CanaryPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
