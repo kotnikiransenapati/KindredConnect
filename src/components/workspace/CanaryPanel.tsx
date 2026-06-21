@@ -77,8 +77,8 @@ export function CanaryPanel({ projectId }: { projectId: string }) {
             {(rollsQ.data ?? []).map((r: any) => (
               <RolloutRow key={r.id} ro={r} projectId={projectId}
                 onStart={() => _start({ data: { id: r.id, projectId } }).then(() => qc.invalidateQueries({ queryKey: ["canary", projectId] }))}
-                onEval={(apply) => _eval({ data: { id: r.id, projectId, apply } })}
-                onTrans={(s) => _trans({ data: { id: r.id, projectId, status: s as any } }).then(() => qc.invalidateQueries({ queryKey: ["canary", projectId] }))}
+                onEval={(apply: boolean) => _eval({ data: { id: r.id, projectId, apply } })}
+                onTrans={(s: string) => _trans({ data: { id: r.id, projectId, status: s as any } }).then(() => qc.invalidateQueries({ queryKey: ["canary", projectId] }))}
                 fetchEvents={() => _events({ data: { rolloutId: r.id } })}
                 fetchMetrics={() => _metrics({ data: { rolloutId: r.id } })}
                 recMetric={(v: any) => _rec({ data: { rolloutId: r.id, projectId, ...v } })}
