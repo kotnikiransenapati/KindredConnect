@@ -2539,6 +2539,194 @@ export type Database = {
           },
         ]
       }
+      on_device_model_builds: {
+        Row: {
+          artifact_path: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          manifest: Json
+          model_id: string
+          project_id: string
+          quantization: string
+          sha256: string | null
+          signature: string | null
+          size_bytes: number
+          status: string
+          target_platform: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          artifact_path?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          manifest?: Json
+          model_id: string
+          project_id: string
+          quantization: string
+          sha256?: string | null
+          signature?: string | null
+          size_bytes?: number
+          status?: string
+          target_platform: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          artifact_path?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          manifest?: Json
+          model_id?: string
+          project_id?: string
+          quantization?: string
+          sha256?: string | null
+          signature?: string | null
+          size_bytes?: number
+          status?: string
+          target_platform?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "on_device_model_builds_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "on_device_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "on_device_model_builds_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      on_device_model_downloads: {
+        Row: {
+          build_id: string
+          bytes_transferred: number
+          created_at: string
+          device_class: string | null
+          duration_ms: number
+          error: string | null
+          id: string
+          platform: string
+          project_id: string
+          success: boolean
+        }
+        Insert: {
+          build_id: string
+          bytes_transferred?: number
+          created_at?: string
+          device_class?: string | null
+          duration_ms?: number
+          error?: string | null
+          id?: string
+          platform: string
+          project_id: string
+          success?: boolean
+        }
+        Update: {
+          build_id?: string
+          bytes_transferred?: number
+          created_at?: string
+          device_class?: string | null
+          duration_ms?: number
+          error?: string | null
+          id?: string
+          platform?: string
+          project_id?: string
+          success?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "on_device_model_downloads_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "on_device_model_builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "on_device_model_downloads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      on_device_models: {
+        Row: {
+          base_size_mb: number
+          capabilities: Json
+          context_window: number
+          created_at: string
+          created_by: string | null
+          default_quant: string
+          family: string
+          id: string
+          license: string
+          name: string
+          platforms: string[]
+          project_id: string
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          base_size_mb: number
+          capabilities?: Json
+          context_window?: number
+          created_at?: string
+          created_by?: string | null
+          default_quant?: string
+          family: string
+          id?: string
+          license?: string
+          name: string
+          platforms?: string[]
+          project_id: string
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          base_size_mb?: number
+          capabilities?: Json
+          context_window?: number
+          created_at?: string
+          created_by?: string | null
+          default_quant?: string
+          family?: string
+          id?: string
+          license?: string
+          name?: string
+          platforms?: string[]
+          project_id?: string
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "on_device_models_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_invitations: {
         Row: {
           accepted_at: string | null
