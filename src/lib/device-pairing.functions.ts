@@ -193,7 +193,12 @@ export const updatePreviewSession = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = { last_event_at: new Date().toISOString() };
+    const patch: {
+      last_event_at: string;
+      status?: "idle" | "connecting" | "live" | "error";
+      error?: string | null;
+      event_count?: number;
+    } = { last_event_at: new Date().toISOString() };
     if (data.status) patch.status = data.status;
     if (data.error !== undefined) patch.error = data.error;
     if (data.incrementEvents) {
