@@ -467,3 +467,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `ReviewPromptsPanel.tsx`: KPI strip (responses/avg★/sentiment/→store/→support), Campaigns tab (full CRUD w/ trigger-aware event field, threshold, cooldown, enable switch), Simulate tab (star picker + comment textarea → live route + sentiment toast), Recent tab (5-star render + route badge per response).
 
 **Phase 15 batches remaining: 0** — identity (passkeys) + feedback (sentiment-routed reviews) layer delivered.
+
+### Phase 16 — Ship narrative & sovereign data
+### P33 — AI release-notes generator ✅
+- DB: `release_notes` (version, channel production/beta/internal, platform ios/android/web/all, tone friendly/formal/playful/technical, language, source_commits jsonb, summary_md, highlights/breaking jsonb, status draft→approved→published→archived). Role-scoped RLS via `has_project_role` (viewer read, editor write, owner delete).
+- `src/lib/release-notes.functions.ts`: conventional-commit classifier (feat/fix/perf/breaking/chore) + tone-seeded opener picker → deterministic markdown summary/highlights/breaking. Optional Lovable AI Gateway path (gemini-2.5-flash) with strict JSON output; auto-falls back to heuristic on any failure. `generateReleaseNotes` rate-limited 20/min, persists as draft; `updateReleaseNote` auto-stamps `published_at` on publish transition.
+- `ReleaseNotesPanel.tsx`: Generate tab (version/channel/platform/tone/language + multi-line commit textarea) and History tab (per-note card with status badges, highlight chips, monospace markdown preview, breaking-changes callout, Approve/Publish/Delete actions).
+
+### P34 — Per-tenant data residency ✅
+- DB: `residency_zones` (catalog of 6 seeded zones: us-east-1, us-west-2, eu-west-1, eu-central-1, ap-south-1, ap-northeast-1 with compliance tags), `project_residency` (UNIQUE per project, primary_zone, backup_zone, dataclass jsonb routing pii/logs/backups, encryption_mode platform/cmek/byok), `residency_audit` (append-only). Owner-only writes via `has_project_role(_,_,'owner')`, viewer reads, server-side trigger refreshes updated_at.
+- `src/lib/residency.functions.ts`: `setResidency` validates both zones against enabled catalog, blocks identical primary/backup, upserts with onConflict project_id, logs every change to `residency_audit` with from/to/reason/metadata; rate-limited 10/min. `listZones`/`getResidency`/`listResidencyAudit` for the UI.
+- `ResidencyPanel.tsx`: Pin tab (primary/backup zone selectors filtered against current primary, encryption mode selector, live compliance chip strip for selected zone, reason input) and Audit tab (chronological change log with action/from→to badges + timestamps).
+
+**Phase 16 batches remaining: 0** — AI ship-narrative + sovereign data layer delivered.

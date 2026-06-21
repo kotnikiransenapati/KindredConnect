@@ -58,6 +58,8 @@ import { AssetCompressionPanel } from "@/components/workspace/AssetCompressionPa
 import { EdgeCachePanel } from "@/components/workspace/EdgeCachePanel";
 import { PasskeysPanel } from "@/components/workspace/PasskeysPanel";
 import { ReviewPromptsPanel } from "@/components/workspace/ReviewPromptsPanel";
+import { ReleaseNotesPanel } from "@/components/workspace/ReleaseNotesPanel";
+import { ResidencyPanel } from "@/components/workspace/ResidencyPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -199,6 +201,8 @@ function ProjectWorkspace() {
                 <EdgeCachePanel projectId={projectId} />
                 <PasskeysPanel projectId={projectId} />
                 <ReviewPromptsPanel projectId={projectId} />
+                <ReleaseNotesPanel projectId={projectId} />
+                <ResidencyPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

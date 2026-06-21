@@ -3010,6 +3010,67 @@ export type Database = {
           },
         ]
       }
+      project_residency: {
+        Row: {
+          backup_zone: string | null
+          created_at: string
+          dataclass: Json
+          encryption_mode: string
+          id: string
+          pinned_at: string
+          primary_zone: string
+          project_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          backup_zone?: string | null
+          created_at?: string
+          dataclass?: Json
+          encryption_mode?: string
+          id?: string
+          pinned_at?: string
+          primary_zone: string
+          project_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          backup_zone?: string | null
+          created_at?: string
+          dataclass?: Json
+          encryption_mode?: string
+          id?: string
+          pinned_at?: string
+          primary_zone?: string
+          project_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_residency_backup_zone_fkey"
+            columns: ["backup_zone"]
+            isOneToOne: false
+            referencedRelation: "residency_zones"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "project_residency_primary_zone_fkey"
+            columns: ["primary_zone"]
+            isOneToOne: false
+            referencedRelation: "residency_zones"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "project_residency_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_secrets: {
         Row: {
           auth_tag: string
@@ -3313,6 +3374,148 @@ export type Database = {
           count?: number
           user_id?: string
           window_start?: string
+        }
+        Relationships: []
+      }
+      release_notes: {
+        Row: {
+          breaking: Json
+          channel: string
+          created_at: string
+          created_by: string | null
+          highlights: Json
+          id: string
+          language: string
+          platform: string
+          project_id: string
+          published_at: string | null
+          source_commits: Json
+          status: string
+          summary_md: string
+          tone: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          breaking?: Json
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          highlights?: Json
+          id?: string
+          language?: string
+          platform?: string
+          project_id: string
+          published_at?: string | null
+          source_commits?: Json
+          status?: string
+          summary_md?: string
+          tone?: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          breaking?: Json
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          highlights?: Json
+          id?: string
+          language?: string
+          platform?: string
+          project_id?: string
+          published_at?: string | null
+          source_commits?: Json
+          status?: string
+          summary_md?: string
+          tone?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_notes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      residency_audit: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          from_zone: string | null
+          id: string
+          metadata: Json
+          project_id: string
+          reason: string | null
+          to_zone: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          from_zone?: string | null
+          id?: string
+          metadata?: Json
+          project_id: string
+          reason?: string | null
+          to_zone?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          from_zone?: string | null
+          id?: string
+          metadata?: Json
+          project_id?: string
+          reason?: string | null
+          to_zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "residency_audit_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      residency_zones: {
+        Row: {
+          code: string
+          compliance: Json
+          country: string
+          created_at: string
+          display_name: string
+          enabled: boolean
+          id: string
+          provider: string
+        }
+        Insert: {
+          code: string
+          compliance?: Json
+          country: string
+          created_at?: string
+          display_name: string
+          enabled?: boolean
+          id?: string
+          provider: string
+        }
+        Update: {
+          code?: string
+          compliance?: Json
+          country?: string
+          created_at?: string
+          display_name?: string
+          enabled?: boolean
+          id?: string
+          provider?: string
         }
         Relationships: []
       }
