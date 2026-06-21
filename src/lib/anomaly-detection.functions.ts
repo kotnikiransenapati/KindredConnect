@@ -196,7 +196,7 @@ export const runDetections = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     const results = [];
     for (const detector of ((detectorRows ?? []) as DetectorRow[])) {
-      const { data: rows } = await context.supabase
+      const { data: rows } = await db(context)
         .from("anomaly_samples")
         .select("id, metric_value, measured_at")
         .eq("detector_id", detector.id)
