@@ -56,6 +56,8 @@ import { HotReloadPanel } from "@/components/workspace/HotReloadPanel";
 import { CanaryPanel } from "@/components/workspace/CanaryPanel";
 import { AssetCompressionPanel } from "@/components/workspace/AssetCompressionPanel";
 import { EdgeCachePanel } from "@/components/workspace/EdgeCachePanel";
+import { PasskeysPanel } from "@/components/workspace/PasskeysPanel";
+import { ReviewPromptsPanel } from "@/components/workspace/ReviewPromptsPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -195,6 +197,8 @@ function ProjectWorkspace() {
                 <CanaryPanel projectId={projectId} />
                 <AssetCompressionPanel projectId={projectId} />
                 <EdgeCachePanel projectId={projectId} />
+                <PasskeysPanel projectId={projectId} />
+                <ReviewPromptsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

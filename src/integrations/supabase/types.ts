@@ -2576,6 +2576,109 @@ export type Database = {
           },
         ]
       }
+      passkey_challenges: {
+        Row: {
+          challenge: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          project_id: string
+          purpose: string
+          rp_id: string
+          user_id: string | null
+        }
+        Insert: {
+          challenge: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          project_id: string
+          purpose: string
+          rp_id: string
+          user_id?: string | null
+        }
+        Update: {
+          challenge?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          project_id?: string
+          purpose?: string
+          rp_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "passkey_challenges_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      passkey_credentials: {
+        Row: {
+          aaguid: string | null
+          backed_up: boolean
+          counter: number
+          created_at: string
+          credential_id: string
+          device_label: string | null
+          id: string
+          last_used_at: string | null
+          project_id: string
+          public_key: string
+          revoked_at: string | null
+          transports: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          aaguid?: string | null
+          backed_up?: boolean
+          counter?: number
+          created_at?: string
+          credential_id: string
+          device_label?: string | null
+          id?: string
+          last_used_at?: string | null
+          project_id: string
+          public_key: string
+          revoked_at?: string | null
+          transports?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          aaguid?: string | null
+          backed_up?: boolean
+          counter?: number
+          created_at?: string
+          credential_id?: string
+          device_label?: string | null
+          id?: string
+          last_used_at?: string | null
+          project_id?: string
+          public_key?: string
+          revoked_at?: string | null
+          transports?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "passkey_credentials_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_events: {
         Row: {
           event_id: string
@@ -3212,6 +3315,116 @@ export type Database = {
           window_start?: string
         }
         Relationships: []
+      }
+      review_prompts: {
+        Row: {
+          cooldown_days: number
+          copy: Json
+          created_at: string
+          enabled: boolean
+          id: string
+          min_sessions: number
+          name: string
+          project_id: string
+          sentiment_threshold: number
+          trigger: string
+          trigger_event: string | null
+          updated_at: string
+        }
+        Insert: {
+          cooldown_days?: number
+          copy?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          min_sessions?: number
+          name: string
+          project_id: string
+          sentiment_threshold?: number
+          trigger: string
+          trigger_event?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cooldown_days?: number
+          copy?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          min_sessions?: number
+          name?: string
+          project_id?: string
+          sentiment_threshold?: number
+          trigger?: string
+          trigger_event?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_prompts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_responses: {
+        Row: {
+          app_version: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          platform: string | null
+          project_id: string
+          prompt_id: string | null
+          rating: number
+          routed_to: string
+          sentiment: number | null
+          subject_id: string
+        }
+        Insert: {
+          app_version?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          platform?: string | null
+          project_id: string
+          prompt_id?: string | null
+          rating: number
+          routed_to: string
+          sentiment?: number | null
+          subject_id: string
+        }
+        Update: {
+          app_version?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          platform?: string | null
+          project_id?: string
+          prompt_id?: string | null
+          rating?: number
+          routed_to?: string
+          sentiment?: number | null
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_responses_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_responses_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "review_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scim_audit: {
         Row: {
