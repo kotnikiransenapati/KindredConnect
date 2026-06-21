@@ -203,7 +203,7 @@ export const transitionStatus = createServerFn({ method: "POST" })
     if (!allowed.includes(data.nextStatus)) {
       throw new Error(`Cannot transition ${sub.status} → ${data.nextStatus}`);
     }
-    const patch: Record<string, any> = { status: data.nextStatus };
+    const patch: { status: typeof data.nextStatus; reviewed_at?: string; reviewer_notes?: string | null } = { status: data.nextStatus };
     if (["in_review", "approved", "rejected"].includes(data.nextStatus)) patch.reviewed_at = new Date().toISOString();
     if (data.reviewerNotes !== undefined) patch.reviewer_notes = data.reviewerNotes;
     const { error: e2 } = await context.supabase.from("store_submissions").update(patch).eq("id", sub.id);
