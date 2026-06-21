@@ -208,6 +208,7 @@ function ProjectWorkspace() {
                 <ResidencyPanel projectId={projectId} />
                 <AppClipsPanel projectId={projectId} />
                 <OnDeviceLlmPanel projectId={projectId} />
+                <KmsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
