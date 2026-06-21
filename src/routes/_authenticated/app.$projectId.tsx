@@ -181,6 +181,8 @@ function ProjectWorkspace() {
                 <ZeroTrustPanel />
                 <DevicePairingPanel projectId={projectId} />
                 <NativeCapabilitiesPanel projectId={projectId} />
+                <CrashReportsPanel projectId={projectId} />
+                <StoreSubmissionsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
