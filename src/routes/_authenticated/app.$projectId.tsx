@@ -204,6 +204,7 @@ function ProjectWorkspace() {
                 <ReviewPromptsPanel projectId={projectId} />
                 <ReleaseNotesPanel projectId={projectId} />
                 <ResidencyPanel projectId={projectId} />
+                <AppClipsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
