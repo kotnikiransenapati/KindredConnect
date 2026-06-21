@@ -185,6 +185,8 @@ function ProjectWorkspace() {
                 <NativeCapabilitiesPanel projectId={projectId} />
                 <CrashReportsPanel projectId={projectId} />
                 <StoreSubmissionsPanel projectId={projectId} />
+                <ExperimentsPanel projectId={projectId} />
+                <BundleAnalyzerPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
