@@ -54,6 +54,8 @@ import { ExperimentsPanel } from "@/components/workspace/ExperimentsPanel";
 import { BundleAnalyzerPanel } from "@/components/workspace/BundleAnalyzerPanel";
 import { HotReloadPanel } from "@/components/workspace/HotReloadPanel";
 import { CanaryPanel } from "@/components/workspace/CanaryPanel";
+import { AssetCompressionPanel } from "@/components/workspace/AssetCompressionPanel";
+import { EdgeCachePanel } from "@/components/workspace/EdgeCachePanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -191,6 +193,8 @@ function ProjectWorkspace() {
                 <BundleAnalyzerPanel projectId={projectId} />
                 <HotReloadPanel projectId={projectId} />
                 <CanaryPanel projectId={projectId} />
+                <AssetCompressionPanel projectId={projectId} />
+                <EdgeCachePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

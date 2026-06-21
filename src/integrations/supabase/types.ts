@@ -735,6 +735,80 @@ export type Database = {
           },
         ]
       }
+      asset_compression_jobs: {
+        Row: {
+          attempts: number
+          compressed_bytes: number
+          created_at: string
+          error: string | null
+          finished_at: string | null
+          id: string
+          original_bytes: number
+          output_format: string
+          output_path: string | null
+          params: Json
+          project_id: string
+          quality: number | null
+          requested_by: string | null
+          savings_bytes: number | null
+          source_kind: string
+          source_path: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          compressed_bytes?: number
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          original_bytes?: number
+          output_format: string
+          output_path?: string | null
+          params?: Json
+          project_id: string
+          quality?: number | null
+          requested_by?: string | null
+          savings_bytes?: number | null
+          source_kind: string
+          source_path: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          compressed_bytes?: number
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          original_bytes?: number
+          output_format?: string
+          output_path?: string | null
+          params?: Json
+          project_id?: string
+          quality?: number | null
+          requested_by?: string | null
+          savings_bytes?: number | null
+          source_kind?: string
+          source_path?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_compression_jobs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -1483,6 +1557,113 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "e2e_tests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edge_cache_purges: {
+        Row: {
+          created_at: string
+          detail: string | null
+          finished_at: string | null
+          id: string
+          project_id: string
+          purged_count: number
+          requested_by: string | null
+          scope: string
+          started_at: string | null
+          status: string
+          targets: Json
+          zone_id: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          finished_at?: string | null
+          id?: string
+          project_id: string
+          purged_count?: number
+          requested_by?: string | null
+          scope: string
+          started_at?: string | null
+          status?: string
+          targets?: Json
+          zone_id: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          finished_at?: string | null
+          id?: string
+          project_id?: string
+          purged_count?: number
+          requested_by?: string | null
+          scope?: string
+          started_at?: string | null
+          status?: string
+          targets?: Json
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edge_cache_purges_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edge_cache_purges_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "edge_cache_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edge_cache_zones: {
+        Row: {
+          created_at: string
+          default_ttl_seconds: number
+          enabled: boolean
+          hostname: string
+          id: string
+          name: string
+          project_id: string
+          rules: Json
+          stale_while_revalidate_seconds: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_ttl_seconds?: number
+          enabled?: boolean
+          hostname: string
+          id?: string
+          name: string
+          project_id: string
+          rules?: Json
+          stale_while_revalidate_seconds?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_ttl_seconds?: number
+          enabled?: boolean
+          hostname?: string
+          id?: string
+          name?: string
+          project_id?: string
+          rules?: Json
+          stale_while_revalidate_seconds?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edge_cache_zones_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
