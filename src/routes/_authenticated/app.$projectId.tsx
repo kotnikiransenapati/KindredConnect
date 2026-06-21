@@ -62,6 +62,7 @@ import { ReleaseNotesPanel } from "@/components/workspace/ReleaseNotesPanel";
 import { ResidencyPanel } from "@/components/workspace/ResidencyPanel";
 import { AppClipsPanel } from "@/components/workspace/AppClipsPanel";
 import { OnDeviceLlmPanel } from "@/components/workspace/OnDeviceLlmPanel";
+import { KmsPanel } from "@/components/workspace/KmsPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -207,6 +208,7 @@ function ProjectWorkspace() {
                 <ResidencyPanel projectId={projectId} />
                 <AppClipsPanel projectId={projectId} />
                 <OnDeviceLlmPanel projectId={projectId} />
+                <KmsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

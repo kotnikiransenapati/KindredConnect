@@ -497,3 +497,11 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 **Phase 17 batches remaining: 0** — install-free reach + on-device intelligence delivered.
 
 Say **next phase** for Phase 18 (e.g., per-tenant KMS rotation, ML-powered anomaly detection, or live multiplayer collaborative editor).
+
+### Phase 18 — Sovereign cryptography
+### P37 — Per-tenant KMS key rotation ✅
+- DB: `kms_keys` (alias unique-per-project, purpose data/signing/jwt/backup/field, algorithm aes-256-gcm/chacha20-poly1305/rsa-4096/ed25519, current_version + rotation_days 1–730 + next_rotation_at, status active/disabled/scheduled_destroy/destroyed); `kms_key_versions` (UNIQUE per key+version, wrapped_dek, fingerprint, state active→retired→destroyed with activated/retired/destroyed timestamps, optional public_jwk for asymmetric); `kms_key_audit` (append-only: create/rotate/retire/destroy/disable/enable/use). Viewer read, editor write, owner destroy.
+- `src/lib/kms.functions.ts`: `mintVersion` uses `crypto.getRandomValues` for 32-byte DEK (512B for RSA), b64-wrapped envelope + sha256 fingerprint; `createKey` atomically inserts key+v1+audit; `rotateKey` mints next version, retires previous active w/ retired_at, bumps `current_version`+`next_rotation_at`, audits w/ from/to versions; `destroyVersion` refuses to destroy current active version (forces rotate first), zeroes `wrapped_dek` → "DESTROYED"; `rotationsDue` returns keys due within 7 days w/ overdue flag. Rate-limited 20/min create, 10/min rotate, 5/min destroy.
+- `KmsPanel.tsx`: amber alert banner showing due/overdue keys, Keys tab (create form + per-key card w/ enable switch, Rotate w/ reason prompt, color-coded next-rotation timestamp), Versions tab (key selector → version list w/ fingerprint + state badges + current pill + per-version destroy guard), Audit tab (scrollable 200-entry log with action badge + alias + version + reason).
+
+**Phase 18 batches remaining: 1** — next P38 (ML anomaly detection or multiplayer collaborative editor).
