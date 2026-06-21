@@ -855,6 +855,77 @@ export type Database = {
           },
         ]
       }
+      crash_reports: {
+        Row: {
+          app_version: string
+          breadcrumbs: Json
+          build_number: string | null
+          created_at: string
+          device_model: string | null
+          fingerprint: string
+          id: string
+          message: string
+          metadata: Json
+          occurred_at: string
+          os_version: string | null
+          platform: string
+          project_id: string
+          severity: string
+          stack_raw: string
+          stack_symbolicated: string | null
+          symbolicated: boolean
+          user_id_external: string | null
+        }
+        Insert: {
+          app_version: string
+          breadcrumbs?: Json
+          build_number?: string | null
+          created_at?: string
+          device_model?: string | null
+          fingerprint: string
+          id?: string
+          message: string
+          metadata?: Json
+          occurred_at?: string
+          os_version?: string | null
+          platform: string
+          project_id: string
+          severity?: string
+          stack_raw: string
+          stack_symbolicated?: string | null
+          symbolicated?: boolean
+          user_id_external?: string | null
+        }
+        Update: {
+          app_version?: string
+          breadcrumbs?: Json
+          build_number?: string | null
+          created_at?: string
+          device_model?: string | null
+          fingerprint?: string
+          id?: string
+          message?: string
+          metadata?: Json
+          occurred_at?: string
+          os_version?: string | null
+          platform?: string
+          project_id?: string
+          severity?: string
+          stack_raw?: string
+          stack_symbolicated?: string | null
+          symbolicated?: boolean
+          user_id_external?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crash_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deep_links: {
         Row: {
           created_at: string
@@ -2752,6 +2823,142 @@ export type Database = {
           },
         ]
       }
+      store_submission_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          detail: string | null
+          event: string
+          id: string
+          metadata: Json
+          project_id: string
+          status: string | null
+          submission_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          detail?: string | null
+          event: string
+          id?: string
+          metadata?: Json
+          project_id: string
+          status?: string | null
+          submission_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          detail?: string | null
+          event?: string
+          id?: string
+          metadata?: Json
+          project_id?: string
+          status?: string | null
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_submission_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_submission_events_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "store_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_submissions: {
+        Row: {
+          build_id: string | null
+          created_at: string
+          created_by: string | null
+          external_submission_id: string | null
+          id: string
+          listing_id: string | null
+          platform: string
+          project_id: string
+          release_notes: string | null
+          reviewed_at: string | null
+          reviewer_notes: string | null
+          status: string
+          submitted_at: string | null
+          track: string
+          updated_at: string
+          validation_report: Json
+          version_code: string | null
+          version_name: string
+        }
+        Insert: {
+          build_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          external_submission_id?: string | null
+          id?: string
+          listing_id?: string | null
+          platform: string
+          project_id: string
+          release_notes?: string | null
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          submitted_at?: string | null
+          track?: string
+          updated_at?: string
+          validation_report?: Json
+          version_code?: string | null
+          version_name: string
+        }
+        Update: {
+          build_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          external_submission_id?: string | null
+          id?: string
+          listing_id?: string | null
+          platform?: string
+          project_id?: string
+          release_notes?: string | null
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          submitted_at?: string | null
+          track?: string
+          updated_at?: string
+          validation_report?: Json
+          version_code?: string | null
+          version_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_submissions_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "mobile_builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_submissions_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "store_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_submissions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean
@@ -2801,6 +3008,56 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      symbol_maps: {
+        Row: {
+          app_version: string
+          build_number: string | null
+          content: string
+          created_at: string
+          file_name: string
+          id: string
+          kind: string
+          platform: string
+          project_id: string
+          size_bytes: number
+          uploaded_by: string | null
+        }
+        Insert: {
+          app_version: string
+          build_number?: string | null
+          content: string
+          created_at?: string
+          file_name: string
+          id?: string
+          kind: string
+          platform: string
+          project_id: string
+          size_bytes?: number
+          uploaded_by?: string | null
+        }
+        Update: {
+          app_version?: string
+          build_number?: string | null
+          content?: string
+          created_at?: string
+          file_name?: string
+          id?: string
+          kind?: string
+          platform?: string
+          project_id?: string
+          size_bytes?: number
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symbol_maps_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]

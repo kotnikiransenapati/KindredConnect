@@ -401,3 +401,17 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `NativeCapabilitiesPanel.tsx`: matrix UI with per-capability switch + iOS/Android/both selector + usage description editor + iOS-key/Android-permission chips, plus a Manifests tab with copyable/downloadable `Info.plist` and `AndroidManifest.xml`, header badges for iOS keys / Android perms / high-risk count.
 
 **Phase 10 batches remaining: 0** — advanced iOS/Android builder phase delivered.
+
+### Phase 11 — Ship-it: crash telemetry + store submission automation
+### P23 — Crash & telemetry pipeline ✅
+- DB: `crash_reports` (project-scoped, fingerprint-grouped, raw + symbolicated stack, breadcrumbs/metadata jsonb, severity fatal/error/warning/info) + `symbol_maps` (sourcemap/dSYM/ProGuard mapping files, unique per project+platform+version+build+kind+filename via partial unique index). Role-scoped RLS via `has_project_role`.
+- `src/lib/crash-telemetry.functions.ts`: stable fingerprint = first 3 stack frames + message kind; `symbolicateCrash` builds a tokenized dict from any matching ProGuard / sourcemap `names` / dSYM file and rewrites the raw stack; symbol upload rate-limited 10/min; dashboard test-crash submitter for end-to-end verification.
+- `src/routes/api/public/crash/ingest.ts`: public POST endpoint with HMAC `x-crash-signature: sha256(serviceKey32:projectId:body)`, CORS, 200 KB payload cap, Zod-validated body, captures `cf-connecting-ip`, writes via `supabaseAdmin` (loaded inside handler).
+- `CrashReportsPanel.tsx`: 3-tab UI — Issues (window + platform filter, fingerprint groups w/ count, expandable stack viewer + Symbolicate button), Symbols (upload form w/ platform/kind/version/build + file picker, list with delete), Test (one-click ios/android/web sample crash).
+
+### P24 — App Store / Play Store submission automation ✅
+- DB: `store_submissions` (linked to `store_listings` + `mobile_builds`, platform ios/android, track production/beta/internal/alpha/testflight, status FSM draft→validating→validation_failed→submitted→in_review→approved/rejected→released/withdrawn, validation_report jsonb) + `store_submission_events` (append-only timeline w/ event/status/detail/actor/metadata). Role-scoped RLS.
+- `src/lib/store-submissions.functions.ts`: `ALLOWED_TRANSITIONS` FSM guard, `runValidation` re-checks linked listing (per-platform title/desc length caps, ≥3 iOS / ≥2 Android screenshots, iOS 100-char keyword budget, privacy/contact/support required) and build (platform match, status=success, type=release, version sync) and notes (≤4000), persists findings to `validation_report`. `submitToStore` gated on `validation_report.ok`, `transitionStatus` enforces FSM, every action audited via `store_submission_events`. Rate-limited 6/min creates.
+- `StoreSubmissionsPanel.tsx`: composer (platform/track/version/build code/notes → draft), per-submission card with status badge + finding list (error/warn/info icons), Validate → Submit → status-transition buttons gated by FSM, live timeline of every event (8s poll).
+
+**Phase 11 batches remaining: 0** — crash telemetry + store submission automation delivered. The mobile builder now ships an app from idea → preview → device → build → signed → validated → submitted → released with crash feedback flowing back in.
