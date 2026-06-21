@@ -735,6 +735,195 @@ export type Database = {
           },
         ]
       }
+      anomaly_detectors: {
+        Row: {
+          baseline: Json
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          id: string
+          metric_key: string
+          min_samples: number
+          name: string
+          notify_channels: Json
+          project_id: string
+          sensitivity: string
+          source: string
+          updated_at: string
+          window_minutes: number
+        }
+        Insert: {
+          baseline?: Json
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          metric_key: string
+          min_samples?: number
+          name: string
+          notify_channels?: Json
+          project_id: string
+          sensitivity?: string
+          source?: string
+          updated_at?: string
+          window_minutes?: number
+        }
+        Update: {
+          baseline?: Json
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          metric_key?: string
+          min_samples?: number
+          name?: string
+          notify_channels?: Json
+          project_id?: string
+          sensitivity?: string
+          source?: string
+          updated_at?: string
+          window_minutes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anomaly_detectors_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anomaly_incidents: {
+        Row: {
+          acknowledged_at: string | null
+          actor_id: string | null
+          actual_value: number
+          detected_at: string
+          detector_id: string
+          expected_value: number | null
+          id: string
+          metadata: Json
+          project_id: string
+          recommendation: string | null
+          resolved_at: string | null
+          sample_id: string | null
+          score: number
+          severity: string
+          state: string
+          summary: string
+          z_score: number | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          actor_id?: string | null
+          actual_value: number
+          detected_at?: string
+          detector_id: string
+          expected_value?: number | null
+          id?: string
+          metadata?: Json
+          project_id: string
+          recommendation?: string | null
+          resolved_at?: string | null
+          sample_id?: string | null
+          score?: number
+          severity?: string
+          state?: string
+          summary: string
+          z_score?: number | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          actor_id?: string | null
+          actual_value?: number
+          detected_at?: string
+          detector_id?: string
+          expected_value?: number | null
+          id?: string
+          metadata?: Json
+          project_id?: string
+          recommendation?: string | null
+          resolved_at?: string | null
+          sample_id?: string | null
+          score?: number
+          severity?: string
+          state?: string
+          summary?: string
+          z_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anomaly_incidents_detector_id_fkey"
+            columns: ["detector_id"]
+            isOneToOne: false
+            referencedRelation: "anomaly_detectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anomaly_incidents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anomaly_incidents_sample_id_fkey"
+            columns: ["sample_id"]
+            isOneToOne: false
+            referencedRelation: "anomaly_samples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anomaly_samples: {
+        Row: {
+          context: Json
+          created_at: string
+          detector_id: string
+          dimension: string | null
+          id: string
+          measured_at: string
+          metric_value: number
+          project_id: string
+        }
+        Insert: {
+          context?: Json
+          created_at?: string
+          detector_id: string
+          dimension?: string | null
+          id?: string
+          measured_at?: string
+          metric_value: number
+          project_id: string
+        }
+        Update: {
+          context?: Json
+          created_at?: string
+          detector_id?: string
+          dimension?: string | null
+          id?: string
+          measured_at?: string
+          metric_value?: number
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anomaly_samples_detector_id_fkey"
+            columns: ["detector_id"]
+            isOneToOne: false
+            referencedRelation: "anomaly_detectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anomaly_samples_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_clip_invocations: {
         Row: {
           clip_id: string

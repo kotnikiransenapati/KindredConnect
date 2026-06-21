@@ -505,3 +505,10 @@ Say **next phase** for Phase 18 (e.g., per-tenant KMS rotation, ML-powered anoma
 - `KmsPanel.tsx`: amber alert banner showing due/overdue keys, Keys tab (create form + per-key card w/ enable switch, Rotate w/ reason prompt, color-coded next-rotation timestamp), Versions tab (key selector → version list w/ fingerprint + state badges + current pill + per-version destroy guard), Audit tab (scrollable 200-entry log with action badge + alias + version + reason).
 
 **Phase 18 batches remaining: 1** — next P38 (ML anomaly detection or multiplayer collaborative editor).
+
+### P38 — ML-powered anomaly detection ✅
+- DB: `anomaly_detectors` (metric/source/sensitivity/window/min-samples/enabled/channels/baseline), `anomaly_samples` (append-only metric stream), and `anomaly_incidents` (open→acknowledged→resolved/suppressed triage with severity, z-score, expected/actual, recommendation). Viewer read, editor configure/ingest/triage, owner delete detectors via project role policies.
+- `src/lib/anomaly-detection.functions.ts` + `.server.ts`: detector CRUD, rate-limited sample ingestion, moving-window baseline, sensitivity-aware z-score anomaly scoring, duplicate-open-incident suppression per window, manual scan over active detectors, and 30-day overview rollups.
+- `AnomalyDetectionPanel.tsx`: KPI strip, detector composer/list, sample simulator with immediate evaluation, incident triage board, and source/severity breakdowns. Mounted in the workspace.
+
+**Phase 18 batches remaining: 0** — sovereign cryptography + ML anomaly response delivered.
