@@ -480,3 +480,11 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `ResidencyPanel.tsx`: Pin tab (primary/backup zone selectors filtered against current primary, encryption mode selector, live compliance chip strip for selected zone, reason input) and Audit tab (chronological change log with action/from→to badges + timestamps).
 
 **Phase 16 batches remaining: 0** — AI ship-narrative + sovereign data layer delivered.
+
+### Phase 17 — Install-free reach
+### P35 — App Clips / Instant Apps builder ✅
+- DB: `app_clips` (slug unique-per-project, title/subtitle, platform ios/android/both, invocation_url, bundle_size_kb CHECK ≤ 15360 = 15 MB Apple/Google cap, entry_route, advance_experience flag, status FSM draft→building→ready→published→archived, associations jsonb, settings jsonb); `app_clip_invocations` (append-only: platform, source qr/nfc/link/share/smart_banner/other, country ISO-2, device_model, converted_to_install, session_ms). Viewer read, editor write, owner delete via `has_project_role`.
+- `src/lib/app-clips.functions.ts`: `upsertClip` validates slug regex, URL, route, bundle cap, per-association domain + leading-slash patterns; `setClipStatus` enforces forward-only FSM (archived→draft allowed); `logInvocation` rate-limited 240/min; `clipStats` aggregates 30-day totals, conversion %, avg session, breakdown by source/platform/country, plus 20 most-recent. Rate limits 30/min writes, 60/min status.
+- `AppClipsPanel.tsx`: KPI strip (clips/invocations/installs/conversion/avg session), Clips tab (per-clip card w/ bundle-size meter color-coded at 70%/90%, inline status selector, association chips, owner delete), Create tab (slug/title/subtitle/platform/URL/route/bundle/advanced + multi-line associations parser `domain /pattern /pattern`), Simulate tab (clip+source+platform+install switch → fires invocation w/ random session), Analytics tab (by-source / by-platform breakdown bars, top-countries list, recent invocations stream).
+
+**Phase 17 batches remaining: 1** — next P36 (on-device LLM packaging / per-tenant KMS rotation).
