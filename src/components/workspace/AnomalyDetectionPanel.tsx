@@ -78,12 +78,12 @@ export function AnomalyDetectionPanel({ projectId }: { projectId: string }) {
   });
   const ingest = useMutation({
     mutationFn: () => ingestFn({ data: { projectId, detectorId: sim.detectorId, value: sim.value, dimension: sim.dimension, context: { source: "manual" } } }),
-    onSuccess: (r) => { toast.success(r.incident ? "Anomaly detected" : "Sample ingested"); invalidate(); },
+    onSuccess: (r: any) => { toast.success(r.incident ? "Anomaly detected" : "Sample ingested"); invalidate(); },
     onError: (e: any) => toast.error(e.message),
   });
   const scan = useMutation({
     mutationFn: () => scanFn({ data: { projectId } }),
-    onSuccess: (r) => toast.success(`Checked ${r.checked} detector${r.checked === 1 ? "" : "s"}`),
+    onSuccess: (r: any) => toast.success(`Checked ${r.checked} detector${r.checked === 1 ? "" : "s"}`),
     onError: (e: any) => toast.error(e.message),
   });
   const triage = useMutation({
@@ -92,8 +92,9 @@ export function AnomalyDetectionPanel({ projectId }: { projectId: string }) {
     onError: (e: any) => toast.error(e.message),
   });
 
-  const detectorList = detectors.data ?? [];
+  const detectorList = (detectors.data ?? []) as any[];
   const stats = overview.data;
+  const incidentList = (incidents.data ?? []) as any[];
 
   return (
     <Card className="border-border/50">
@@ -159,7 +160,7 @@ export function AnomalyDetectionPanel({ projectId }: { projectId: string }) {
           </TabsContent>
 
           <TabsContent value="incidents" className="mt-3 space-y-2">
-            {(incidents.data ?? []).map((i: any) => (
+            {incidentList.map((i: any) => (
               <div key={i.id} className="rounded-md border p-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><Badge className={severityTone[i.severity] ?? ""}>{i.severity}</Badge><Badge variant="outline">{i.state}</Badge><span className="font-medium">{i.anomaly_detectors?.name ?? "Detector"}</span><code className="text-xs text-muted-foreground">{i.anomaly_detectors?.metric_key}</code></div><p className="mt-1 text-sm">{i.summary}</p><p className="mt-1 text-xs text-muted-foreground">{i.recommendation}</p></div>
@@ -168,7 +169,7 @@ export function AnomalyDetectionPanel({ projectId }: { projectId: string }) {
               </div>
             ))}
             {incidents.isLoading && <Loader2 className="size-4 animate-spin" />}
-            {!incidents.isLoading && !(incidents.data ?? []).length && <p className="text-sm text-muted-foreground">No incidents in the last 30 days.</p>}
+            {!incidents.isLoading && !incidentList.length && <p className="text-sm text-muted-foreground">No incidents in the last 30 days.</p>}
           </TabsContent>
 
           <TabsContent value="overview" className="mt-3 grid gap-3 md:grid-cols-2">

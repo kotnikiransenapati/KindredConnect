@@ -8,14 +8,19 @@ import { assertProjectRole, enforceRateLimit, evaluateMetric, normalizeChannels 
 import type { Database } from "@/integrations/supabase/types";
 
 type DbClient = any;
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+type JsonObject = { [key: string]: JsonValue };
 type DetectorRow = Database["public"]["Tables"]["anomaly_detectors"]["Row"];
 type IncidentRow = Database["public"]["Tables"]["anomaly_incidents"]["Row"];
 type SampleRow = Database["public"]["Tables"]["anomaly_samples"]["Row"];
-type DetectorDto = Omit<DetectorRow, "notify_channels" | "baseline"> & { notify_channels: string[]; baseline: Record<string, unknown> };
-type IncidentDto = Omit<IncidentRow, "metadata"> & { metadata: Record<string, unknown>; anomaly_detectors?: { name: string; metric_key: string; source: string } | null };
-type SampleDto = Omit<SampleRow, "context"> & { context: Record<string, unknown> };
+type DetectorDto = Omit<DetectorRow, "notify_channels" | "baseline"> & { notify_channels: string[]; baseline: JsonObject };
+type IncidentDto = Omit<IncidentRow, "metadata"> & { metadata: JsonObject; anomaly_detectors?: { name: string; metric_key: string; source: string } | null };
+type SampleDto = Omit<SampleRow, "context"> & { context: JsonObject };
 const db = (ctx: any) => ctx.supabase as DbClient;
-const toRecord = (value: unknown) => (value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {});
+const toRecord = (value: unknown): JsonObject => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return JSON.parse(JSON.stringify(value)) as JsonObject;
+};
 const toChannels = (value: unknown) => Array.isArray(value) ? value.map(String) : [];
 function detectorDto(row: DetectorRow): DetectorDto { return { ...row, notify_channels: toChannels(row.notify_channels), baseline: toRecord(row.baseline) }; }
 function sampleDto(row: SampleRow): SampleDto { return { ...row, context: toRecord(row.context) }; }
