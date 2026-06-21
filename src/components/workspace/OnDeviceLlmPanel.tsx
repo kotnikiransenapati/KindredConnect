@@ -5,8 +5,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listModels, upsertModel, deleteModel,
   listBuilds, enqueueBuild, finalizeBuild, revokeBuild,
-  logDownload, modelStats, estimateBuildSize,
+  logDownload, modelStats,
 } from "@/lib/on-device-llm.functions";
+import { estimateBuildSize } from "@/lib/on-device-llm.shared";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
