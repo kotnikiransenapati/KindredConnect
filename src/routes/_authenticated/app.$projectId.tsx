@@ -66,6 +66,9 @@ import { KmsPanel } from "@/components/workspace/KmsPanel";
 import { AnomalyDetectionPanel } from "@/components/workspace/AnomalyDetectionPanel";
 import { CollabEditorPanel } from "@/components/workspace/CollabEditorPanel";
 import { BuildPipelinePanel } from "@/components/workspace/BuildPipelinePanel";
+import { AiTestsPanel } from "@/components/workspace/AiTestsPanel";
+import { FailoverPanel } from "@/components/workspace/FailoverPanel";
+import { ProvenancePanel } from "@/components/workspace/ProvenancePanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -215,6 +218,9 @@ function ProjectWorkspace() {
                 <AnomalyDetectionPanel projectId={projectId} />
                 <CollabEditorPanel projectId={projectId} />
                 <BuildPipelinePanel projectId={projectId} />
+                <AiTestsPanel projectId={projectId} />
+                <FailoverPanel projectId={projectId} />
+                <ProvenancePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

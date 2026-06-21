@@ -644,6 +644,164 @@ export type Database = {
           },
         ]
       }
+      ai_test_cases: {
+        Row: {
+          created_at: string
+          id: string
+          last_run_at: string | null
+          last_status: string
+          max_retries: number
+          project_id: string
+          selector_strategy: string
+          spec_code: string
+          suite_id: string
+          title: string
+          updated_at: string
+          user_story: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_run_at?: string | null
+          last_status?: string
+          max_retries?: number
+          project_id: string
+          selector_strategy?: string
+          spec_code?: string
+          suite_id: string
+          title: string
+          updated_at?: string
+          user_story: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_run_at?: string | null
+          last_status?: string
+          max_retries?: number
+          project_id?: string
+          selector_strategy?: string
+          spec_code?: string
+          suite_id?: string
+          title?: string
+          updated_at?: string
+          user_story?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_test_cases_suite_id_fkey"
+            columns: ["suite_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_suites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_test_runs: {
+        Row: {
+          attempt: number
+          case_id: string
+          created_at: string
+          duration_ms: number
+          failure_reason: string | null
+          healed_locators: Json
+          id: string
+          logs_excerpt: string | null
+          project_id: string
+          status: string
+        }
+        Insert: {
+          attempt?: number
+          case_id: string
+          created_at?: string
+          duration_ms?: number
+          failure_reason?: string | null
+          healed_locators?: Json
+          id?: string
+          logs_excerpt?: string | null
+          project_id: string
+          status: string
+        }
+        Update: {
+          attempt?: number
+          case_id?: string
+          created_at?: string
+          duration_ms?: number
+          failure_reason?: string | null
+          healed_locators?: Json
+          id?: string
+          logs_excerpt?: string | null
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_runs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_test_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_test_suites: {
+        Row: {
+          base_url: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          project_id: string
+          status: string
+          target: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          project_id: string
+          status?: string
+          target?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          project_id?: string
+          status?: string
+          target?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_suites_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_usage: {
         Row: {
           created_at: string
@@ -2608,6 +2766,154 @@ export type Database = {
           },
         ]
       }
+      failover_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          from_region: string | null
+          id: string
+          kind: string
+          metadata: Json
+          policy_id: string | null
+          project_id: string
+          reason: string | null
+          to_region: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          from_region?: string | null
+          id?: string
+          kind: string
+          metadata?: Json
+          policy_id?: string | null
+          project_id: string
+          reason?: string | null
+          to_region?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          from_region?: string | null
+          id?: string
+          kind?: string
+          metadata?: Json
+          policy_id?: string | null
+          project_id?: string
+          reason?: string | null
+          to_region?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "failover_events_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "failover_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "failover_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      failover_policies: {
+        Row: {
+          cooldown_minutes: number
+          created_at: string
+          enabled: boolean
+          health_threshold: number
+          id: string
+          name: string
+          project_id: string
+          strategy: string
+          traffic_weights: Json
+          updated_at: string
+        }
+        Insert: {
+          cooldown_minutes?: number
+          created_at?: string
+          enabled?: boolean
+          health_threshold?: number
+          id?: string
+          name: string
+          project_id: string
+          strategy?: string
+          traffic_weights?: Json
+          updated_at?: string
+        }
+        Update: {
+          cooldown_minutes?: number
+          created_at?: string
+          enabled?: boolean
+          health_threshold?: number
+          id?: string
+          name?: string
+          project_id?: string
+          strategy?: string
+          traffic_weights?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "failover_policies_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      failover_regions: {
+        Row: {
+          code: string
+          created_at: string
+          display_name: string
+          id: string
+          last_check: string
+          latency_ms: number
+          project_id: string
+          role: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          display_name: string
+          id?: string
+          last_check?: string
+          latency_ms?: number
+          project_id: string
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          last_check?: string
+          latency_ms?: number
+          project_id?: string
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "failover_regions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feature_flags: {
         Row: {
           created_at: string
@@ -4346,6 +4652,72 @@ export type Database = {
           },
         ]
       }
+      provenance_attestations: {
+        Row: {
+          builder_id: string
+          created_at: string
+          created_by: string | null
+          dsse_envelope: Json
+          id: string
+          predicate_type: string
+          project_id: string
+          run_id: string | null
+          source_digest: string | null
+          source_uri: string | null
+          subject_digest: string
+          subject_name: string
+          verification_status: string
+          verified_at: string | null
+        }
+        Insert: {
+          builder_id: string
+          created_at?: string
+          created_by?: string | null
+          dsse_envelope?: Json
+          id?: string
+          predicate_type?: string
+          project_id: string
+          run_id?: string | null
+          source_digest?: string | null
+          source_uri?: string | null
+          subject_digest: string
+          subject_name: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Update: {
+          builder_id?: string
+          created_at?: string
+          created_by?: string | null
+          dsse_envelope?: Json
+          id?: string
+          predicate_type?: string
+          project_id?: string
+          run_id?: string | null
+          source_digest?: string | null
+          source_uri?: string | null
+          subject_digest?: string
+          subject_name?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provenance_attestations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provenance_attestations_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "build_pipeline_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_campaigns: {
         Row: {
           body: string
@@ -4765,6 +5137,73 @@ export type Database = {
             columns: ["prompt_id"]
             isOneToOne: false
             referencedRelation: "review_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sbom_documents: {
+        Row: {
+          attestation_id: string | null
+          component_count: number
+          created_at: string
+          document: Json
+          format: string
+          id: string
+          project_id: string
+          run_id: string | null
+          severity_rollup: Json
+          signature: string | null
+          signed: boolean
+          vulnerabilities_count: number
+        }
+        Insert: {
+          attestation_id?: string | null
+          component_count?: number
+          created_at?: string
+          document?: Json
+          format: string
+          id?: string
+          project_id: string
+          run_id?: string | null
+          severity_rollup?: Json
+          signature?: string | null
+          signed?: boolean
+          vulnerabilities_count?: number
+        }
+        Update: {
+          attestation_id?: string | null
+          component_count?: number
+          created_at?: string
+          document?: Json
+          format?: string
+          id?: string
+          project_id?: string
+          run_id?: string | null
+          severity_rollup?: Json
+          signature?: string | null
+          signed?: boolean
+          vulnerabilities_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sbom_documents_attestation_id_fkey"
+            columns: ["attestation_id"]
+            isOneToOne: false
+            referencedRelation: "provenance_attestations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sbom_documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sbom_documents_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "build_pipeline_runs"
             referencedColumns: ["id"]
           },
         ]

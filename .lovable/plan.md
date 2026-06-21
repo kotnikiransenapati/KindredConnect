@@ -525,3 +525,21 @@ Say **next phase** for Phase 18 (e.g., per-tenant KMS rotation, ML-powered anoma
 - `BuildPipelinePanel.tsx`: KPI strip + 3-tab UI — Pipelines (list + trigger/delete), Compose (pipe-delimited stages composer w/ live parse), Runs (per-run advance/cancel + expandable jobs & artifacts w/ attach form).
 
 **Phase 19 batches remaining: 0** — live multiplayer editor + build pipeline orchestrator delivered. Say **next phase** for Phase 20 (e.g., agentic test author w/ Playwright + RL retry, multi-region failover orchestrator, or end-to-end signed-build provenance / SLSA).
+
+### Phase 20 — Agentic QA, sovereign uptime, signed supply chain
+### P41 — Agentic Playwright test author w/ self-healing retries ✅
+- DB: `ai_test_suites` (UNIQUE per project,name; status active/paused/archived), `ai_test_cases` (selector_strategy role/testid/text/css/auto, max_retries 0-8, last_status pending/passed/failed/flaky/healed), `ai_test_runs` (per-attempt log w/ healed_locators jsonb). Viewer/editor RLS.
+- `src/lib/ai-tests.functions.ts` + `.server.ts`: `generateSpec` deterministic story→Playwright transpiler (Go to / Click / Type / Expect), `auto` strategy compiles `getByTestId.or(getByRole).or(getByText)` cascades; `runCase` retries up to `max_retries+1` w/ `simulateRun` (~28% first-attempt flake, ~6% on retry, ~18% chance of self-heal swap on retry); final status promoted to passed/flaky/healed/failed; rate-limited 60/min runs.
+- `AiTestsPanel.tsx`: KPI strip + 3-tab UI (Cases, Author w/ story→spec preview, Suite). Per-case expandable run history w/ attempt timeline, failure reason, healed-locator badge.
+
+### P42 — Multi-region failover orchestrator ✅
+- DB: `failover_regions` (UNIQUE per project,code; role primary/replica/standby/observer, status healthy/degraded/down/draining, latency_ms, last_check), `failover_policies` (strategy active-active/active-passive/geo/weighted, health_threshold, cooldown_minutes, traffic_weights jsonb), `failover_events` (kind health-check/promotion/demotion/failover/rollback/drain/restore append-only). Viewer/editor RLS.
+- `src/lib/failover.functions.ts` + `.server.ts`: `planFailover` chooses lowest-latency healthy replica when primary down/degraded (>500ms), computes latency-weighted traffic split for active-active; `evaluatePolicy` with `apply=true` atomically swaps roles (`primary` ↔ `replica`), persists new traffic_weights, writes a `failover_events` row attributed to the actor; `recordHealthCheck` (300/min) updates status/latency + logs event.
+- `FailoverPanel.tsx`: 3-tab UI — Regions (cards w/ role + status chips, region composer, health-check submitter), Policies (composer + per-policy Evaluate/Apply), Events (10s-poll audit trail).
+
+### P43 — SLSA build provenance + SBOM signing ✅
+- DB: `provenance_attestations` (subject_name/digest, builder_id, source_uri/digest, dsse_envelope jsonb, verification_status verified/unverified/failed/revoked, run_id → `build_pipeline_runs`), `sbom_documents` (format spdx/cyclonedx/syft-json, component_count, vulnerabilities_count, severity_rollup jsonb, signed bool, signature). Viewer/editor RLS; owner-only revoke.
+- `src/lib/provenance.functions.ts` + `.server.ts`: `buildSlsaPredicate` emits SLSA v1 in-toto predicate (`buildType`, `builder.id`, `configSource.digest.sha256`, `subject[]`); `buildDsseEnvelope` uses Web Crypto `HMAC-SHA-256` over canonical PAE (`DSSEv1 <ptype-len> <ptype> <payload-len> <payload>`); `verifyAttestation` reconstructs PAE and timing-compares signature; `ingestSbom` rolls up critical/high/medium/low/unknown and optionally signs the doc envelope.
+- `ProvenancePanel.tsx`: KPI strip (attestations / verified / failed / sboms / critical / high vulns) + 3-tab UI (Attestations w/ Verify+Revoke, Create form w/ hex-digest validation, SBOM ingest w/ `name@version` + `CVE|severity` paste).
+
+**Phase 20 batches remaining: 0** — agentic QA + multi-region resilience + SLSA-signed supply chain delivered. Say **next phase** for Phase 21 (e.g., live edge AI inference router, project-wide impact-analysis bot, or fleet device management).
