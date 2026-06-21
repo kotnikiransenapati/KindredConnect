@@ -197,6 +197,8 @@ function ProjectWorkspace() {
                 <CanaryPanel projectId={projectId} />
                 <AssetCompressionPanel projectId={projectId} />
                 <EdgeCachePanel projectId={projectId} />
+                <PasskeysPanel projectId={projectId} />
+                <ReviewPromptsPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

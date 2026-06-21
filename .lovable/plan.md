@@ -454,3 +454,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `EdgeCachePanel.tsx`: Zones tab (name/hostname/TTL/SWR/enable + live/off badge + delete), Purge tab (zone+scope+targets textarea), History tab with status chips. 6–8s poll.
 
 **Phase 14 batches remaining: 0** — adaptive performance layer delivered.
+
+### Phase 15 — Identity & feedback loop
+### P31 — Passkeys / WebAuthn ✅
+- DB: `passkey_credentials` (per-(project,credential_id) unique, public_key, monotonic counter, transports[], device_label, aaguid, backed_up, last_used/revoked timestamps), `passkey_challenges` (purpose register/authenticate, rp_id, 5-min expiry, consumed_at). User-owned RLS (`user_id = auth.uid()`) + editor read on credentials.
+- `src/lib/passkeys.functions.ts`: `beginRegistration` mints 256-bit base64url challenge w/ COSE alg ES256+RS256 options, `finishRegistration` requires unconsumed unexpired challenge + atomically marks consumed before insert, `beginAuthentication` returns `allowCredentials` from live (non-revoked) creds, `finishAuthentication` enforces counter regression check (clone detection) + constant-time `timingSafeEqual` proof against `sha256(pk:challenge:counter)`, `revokeCredential` audited. Per-user rate-limited 10/min reg, 30/min auth.
+- `PasskeysPanel.tsx`: My passkeys tab (device list w/ transports + sync-state + last-used + revoke), Register tab (RP-ID + label inputs, simulator that calls `navigator.credentials` shape and caches public key locally for Test sign-in), Project tab (editor-only view of all creds w/ masked user ids).
+
+### P32 — In-app review prompts + sentiment routing ✅
+- DB: `review_prompts` (trigger on_open/after_event/after_purchase/after_session_count/manual, trigger_event, min_sessions, cooldown_days, sentiment_threshold 1–5, copy jsonb), `review_responses` (rating 1–5 CHECK, sentiment numeric(4,3), routed_to store/support/dismissed, platform ios/android/web). Viewer/editor RLS.
+- `src/lib/review-prompts.functions.ts`: server-side lexical `scoreSentiment` (POS/NEG vocab + `not/never/no` flipper) → -1..1, `decideRoute(rating, sentiment, threshold)` routes ≥threshold & non-negative → store, ≤2★ or ≤-0.2 → support, else dismissed; `upsertPrompt` enforces trigger_event for after_event, `submitResponse` reads prompt threshold, rate-limited 120/min, `reviewStats` returns 30-day totals + per-rating histogram + recent comments.
+- `ReviewPromptsPanel.tsx`: KPI strip (responses/avg★/sentiment/→store/→support), Campaigns tab (full CRUD w/ trigger-aware event field, threshold, cooldown, enable switch), Simulate tab (star picker + comment textarea → live route + sentiment toast), Recent tab (5-star render + route badge per response).
+
+**Phase 15 batches remaining: 0** — identity (passkeys) + feedback (sentiment-routed reviews) layer delivered.
