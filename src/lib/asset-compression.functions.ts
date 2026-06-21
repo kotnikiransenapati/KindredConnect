@@ -159,8 +159,9 @@ export const runQueue = createServerFn({ method: "POST" })
       const compressed = Math.max(0, Math.round(original * ratio));
       const ok = original > 0;
       const outputPath = ok ? job.source_path.replace(/\.[^./]+$/, "") + "." + job.output_format : null;
-      const update: Record<string, unknown> = {
-        status: ok ? (compressed < original ? "succeeded" : "skipped") : "failed",
+      const update = {
+        status: (ok ? (compressed < original ? "succeeded" : "skipped") : "failed") as
+          "succeeded" | "skipped" | "failed",
         compressed_bytes: ok ? compressed : 0,
         output_path: outputPath,
         finished_at: new Date().toISOString(),
