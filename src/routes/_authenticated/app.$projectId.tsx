@@ -60,6 +60,7 @@ import { PasskeysPanel } from "@/components/workspace/PasskeysPanel";
 import { ReviewPromptsPanel } from "@/components/workspace/ReviewPromptsPanel";
 import { ReleaseNotesPanel } from "@/components/workspace/ReleaseNotesPanel";
 import { ResidencyPanel } from "@/components/workspace/ResidencyPanel";
+import { AppClipsPanel } from "@/components/workspace/AppClipsPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
