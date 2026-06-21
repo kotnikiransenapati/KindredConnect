@@ -388,3 +388,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `ZeroTrustPanel.tsx`: four tabs — Policies (form + list with effect badges), Capability Tokens (TTL minutes, scope csv, issued token shown once with copy), Evaluate playground (resource/action/token/context JSON), Decisions log (10s auto-refresh, allow/deny badges).
 
 **Phase 9 batches remaining: 0** — billing meter + zero-trust authorization delivered.
+
+### Phase 10 — Most-advanced mobile builder
+### P21 — Live device preview & pairing ✅
+- DB: `device_pairings` (code unique, sha256 token_hash, platform ios/android/web, device meta, status pending/paired/revoked/expired, expires_at 15 min) + `preview_sessions` (bundle_url, version, status idle/connecting/live/error, event_count). Role-scoped RLS via `has_project_role`.
+- `src/lib/device-pairing.functions.ts`: `createPairing` (collision-free 6-char A–Z2–9 code, one-time hex token returned ONCE, rate-limited 30/min), `listPairings`, `claimPairing` (validates code+token, flips → paired, captures device metadata, rate-limited 20/min), `heartbeatPairing`, `revokePairing`, `startPreviewSession`, `updatePreviewSession` (status + event counter), `listPreviewSessions`.
+- `DevicePairingPanel.tsx`: one-click pairing code generator with 60s auto-clearing token reveal + copy-to-clipboard, live device list with status chips/last-seen, per-device Preview/Revoke, recent session log with error surface.
+
+### P22 — Native capabilities & permission manifests ✅
+- DB: `native_capabilities` (capability_key, platform ios/android/both, enabled, usage_description, justification, risk low/med/high, jsonb config; unique per project+key+platform). Role-scoped RLS.
+- `src/lib/native-capabilities.functions.ts`: built-in 16-entry CAPABILITY_CATALOG (camera, mic, photos, location-when-in-use/always, contacts, calendar, biometrics, push, bluetooth, nfc, motion, healthkit, background fetch, IAP, share) mapping each to its iOS usage key (e.g. `NSCameraUsageDescription`) and Android permission(s) (e.g. `android.permission.CAMERA`). `upsertCapability` enforces ≥10-char iOS usage description for any iOS-bound row (App Store gate). `generateManifests` produces a valid `Info.plist` XML and `AndroidManifest.xml` with deduped + sorted `<uses-permission>` entries.
+- `NativeCapabilitiesPanel.tsx`: matrix UI with per-capability switch + iOS/Android/both selector + usage description editor + iOS-key/Android-permission chips, plus a Manifests tab with copyable/downloadable `Info.plist` and `AndroidManifest.xml`, header badges for iOS keys / Android perms / high-risk count.
+
+**Phase 10 batches remaining: 0** — advanced iOS/Android builder phase delivered.
