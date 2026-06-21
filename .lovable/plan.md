@@ -375,3 +375,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `A2APanel.tsx`: tabbed Registry / Discover / Send / Messages (8s poll) — register agents w/ capabilities, browse by capability, send signed JSON envelopes, ack/reject inbox.
 
 **Phase 8 batches remaining: 0** — distributed trust & agent mesh delivered.
+
+### Phase 9 — Scale & zero-trust
+### P19 — Billing-grade usage metering ✅
+- DB: `usage_meters` (org-scoped, metric_key UNIQUE-per-org, aggregation enum sum/max/last/count, price_per_unit_cents, included_quota, hard_cap, enabled) + `usage_events` (append-only, idempotency_key UNIQUE-per-(org,metric), actor_id, properties jsonb) + `usage_aggregates` (daily rollup per org/metric/day) + `usage_invoices` (period-bound, status enum draft/issued/paid/void, line_items jsonb). SECURITY DEFINER `usage_period_totals()` enforces org admin role.
+- `src/lib/usage-metering.functions.ts`: meter CRUD, idempotent `trackUsage` (regex-validated metric, 600/min rate limit, enforces hard_cap by querying 30-day rollup before insert, dedupes via upsert), `rollupUsage` (50k-event window aggregation), `generateInvoice` (joins meters + period totals, subtracts included_quota, line-itemized cents math), `setInvoiceStatus`.
+- `UsageMeteringPanel.tsx`: org switcher (admin+), three-tab UI — Meters CRUD with inline event trigger, Usage with date-range rollup + totals table, Invoices with status select + collapsible line-item drill-down.
+
+### P20 — Zero-Trust per-request authorization ✅
+- DB: `zt_policies` (org-scoped, effect enum allow/deny, glob resource_pattern + action_pattern, subject jsonb, conditions jsonb, priority 0–1000) + `zt_access_tokens` (sha256-hashed capability tokens with scope[], resource_pattern, TTL, revoked_at, last_used tracking) + `zt_decisions` (append-only decision log). RLS gates everything to org admins; token holders may read their own.
+- `src/lib/zero-trust.functions.ts`: glob matcher (`*`/`**` over `:` segments), policy CRUD, `issueAccessToken` (32-byte CSPRNG `zt_…`, sha256 hash at rest, token returned once + short hint stored), `evaluateAccess` engine: token short-circuit (scope+resource match) → policy eval (deny-wins → highest-priority allow → default deny). Conditions support `ip_in`, `time_between` UTC window, `require_mfa`. Every decision persisted to `zt_decisions`.
+- `ZeroTrustPanel.tsx`: four tabs — Policies (form + list with effect badges), Capability Tokens (TTL minutes, scope csv, issued token shown once with copy), Evaluate playground (resource/action/token/context JSON), Decisions log (10s auto-refresh, allow/deny badges).
+
+**Phase 9 batches remaining: 0** — billing meter + zero-trust authorization delivered.

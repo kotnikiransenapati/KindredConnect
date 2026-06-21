@@ -44,6 +44,8 @@ import { ScimPanel } from "@/components/workspace/ScimPanel";
 import { MarketplacePanel } from "@/components/workspace/MarketplacePanel";
 import { SiemStreamingPanel } from "@/components/workspace/SiemStreamingPanel";
 import { A2APanel } from "@/components/workspace/A2APanel";
+import { UsageMeteringPanel } from "@/components/workspace/UsageMeteringPanel";
+import { ZeroTrustPanel } from "@/components/workspace/ZeroTrustPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -171,6 +173,8 @@ function ProjectWorkspace() {
                 <MarketplacePanel />
                 <SiemStreamingPanel />
                 <A2APanel projectId={projectId} />
+                <UsageMeteringPanel />
+                <ZeroTrustPanel />
                 <ActivityFeed projectId={projectId} />
 
 
