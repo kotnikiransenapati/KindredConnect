@@ -1174,6 +1174,261 @@ export type Database = {
           },
         ]
       }
+      build_artifacts: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          id: string
+          job_id: string | null
+          kind: string
+          metadata: Json
+          name: string
+          project_id: string
+          retention_days: number
+          run_id: string
+          size_bytes: number
+          storage_path: string
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          kind: string
+          metadata?: Json
+          name: string
+          project_id: string
+          retention_days?: number
+          run_id: string
+          size_bytes?: number
+          storage_path: string
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          kind?: string
+          metadata?: Json
+          name?: string
+          project_id?: string
+          retention_days?: number
+          run_id?: string
+          size_bytes?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_artifacts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "build_pipeline_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_artifacts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_artifacts_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "build_pipeline_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_pipeline_jobs: {
+        Row: {
+          attempt: number
+          created_at: string
+          depends_on: string[]
+          duration_ms: number | null
+          exit_code: number | null
+          finished_at: string | null
+          id: string
+          logs_excerpt: string | null
+          max_attempts: number
+          project_id: string
+          run_id: string
+          stage_key: string
+          stage_name: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          attempt?: number
+          created_at?: string
+          depends_on?: string[]
+          duration_ms?: number | null
+          exit_code?: number | null
+          finished_at?: string | null
+          id?: string
+          logs_excerpt?: string | null
+          max_attempts?: number
+          project_id: string
+          run_id: string
+          stage_key: string
+          stage_name: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          depends_on?: string[]
+          duration_ms?: number | null
+          exit_code?: number | null
+          finished_at?: string | null
+          id?: string
+          logs_excerpt?: string | null
+          max_attempts?: number
+          project_id?: string
+          run_id?: string
+          stage_key?: string
+          stage_name?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_pipeline_jobs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_pipeline_jobs_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "build_pipeline_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_pipeline_runs: {
+        Row: {
+          commit_sha: string | null
+          created_at: string
+          duration_ms: number | null
+          finished_at: string | null
+          id: string
+          inputs: Json
+          pipeline_id: string
+          project_id: string
+          ref: string | null
+          run_number: number
+          started_at: string | null
+          status: string
+          trigger: string
+          triggered_by: string | null
+        }
+        Insert: {
+          commit_sha?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          finished_at?: string | null
+          id?: string
+          inputs?: Json
+          pipeline_id: string
+          project_id: string
+          ref?: string | null
+          run_number: number
+          started_at?: string | null
+          status?: string
+          trigger: string
+          triggered_by?: string | null
+        }
+        Update: {
+          commit_sha?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          finished_at?: string | null
+          id?: string
+          inputs?: Json
+          pipeline_id?: string
+          project_id?: string
+          ref?: string | null
+          run_number?: number
+          started_at?: string | null
+          status?: string
+          trigger?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_pipeline_runs_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "build_pipelines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_pipeline_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_pipelines: {
+        Row: {
+          concurrency: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          enabled: boolean
+          id: string
+          name: string
+          project_id: string
+          schedule_cron: string | null
+          stages: Json
+          trigger: string
+          updated_at: string
+        }
+        Insert: {
+          concurrency?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          name: string
+          project_id: string
+          schedule_cron?: string | null
+          stages?: Json
+          trigger?: string
+          updated_at?: string
+        }
+        Update: {
+          concurrency?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          name?: string
+          project_id?: string
+          schedule_cron?: string | null
+          stages?: Json
+          trigger?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_pipelines_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bundle_assets: {
         Row: {
           bytes: number
@@ -1498,6 +1753,228 @@ export type Database = {
           },
           {
             foreignKeyName: "ci_gates_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collab_comments: {
+        Row: {
+          anchor: Json
+          author_id: string | null
+          body: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          project_id: string
+          resolved_at: string | null
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          anchor?: Json
+          author_id?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          project_id: string
+          resolved_at?: string | null
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          anchor?: Json
+          author_id?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          project_id?: string
+          resolved_at?: string | null
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collab_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "collab_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_comments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "collab_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collab_ops: {
+        Row: {
+          actor_id: string | null
+          client_id: string | null
+          created_at: string
+          id: string
+          op_kind: string
+          parent_version: number
+          payload: Json
+          project_id: string
+          session_id: string
+          version: number
+        }
+        Insert: {
+          actor_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          op_kind: string
+          parent_version?: number
+          payload?: Json
+          project_id: string
+          session_id: string
+          version: number
+        }
+        Update: {
+          actor_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          op_kind?: string
+          parent_version?: number
+          payload?: Json
+          project_id?: string
+          session_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collab_ops_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_ops_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "collab_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collab_participants: {
+        Row: {
+          color: string
+          cursor: Json
+          display_name: string
+          id: string
+          joined_at: string
+          last_seen: string
+          project_id: string
+          selection: Json
+          session_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          cursor?: Json
+          display_name: string
+          id?: string
+          joined_at?: string
+          last_seen?: string
+          project_id: string
+          selection?: Json
+          session_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          cursor?: Json
+          display_name?: string
+          id?: string
+          joined_at?: string
+          last_seen?: string
+          project_id?: string
+          selection?: Json
+          session_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collab_participants_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "collab_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collab_sessions: {
+        Row: {
+          base_version: number
+          created_at: string
+          created_by: string | null
+          document_path: string
+          head_version: number
+          id: string
+          project_id: string
+          snapshot: Json
+          status: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_version?: number
+          created_at?: string
+          created_by?: string | null
+          document_path: string
+          head_version?: number
+          id?: string
+          project_id: string
+          snapshot?: Json
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_version?: number
+          created_at?: string
+          created_by?: string | null
+          document_path?: string
+          head_version?: number
+          id?: string
+          project_id?: string
+          snapshot?: Json
+          status?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collab_sessions_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
