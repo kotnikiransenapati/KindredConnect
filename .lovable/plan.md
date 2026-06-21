@@ -441,3 +441,16 @@ Expandable task rows in AgentsPanel; `listTaskMessages` server fn streams `agent
 - `CanaryPanel.tsx`: new-rollout form (artifact + baseline + stages csv `percent:hold_min` + budgets), per-rollout row w/ Start/Pause/Resume/Rollback/Abort, inline metric recorder + Evaluate/Apply buttons w/ decision badge + ppm chips, expandable Metrics & Events drawer.
 
 **Phase 13 batches remaining: 0** — live bridge to devices + safe staged ship delivered.
+
+### Phase 14 — Adaptive performance: codec pipeline & edge cache
+### P29 — AI-driven asset compression pipeline ✅
+- DB: `asset_compression_jobs` (source path/kind, output format webp/avif/jpeg/png/woff2/gzip/brotli/passthrough, queued→running→succeeded/failed/skipped, original_bytes/compressed_bytes/savings_bytes GENERATED, quality, params jsonb, attempts/started_at/finished_at audit). Editor RLS via `has_project_role`.
+- `src/lib/asset-compression.functions.ts`: calibrated codec savings model (AVIF q60, WebP m6, Brotli q11), batched `enqueueJobs` (≤500 rows, rate-limited 20/min), `runQueue` deterministic FIFO with atomic queued→running gate, `summary` (per-status totals + per-format savings), `retryJob`, `deleteJob`.
+- `AssetCompressionPanel.tsx`: KPI strip (jobs/original/compressed/saved %), Jobs tab with status badges + per-job retry/delete, Enqueue tab (kind/output/quality + `path|bytes` paste), Formats tab roll-up. 6s poll.
+
+### P30 — Multi-region edge cache & CDN purging ✅
+- DB: `edge_cache_zones` (hostname unique-per-project, default TTL + SWR, rules jsonb, enabled toggle), `edge_cache_purges` (scope paths/prefix/tag/everything, targets jsonb, queued→running→succeeded/failed/partial, purged_count, requested_by audit). Editor RLS.
+- `src/lib/edge-cache.functions.ts`: hostname regex-validated `upsertZone`, scope-aware target normalization (paths/prefix require leading `/`, tag matches `[a-z0-9._-]{1,80}`, everything ignores targets), `createPurge` cross-checks zone↔project, `runPurges` flips queued→running→succeeded with auditable detail. Rate-limited 20–30/min.
+- `EdgeCachePanel.tsx`: Zones tab (name/hostname/TTL/SWR/enable + live/off badge + delete), Purge tab (zone+scope+targets textarea), History tab with status chips. 6–8s poll.
+
+**Phase 14 batches remaining: 0** — adaptive performance layer delivered.
