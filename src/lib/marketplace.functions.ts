@@ -2,7 +2,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { recordAudit } from "./audit.server";
 
 const PLATFORM_FEE_PCT = 20; // matches default 80% payout_pct on the listing
 
@@ -187,7 +186,7 @@ export const simulatePurchaseSuccess = createServerFn({ method: "POST" })
       currency: p.currency, status: "accrued",
     }, { onConflict: "purchase_id" });
 
-    await recordAudit(context.supabase, context.userId, {
+    const { recordAudit } = await import("@/lib/audit.server"); await recordAudit(context.supabase, context.userId, {
       action: "billing.plan_change", resourceType: "template_purchase", resourceId: p.id,
       metadata: { intent_id: p.intent_id, amount_minor: p.amount_minor, currency: p.currency },
     });

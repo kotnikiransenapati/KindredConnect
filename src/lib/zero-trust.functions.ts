@@ -2,7 +2,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { recordAudit } from "@/lib/audit.server";
 
 async function sha256Hex(input: string): Promise<string> {
   const enc = new TextEncoder().encode(input);
@@ -131,7 +130,7 @@ export const issueAccessToken = createServerFn({ method: "POST" })
       created_by: context.userId,
     }).select().single();
     if (error) throw new Error(error.message);
-    await recordAudit(context.supabase, context.userId, {
+    const { recordAudit } = await import("@/lib/audit.server"); await recordAudit(context.supabase, context.userId, {
       action: "secret.create", resourceType: "zt_token", resourceId: row.id,
       orgId: data.orgId, metadata: { label: data.label, scope: data.scope },
     });
@@ -157,7 +156,7 @@ export const revokeAccessToken = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("zt_access_tokens")
       .update({ revoked_at: new Date().toISOString() }).eq("id", data.id);
     if (error) throw new Error(error.message);
-    await recordAudit(context.supabase, context.userId, {
+    const { recordAudit } = await import("@/lib/audit.server"); await recordAudit(context.supabase, context.userId, {
       action: "secret.delete", resourceType: "zt_token", resourceId: data.id, orgId: data.orgId,
     });
     return { ok: true };

@@ -127,7 +127,7 @@ export const revealProjectSecret = createServerFn({ method: "POST" })
       fromBytea(row.iv as unknown as string),
       fromBytea(row.auth_tag as unknown as string),
     );
-    const { recordAudit } = await import("./audit.functions");
+    const { recordAudit } = await import("./audit.server");
     await recordAudit(supabase, userId, {
       action: "secret.reveal",
       resourceType: "project_secret",

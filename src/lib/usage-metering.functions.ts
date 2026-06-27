@@ -2,7 +2,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { recordAudit } from "@/lib/audit.server";
 
 const METRIC_RE = /^[a-z][a-z0-9_.]{1,63}$/;
 
@@ -64,7 +63,7 @@ export const upsertUsageMeter = createServerFn({ method: "POST" })
     const { data: row, error } = await context.supabase
       .from("usage_meters").upsert(payload, { onConflict: "org_id,metric_key" }).select().single();
     if (error) throw new Error(error.message);
-    await recordAudit(context.supabase, context.userId, {
+    const { recordAudit } = await import("@/lib/audit.server"); await recordAudit(context.supabase, context.userId, {
       action: "billing.plan_change", resourceType: "usage_meter", resourceId: row.id,
       orgId: data.orgId, metadata: { metric_key: data.metricKey },
     });
@@ -238,7 +237,7 @@ export const generateInvoice = createServerFn({ method: "POST" })
         generated_at: new Date().toISOString(),
       }, { onConflict: "org_id,period_start,period_end" }).select().single();
     if (error) throw new Error(error.message);
-    await recordAudit(context.supabase, context.userId, {
+    const { recordAudit } = await import("@/lib/audit.server"); await recordAudit(context.supabase, context.userId, {
       action: "billing.plan_change", resourceType: "invoice", resourceId: inv.id,
       orgId: data.orgId, metadata: { subtotal_cents: subtotal, period: `${data.from}_${data.to}` },
     });
