@@ -240,6 +240,7 @@ function ProjectWorkspace() {
                 <AvRoomsPanel projectId={projectId} />
                 <AiChangelogPanel projectId={projectId} />
                 <EvidenceVaultPanel projectId={projectId} />
+                <SpatialScenePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
