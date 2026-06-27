@@ -4977,6 +4977,59 @@ export type Database = {
           },
         ]
       }
+      palette_blocks: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          default_props: Json
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          project_id: string
+          sort_order: number
+          thumbnail_color: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          default_props?: Json
+          description?: string | null
+          icon?: string
+          id?: string
+          name: string
+          project_id: string
+          sort_order?: number
+          thumbnail_color?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          default_props?: Json
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          project_id?: string
+          sort_order?: number
+          thumbnail_color?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "palette_blocks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       passkey_challenges: {
         Row: {
           challenge: string
@@ -5317,6 +5370,71 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "plugins_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      preview_devices: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          label: string
+          position_x: number
+          position_y: number
+          position_z: number
+          preview_url: string | null
+          project_id: string
+          rotation_y: number
+          scale: number
+          updated_at: string
+          viewport_h: number
+          viewport_w: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          label: string
+          position_x?: number
+          position_y?: number
+          position_z?: number
+          preview_url?: string | null
+          project_id: string
+          rotation_y?: number
+          scale?: number
+          updated_at?: string
+          viewport_h?: number
+          viewport_w?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          label?: string
+          position_x?: number
+          position_y?: number
+          position_z?: number
+          preview_url?: string | null
+          project_id?: string
+          rotation_y?: number
+          scale?: number
+          updated_at?: string
+          viewport_h?: number
+          viewport_w?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preview_devices_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
