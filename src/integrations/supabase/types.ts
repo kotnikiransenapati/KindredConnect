@@ -6324,6 +6324,56 @@ export type Database = {
           },
         ]
       }
+      scene_viewpoints: {
+        Row: {
+          cam_x: number
+          cam_y: number
+          cam_z: number
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          project_id: string
+          target_x: number
+          target_y: number
+          target_z: number
+        }
+        Insert: {
+          cam_x?: number
+          cam_y?: number
+          cam_z?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          project_id: string
+          target_x?: number
+          target_y?: number
+          target_z?: number
+        }
+        Update: {
+          cam_x?: number
+          cam_y?: number
+          cam_z?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          project_id?: string
+          target_x?: number
+          target_y?: number
+          target_z?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scene_viewpoints_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scim_audit: {
         Row: {
           created_at: string
@@ -6597,6 +6647,65 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spatial_nodes: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          file_path: string | null
+          id: string
+          kind: string
+          label: string
+          metadata: Json
+          pos_x: number
+          pos_y: number
+          pos_z: number
+          project_id: string
+          scale: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          file_path?: string | null
+          id?: string
+          kind?: string
+          label: string
+          metadata?: Json
+          pos_x?: number
+          pos_y?: number
+          pos_z?: number
+          project_id: string
+          scale?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          file_path?: string | null
+          id?: string
+          kind?: string
+          label?: string
+          metadata?: Json
+          pos_x?: number
+          pos_y?: number
+          pos_z?: number
+          project_id?: string
+          scale?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spatial_nodes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]

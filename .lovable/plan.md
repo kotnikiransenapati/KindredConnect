@@ -198,3 +198,9 @@ I'll execute **3 batches per turn**, in order A→F, posting remaining count aft
 ---
 
 Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spatial file system, component palette) — 35 batches remaining after that.
+
+
+## Phase A Progress
+- A1 (3D Scene Foundation): DONE — R3F canvas with orbit controls, star field, infinite grid, animated icosahedron nodes with HTML labels and inspector
+- A2 (Spatial File System): DONE — spatial_nodes + scene_viewpoints tables, server fns (list/upsert/move/delete/seed-from-files/save-viewpoint), seed uses golden-angle spiral layout
+- Remaining batches in Foundry v2: 33
