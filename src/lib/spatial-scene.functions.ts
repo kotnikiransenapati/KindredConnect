@@ -31,7 +31,7 @@ const upsertSchema = z.object({
   position: z.object({ x: z.number(), y: z.number(), z: z.number() }),
   scale: z.number().min(0.1).max(10).default(1),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#6366f1"),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.any()).default({}),
 });
 
 export const upsertSpatialNode = createServerFn({ method: "POST" })
@@ -48,7 +48,7 @@ export const upsertSpatialNode = createServerFn({ method: "POST" })
       pos_z: data.position.z,
       scale: data.scale,
       color: data.color,
-      metadata: data.metadata,
+      metadata: data.metadata as any,
       created_by: context.userId,
     };
     if (data.id) {
