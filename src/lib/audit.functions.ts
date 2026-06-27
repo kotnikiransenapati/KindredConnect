@@ -81,6 +81,7 @@ export const exportAuditLog = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     // Self-audit the export
+    const { recordAudit } = await import("@/lib/audit.server");
     await recordAudit(context.supabase, context.userId, {
       action: "data.export",
       resourceType: "audit_log",
