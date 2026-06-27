@@ -81,6 +81,9 @@ import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
 import { OnboardingTour } from "@/components/workspace/OnboardingTour";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Code2 } from "lucide-react";
+import { AvRoomsPanel } from "@/components/workspace/AvRoomsPanel";
+import { AiChangelogPanel } from "@/components/workspace/AiChangelogPanel";
+import { EvidenceVaultPanel } from "@/components/workspace/EvidenceVaultPanel";
 import type { UIMessage } from "ai";
 
 export const Route = createFileRoute("/_authenticated/app/$projectId")({
@@ -233,6 +236,9 @@ function ProjectWorkspace() {
                 <WhiteboardPanel projectId={projectId} />
                 <CostGuardrailsPanel projectId={projectId} />
                 <PluginsPanel projectId={projectId} />
+                <AvRoomsPanel projectId={projectId} />
+                <AiChangelogPanel projectId={projectId} />
+                <EvidenceVaultPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
