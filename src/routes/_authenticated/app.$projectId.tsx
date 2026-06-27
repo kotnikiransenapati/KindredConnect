@@ -75,6 +75,7 @@ import { FleetPanel } from "@/components/workspace/FleetPanel";
 import { WhiteboardPanel } from "@/components/workspace/WhiteboardPanel";
 import { CostGuardrailsPanel } from "@/components/workspace/CostGuardrailsPanel";
 import { PluginsPanel } from "@/components/workspace/PluginsPanel";
+import { SpatialScenePanel } from "@/components/workspace/SpatialScenePanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
