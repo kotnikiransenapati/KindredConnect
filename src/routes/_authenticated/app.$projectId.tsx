@@ -76,6 +76,8 @@ import { WhiteboardPanel } from "@/components/workspace/WhiteboardPanel";
 import { CostGuardrailsPanel } from "@/components/workspace/CostGuardrailsPanel";
 import { PluginsPanel } from "@/components/workspace/PluginsPanel";
 import { SpatialScenePanel } from "@/components/workspace/SpatialScenePanel";
+import { ComponentPalettePanel } from "@/components/workspace/ComponentPalettePanel";
+import { DeviceStudioPanel } from "@/components/workspace/DeviceStudioPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -241,6 +243,8 @@ function ProjectWorkspace() {
                 <AiChangelogPanel projectId={projectId} />
                 <EvidenceVaultPanel projectId={projectId} />
                 <SpatialScenePanel projectId={projectId} />
+                <ComponentPalettePanel projectId={projectId} />
+                <DeviceStudioPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
