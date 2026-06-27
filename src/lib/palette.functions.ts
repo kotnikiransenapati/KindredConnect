@@ -46,11 +46,11 @@ export const seedDefaultBlocks = createServerFn({ method: "POST" })
       description: b.description,
       icon: b.icon,
       thumbnail_color: b.color,
-      default_props: b.props,
+      default_props: b.props as never,
       sort_order: i,
       created_by: context.userId,
     }));
-    const { error } = await context.supabase.from("palette_blocks").insert(rows);
+    const { error } = await context.supabase.from("palette_blocks").insert(rows as never);
     if (error) throw new Error(error.message);
     return { inserted: rows.length };
   });
@@ -83,9 +83,9 @@ export const instantiateBlock = createServerFn({ method: "POST" })
         position_x: data.position.x,
         position_y: data.position.y,
         position_z: data.position.z,
-        metadata: { source_block_id: block.id, category: block.category, props: block.default_props },
+        metadata: { source_block_id: block.id, category: block.category, props: block.default_props } as never,
         created_by: context.userId,
-      })
+      } as never)
       .select()
       .single();
     if (error) throw new Error(error.message);
