@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertProjectRole, enforceRateLimit } from "./_phase23.shared";
-import { canJoin } from "./av-rooms.server";
+import { canJoin } from "./av-rooms.shared";
 
 const db = (ctx: any) => ctx.supabase as any;
 

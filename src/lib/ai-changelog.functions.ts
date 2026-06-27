@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { assertProjectRole, enforceRateLimit } from "./_phase23.shared";
-import { bumpVersion, classify, summarize } from "./ai-changelog.server";
+import { bumpVersion, classify, summarize } from "./ai-changelog.shared";
 
 const db = (ctx: any) => ctx.supabase as any;
 const KindZ = z.enum(["commit", "pr", "issue", "deploy", "manual"]);
