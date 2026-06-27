@@ -1493,6 +1493,161 @@ export type Database = {
           },
         ]
       }
+      av_participants: {
+        Row: {
+          audio: boolean
+          display_name: string
+          id: string
+          joined_at: string
+          left_at: string | null
+          project_id: string
+          role: string
+          room_id: string
+          screen: boolean
+          user_id: string
+          video: boolean
+        }
+        Insert: {
+          audio?: boolean
+          display_name: string
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          project_id: string
+          role?: string
+          room_id: string
+          screen?: boolean
+          user_id?: string
+          video?: boolean
+        }
+        Update: {
+          audio?: boolean
+          display_name?: string
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          project_id?: string
+          role?: string
+          room_id?: string
+          screen?: boolean
+          user_id?: string
+          video?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "av_participants_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "av_participants_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "av_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      av_rooms: {
+        Row: {
+          created_at: string
+          created_by: string
+          ended_at: string | null
+          id: string
+          max_participants: number
+          mode: string
+          name: string
+          project_id: string
+          recording: boolean
+          status: string
+          topic: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          ended_at?: string | null
+          id?: string
+          max_participants?: number
+          mode?: string
+          name: string
+          project_id: string
+          recording?: boolean
+          status?: string
+          topic?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          ended_at?: string | null
+          id?: string
+          max_participants?: number
+          mode?: string
+          name?: string
+          project_id?: string
+          recording?: boolean
+          status?: string
+          topic?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "av_rooms_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      av_signals: {
+        Row: {
+          created_at: string
+          from_user: string
+          id: string
+          kind: string
+          payload: Json
+          project_id: string
+          room_id: string
+          to_user: string | null
+        }
+        Insert: {
+          created_at?: string
+          from_user?: string
+          id?: string
+          kind: string
+          payload?: Json
+          project_id: string
+          room_id: string
+          to_user?: string | null
+        }
+        Update: {
+          created_at?: string
+          from_user?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          project_id?: string
+          room_id?: string
+          to_user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "av_signals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "av_signals_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "av_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       build_artifacts: {
         Row: {
           checksum: string | null
@@ -2009,6 +2164,115 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "canary_rollouts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      changelog_entries: {
+        Row: {
+          audience: string
+          category: string
+          created_at: string
+          created_by: string
+          id: string
+          impact: string
+          project_id: string
+          published_at: string | null
+          sources: Json
+          status: string
+          summary: string
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          audience?: string
+          category: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          impact?: string
+          project_id: string
+          published_at?: string | null
+          sources?: Json
+          status?: string
+          summary: string
+          title: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          audience?: string
+          category?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          impact?: string
+          project_id?: string
+          published_at?: string | null
+          sources?: Json
+          status?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "changelog_entries_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      changelog_sources: {
+        Row: {
+          author: string | null
+          body: string | null
+          consumed_at: string | null
+          created_at: string
+          id: string
+          kind: string
+          labels: string[]
+          occurred_at: string
+          project_id: string
+          ref: string
+          title: string
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          labels?: string[]
+          occurred_at?: string
+          project_id: string
+          ref: string
+          title: string
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          labels?: string[]
+          occurred_at?: string
+          project_id?: string
+          ref?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "changelog_sources_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -2947,6 +3211,119 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "edge_cache_zones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_artifacts: {
+        Row: {
+          collected_at: string
+          collected_by: string
+          control_id: string
+          id: string
+          kind: string
+          metadata: Json
+          project_id: string
+          retention_until: string | null
+          sha256: string
+          size_bytes: number
+          title: string
+          uri: string | null
+        }
+        Insert: {
+          collected_at?: string
+          collected_by?: string
+          control_id: string
+          id?: string
+          kind: string
+          metadata?: Json
+          project_id: string
+          retention_until?: string | null
+          sha256: string
+          size_bytes?: number
+          title: string
+          uri?: string | null
+        }
+        Update: {
+          collected_at?: string
+          collected_by?: string
+          control_id?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          project_id?: string
+          retention_until?: string | null
+          sha256?: string
+          size_bytes?: number
+          title?: string
+          uri?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_artifacts_control_id_fkey"
+            columns: ["control_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_controls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_artifacts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_controls: {
+        Row: {
+          control_id: string
+          created_at: string
+          description: string | null
+          framework: string
+          id: string
+          last_reviewed: string | null
+          next_review: string | null
+          owner: string | null
+          project_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          control_id: string
+          created_at?: string
+          description?: string | null
+          framework: string
+          id?: string
+          last_reviewed?: string | null
+          next_review?: string | null
+          owner?: string | null
+          project_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          control_id?: string
+          created_at?: string
+          description?: string | null
+          framework?: string
+          id?: string
+          last_reviewed?: string | null
+          next_review?: string | null
+          owner?: string | null
+          project_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_controls_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
