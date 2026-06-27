@@ -1,7 +1,8 @@
-// Append-only audit log for compliance: write helper + read/export server fns.
+// Append-only audit log for compliance: read/export server fns.
+// The server-only `recordAudit` write helper lives in `audit.server.ts` and
+// must be loaded via dynamic import inside server-fn handlers.
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const ALLOWED_ACTIONS = [
@@ -16,42 +17,6 @@ const ALLOWED_ACTIONS = [
 ] as const;
 
 export type AuditAction = (typeof ALLOWED_ACTIONS)[number];
-
-/**
- * Server-side helper — call from inside any sensitive server fn handler.
- * Writes through RLS as the current user (actor_id = auth.uid()).
- */
-export async function recordAudit(
-  supabase: any,
-  userId: string,
-  entry: {
-    action: AuditAction;
-    resourceType: string;
-    resourceId?: string | null;
-    projectId?: string | null;
-    orgId?: string | null;
-    metadata?: Record<string, unknown>;
-  },
-) {
-  try {
-    const ua = getRequestHeader("user-agent") ?? null;
-    const ipHdr = getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-forwarded-for") ?? null;
-    const ip = ipHdr ? ipHdr.split(",")[0].trim() : null;
-    await supabase.from("audit_log").insert({
-      actor_id: userId,
-      action: entry.action,
-      resource_type: entry.resourceType,
-      resource_id: entry.resourceId ?? null,
-      project_id: entry.projectId ?? null,
-      org_id: entry.orgId ?? null,
-      ip,
-      user_agent: ua,
-      metadata: entry.metadata ?? {},
-    });
-  } catch {
-    // never break the parent operation on audit failure
-  }
-}
 
 export const listAuditLog = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -116,6 +81,7 @@ export const exportAuditLog = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     // Self-audit the export
+    const { recordAudit } = await import("@/lib/audit.server");
     await recordAudit(context.supabase, context.userId, {
       action: "data.export",
       resourceType: "audit_log",
