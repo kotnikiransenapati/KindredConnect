@@ -90,8 +90,8 @@ export function DeviceStudioPanel({ projectId }: { projectId: string }) {
     onError: (e: Error) => toast.error(e.message),
   });
   const upd = useMutation({
-    mutationFn: (vars: { id: string; patch: Parameters<typeof updFn>[0]["data"]["patch"] }) =>
-      updFn({ data: { projectId, id: vars.id, patch: vars.patch } }),
+    mutationFn: (vars: { id: string; patch: Record<string, unknown> }) =>
+      updFn({ data: { projectId, id: vars.id, patch: vars.patch as never } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["preview-devices", projectId] }),
     onError: (e: Error) => toast.error(e.message),
   });
