@@ -201,6 +201,8 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 
 
 ## Phase A Progress
-- A1 (3D Scene Foundation): DONE — R3F canvas with orbit controls, star field, infinite grid, animated icosahedron nodes with HTML labels and inspector
-- A2 (Spatial File System): DONE — spatial_nodes + scene_viewpoints tables, server fns (list/upsert/move/delete/seed-from-files/save-viewpoint), seed uses golden-angle spiral layout
-- Remaining batches in Foundry v2: 33
+- A1 (3D Scene Foundation): DONE
+- A2 (Spatial File System): DONE
+- A3 (Component Palette): DONE — palette_blocks table, default seed (Hero/Grid/Pricing/Button/Form/Table/Chart/Gallery/Video), drag-to-scene instantiates spatial_nodes
+- A4 (3D Device Studio): DONE — preview_devices table with 5 presets, R3F device meshes with embedded iframe textures, click-to-inspect, position/rotation/scale editing
+- Remaining batches in Foundry v2: 31
