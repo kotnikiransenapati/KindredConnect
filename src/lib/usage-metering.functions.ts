@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { recordAudit } from "@/lib/audit.functions";
+import { recordAudit } from "@/lib/audit.server";
 
 const METRIC_RE = /^[a-z][a-z0-9_.]{1,63}$/;
 

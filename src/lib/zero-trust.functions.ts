@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { recordAudit } from "@/lib/audit.functions";
+import { recordAudit } from "@/lib/audit.server";
 
 async function sha256Hex(input: string): Promise<string> {
   const enc = new TextEncoder().encode(input);

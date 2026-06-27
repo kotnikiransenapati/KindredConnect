@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { recordAudit } from "./audit.functions";
+import { recordAudit } from "./audit.server";
 
 const PLATFORM_FEE_PCT = 20; // matches default 80% payout_pct on the listing
 
