@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { applyDeployPlan, createDeployPlan, deleteDeployAdapter, listDeployOrchestrator, rollbackDeployPlan, saveDeployAdapter } from "@/lib/deploy-adapters.functions";
+import { createCanaryDeployPlan, exportSelfHostBundle, validateDeployCredentials } from "@/lib/deploy-extras.functions";
 import type { DeployProvider } from "@/lib/deploy-adapters.shared";
 import type { BuildTarget } from "@/lib/target-builds.shared";
-import { CheckCircle2, CloudCog, Loader2, PlayCircle, RotateCcw, ShieldCheck, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, CloudCog, Download, GitBranch, Globe2, KeyRound, Loader2, PlayCircle, RotateCcw, ShieldCheck, Trash2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const TARGET_OPTIONS: BuildTarget[] = ["web", "mobile", "desktop", "pwa", "widget"];
@@ -25,6 +26,9 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
   const applyFn = useServerFn(applyDeployPlan);
   const rollbackFn = useServerFn(rollbackDeployPlan);
   const deleteFn = useServerFn(deleteDeployAdapter);
+  const validateFn = useServerFn(validateDeployCredentials);
+  const exportFn = useServerFn(exportSelfHostBundle);
+  const canaryFn = useServerFn(createCanaryDeployPlan);
 
   const dataQ = useQuery({ queryKey: ["deploy-orchestrator", projectId], queryFn: () => listFn({ data: { projectId } }), refetchInterval: 15_000 });
   const data = dataQ.data as { catalog: any[]; adapters: any[]; plans: any[]; runs: any[] } | undefined;
@@ -35,6 +39,10 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
   const [region, setRegion] = useState("");
   const [trafficPercent, setTrafficPercent] = useState(100);
   const [credentialsRef, setCredentialsRef] = useState("");
+  const [exportDomain, setExportDomain] = useState("");
+  const [canaryRegions, setCanaryRegions] = useState("iad1,sfo1,fra1");
+  const [canaryStages, setCanaryStages] = useState("5:120,25:180,50:180,100:0");
+  const [credCheck, setCredCheck] = useState<{ ready: boolean; missing: string[]; present: string[] } | null>(null);
 
   const catalogEntry = useMemo(() => data?.catalog.find((entry) => entry.provider === provider), [data, provider]);
   const filteredTargets = useMemo(() => TARGET_OPTIONS.filter((t) => catalogEntry?.supportedTargets?.includes(t)), [catalogEntry]);
@@ -64,6 +72,39 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
   const deleteM = useMutation({
     mutationFn: (adapterId: string) => deleteFn({ data: { projectId, adapterId } }),
     onSuccess: () => { toast.success("Adapter removed"); invalidate(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const validateM = useMutation({
+    mutationFn: () => validateFn({ data: { projectId, provider } }),
+    onSuccess: (r) => {
+      setCredCheck({ ready: r.ready, missing: r.missing, present: r.present });
+      r.ready ? toast.success(`All ${r.required.length} credentials present`) : toast.error(`Missing ${r.missing.length}: ${r.missing.join(", ")}`);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const exportM = useMutation({
+    mutationFn: () => exportFn({ data: { projectId, provider, target, domain: exportDomain || undefined } }),
+    onSuccess: (bundle) => {
+      const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = `${provider}-${target}-selfhost.json`; a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Bundle ready · ${bundle.summary.fileCount} files · ${(bundle.summary.bytes / 1024).toFixed(1)}KB`);
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const canaryM = useMutation({
+    mutationFn: () => {
+      const regions = canaryRegions.split(",").map((s) => s.trim()).filter(Boolean);
+      const stages = canaryStages.split(",").map((s) => s.trim()).filter(Boolean).map((pair) => {
+        const [p, h] = pair.split(":").map((n) => parseInt(n, 10));
+        return { percent: Math.max(1, Math.min(100, p || 100)), holdSeconds: Math.max(0, h || 0) };
+      });
+      return canaryFn({ data: { projectId, provider, target, environment, regions, stages } });
+    },
+    onSuccess: (r) => { toast.success(`Canary plan · ${r.plan.steps.length} steps · ${r.plan.warnings.length} warning(s)`); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -172,6 +213,47 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
             {!data?.runs.length && <p className="text-xs text-muted-foreground">No deploy actions yet.</p>}
           </div>
         </Section>
+
+        <div className="grid gap-3 lg:grid-cols-3">
+          <Section title="E2 · Bring-your-own credentials">
+            <p className="mb-2 text-[11px] text-muted-foreground">Checks the project secrets vault for every credential key required by <b>{provider}</b>.</p>
+            <Button size="sm" variant="outline" onClick={() => validateM.mutate()} disabled={validateM.isPending}>
+              {validateM.isPending ? <Loader2 className="mr-1 size-3 animate-spin" /> : <KeyRound className="mr-1 size-3" />} Validate credentials
+            </Button>
+            {credCheck && (
+              <div className="mt-2 space-y-1 text-xs">
+                <div className="flex items-center gap-1">{credCheck.ready ? <CheckCircle2 className="size-3.5 text-emerald-500" /> : <XCircle className="size-3.5 text-destructive" />}<span>{credCheck.ready ? "Ready to deploy" : "Missing credentials"}</span></div>
+                {credCheck.present.length > 0 && <div className="flex flex-wrap gap-1">{credCheck.present.map((k) => <Badge key={k} variant="outline" className="text-[10px]">✓ {k}</Badge>)}</div>}
+                {credCheck.missing.length > 0 && <div className="flex flex-wrap gap-1">{credCheck.missing.map((k) => <Badge key={k} variant="destructive" className="text-[10px]">{k}</Badge>)}</div>}
+              </div>
+            )}
+          </Section>
+
+          <Section title="E3 · Self-host export">
+            <p className="mb-2 text-[11px] text-muted-foreground">Generates Dockerfile + Compose + Helm + Terraform + Caddyfile for the current IR. Downloads as a JSON manifest.</p>
+            <div className="space-y-2">
+              <Field label="Domain (optional)"><Input value={exportDomain} onChange={(e) => setExportDomain(e.target.value)} placeholder="app.example.com" /></Field>
+              <Button size="sm" onClick={() => exportM.mutate()} disabled={exportM.isPending}>
+                {exportM.isPending ? <Loader2 className="mr-1 size-3 animate-spin" /> : <Download className="mr-1 size-3" />} Export bundle
+              </Button>
+            </div>
+          </Section>
+
+          <Section title="E4 · Multi-region canary">
+            <p className="mb-2 text-[11px] text-muted-foreground">Progressive traffic shift across regions. Stages format: <code>percent:holdSeconds</code>.</p>
+            <div className="space-y-2">
+              <Field label="Regions (comma-separated)"><Input value={canaryRegions} onChange={(e) => setCanaryRegions(e.target.value)} placeholder="iad1,sfo1,fra1" /></Field>
+              <Field label="Stages"><Input value={canaryStages} onChange={(e) => setCanaryStages(e.target.value)} placeholder="5:120,25:180,50:180,100:0" /></Field>
+              <Button size="sm" variant="outline" onClick={() => canaryM.mutate()} disabled={canaryM.isPending}>
+                {canaryM.isPending ? <Loader2 className="mr-1 size-3 animate-spin" /> : <GitBranch className="mr-1 size-3" />} Create canary plan
+              </Button>
+            </div>
+          </Section>
+        </div>
+
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+          <Globe2 className="size-3" /> Foundry v2 · Phase E (E2 credentials · E3 self-host · E4 canary) wired through the deploy orchestrator.
+        </div>
       </CardContent>
     </Card>
   );
