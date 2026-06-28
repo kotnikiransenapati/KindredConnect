@@ -4036,6 +4036,183 @@ export type Database = {
           },
         ]
       }
+      foundry_launch_runbooks: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          escalation: Json
+          id: string
+          last_drilled_at: string | null
+          owners: Json
+          project_id: string
+          scenario: string
+          severity: string
+          sla_minutes: number
+          steps: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          escalation?: Json
+          id?: string
+          last_drilled_at?: string | null
+          owners?: Json
+          project_id: string
+          scenario: string
+          severity?: string
+          sla_minutes?: number
+          steps?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          escalation?: Json
+          id?: string
+          last_drilled_at?: string | null
+          owners?: Json
+          project_id?: string
+          scenario?: string
+          severity?: string
+          sla_minutes?: number
+          steps?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_launch_runbooks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_marketplace_listings: {
+        Row: {
+          artifact_kind: string
+          bundle: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          install_count: number
+          manifest: Json
+          name: string
+          pricing: Json
+          project_id: string
+          slug: string
+          status: string
+          summary: string | null
+          updated_at: string
+          version: string
+          visibility: string
+        }
+        Insert: {
+          artifact_kind: string
+          bundle?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          install_count?: number
+          manifest?: Json
+          name: string
+          pricing?: Json
+          project_id: string
+          slug: string
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          version?: string
+          visibility?: string
+        }
+        Update: {
+          artifact_kind?: string
+          bundle?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          install_count?: number
+          manifest?: Json
+          name?: string
+          pricing?: Json
+          project_id?: string
+          slug?: string
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          version?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_marketplace_listings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_product_docs: {
+        Row: {
+          content_md: string
+          created_at: string
+          created_by: string | null
+          format: string
+          id: string
+          kind: string
+          project_id: string
+          slug: string
+          source: string
+          title: string
+          updated_at: string
+          version: number
+          word_count: number
+        }
+        Insert: {
+          content_md: string
+          created_at?: string
+          created_by?: string | null
+          format?: string
+          id?: string
+          kind: string
+          project_id: string
+          slug: string
+          source?: string
+          title: string
+          updated_at?: string
+          version?: number
+          word_count?: number
+        }
+        Update: {
+          content_md?: string
+          created_at?: string
+          created_by?: string | null
+          format?: string
+          id?: string
+          kind?: string
+          project_id?: string
+          slug?: string
+          source?: string
+          title?: string
+          updated_at?: string
+          version?: number
+          word_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_product_docs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       foundry_readiness_assessments: {
         Row: {
           checks: Json
