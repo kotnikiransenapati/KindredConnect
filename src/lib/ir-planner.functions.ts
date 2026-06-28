@@ -89,7 +89,7 @@ export const listPlanRuns = createServerFn({ method: "POST" })
       .limit(20);
     return { runs: (rows ?? []) as Array<{
       id: string; prompt: string; status: string; attempts: number;
-      errors: unknown; model: string | null; tokens_in: number; tokens_out: number;
+      errors: unknown[]; model: string | null; tokens_in: number; tokens_out: number;
       created_at: string; applied_revision_id: string | null;
     }> };
   });

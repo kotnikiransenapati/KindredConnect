@@ -25,9 +25,15 @@ export const IrModelSchema = z.object({
   rls: z.enum(["owner", "public_read", "members_only", "admin_only"]).default("owner"),
 });
 
-export const IrComponentSchema = z.object({
+export type IrComponent = {
+  id: string;
+  type: string;
+  props: Record<string, unknown>;
+  children?: IrComponent[];
+};
+export const IrComponentSchema: z.ZodType<IrComponent> = z.object({
   id: z.string().min(1),
-  type: z.string().min(1), // e.g. "Hero" / "Grid" / "Form" / palette block id
+  type: z.string().min(1),
   props: z.record(z.string(), z.any()).default({}),
   children: z.array(z.lazy(() => IrComponentSchema)).optional(),
 });

@@ -26,7 +26,7 @@ export function IrPlannerPanel({ projectId }: { projectId: string }) {
   });
 
   const m = useMutation({
-    mutationFn: () => run({ data: { projectId, prompt, apply } }),
+    mutationFn: () => run({ data: { projectId, prompt, apply, model: "google/gemini-2.5-flash" } }),
     onSuccess: (r) => {
       toast[r.ok ? "success" : "error"](r.ok ? `Planner OK in ${r.attempts} attempt(s)` : `Planner failed after ${r.attempts} attempts`);
       qc.invalidateQueries({ queryKey: ["ir-plan-runs", projectId] });
