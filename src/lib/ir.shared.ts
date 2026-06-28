@@ -28,7 +28,8 @@ export const IrModelSchema = z.object({
 export type IrComponent = {
   id: string;
   type: string;
-  props: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: Record<string, any>;
   children?: IrComponent[];
 };
 export const IrComponentSchema: z.ZodType<IrComponent> = z.object({
