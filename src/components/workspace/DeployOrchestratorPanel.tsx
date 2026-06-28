@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { applyDeployPlan, createDeployPlan, deleteDeployAdapter, listDeployOrchestrator, rollbackDeployPlan, saveDeployAdapter } from "@/lib/deploy-adapters.functions";
+import { createCanaryDeployPlan, exportSelfHostBundle, validateDeployCredentials } from "@/lib/deploy-extras.functions";
 import type { DeployProvider } from "@/lib/deploy-adapters.shared";
 import type { BuildTarget } from "@/lib/target-builds.shared";
-import { CheckCircle2, CloudCog, Loader2, PlayCircle, RotateCcw, ShieldCheck, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, CloudCog, Download, GitBranch, Globe2, KeyRound, Loader2, PlayCircle, RotateCcw, ShieldCheck, Trash2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const TARGET_OPTIONS: BuildTarget[] = ["web", "mobile", "desktop", "pwa", "widget"];
