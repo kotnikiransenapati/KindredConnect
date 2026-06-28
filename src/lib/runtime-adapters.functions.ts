@@ -44,7 +44,7 @@ export const getRuntimeAdapters = createServerFn({ method: "POST" })
       .limit(12);
 
     return {
-      catalog: RUNTIME_ADAPTER_CATALOG.filter((adapter) => ["auth", "database", "storage", "functions", "ai"].includes(adapter.category)),
+      catalog: RUNTIME_ADAPTER_CATALOG.filter((adapter) => ["auth", "database", "storage", "functions", "ai", "payments", "email", "push"].includes(adapter.category)),
       configs: (configs ?? []) as Array<{ id: string; category: RuntimeAdapterCategory; provider: string; display_name: string; status: string; capabilities: string[]; config: Record<string, any>; secret_refs: string[]; score: number; updated_at: string }>,
       audits: (audits ?? []) as Array<{ id: string; action: string; summary: string; created_at: string; adapter_config_id: string | null }>,
       summary: runtimeContractSummary((configs ?? []) as RuntimeContractAdapter[]),
@@ -145,14 +145,14 @@ export const applyRuntimeAdaptersToIr = createServerFn({ method: "POST" })
       .from("runtime_adapter_configs" as never)
       .select("category, provider, config, status")
       .eq("project_id" as never, data.projectId as never)
-      .in("category" as never, ["auth", "database", "storage", "functions", "ai"] as never);
+        .in("category" as never, ["auth", "database", "storage", "functions", "ai", "payments", "email", "push"] as never);
     const { data: row } = await context.supabase
       .from("project_ir" as never)
       .select("ir, version")
       .eq("project_id" as never, data.projectId as never)
       .maybeSingle();
     const current = IrSchema.parse((row as unknown as { ir: unknown } | null)?.ir ?? EMPTY_IR);
-    const replacedKinds = new Set(["auth", "db", "storage", "functions", "ai"]);
+    const replacedKinds = new Set(["auth", "db", "storage", "functions", "ai", "payments", "email", "push"]);
     const nextIntegrations = current.integrations.filter((integration) => !replacedKinds.has(integration.kind));
     for (const config of (configs ?? []) as Array<{ category: RuntimeAdapterCategory; provider: string; config: Record<string, any>; status: string }>) {
       nextIntegrations.push({ kind: integrationKindForCategory(config.category), provider: config.provider, config: { ...config.config, status: config.status } });
@@ -193,7 +193,7 @@ export const syncRuntimeAdapterContractFiles = createServerFn({ method: "POST" }
       .from("runtime_adapter_configs" as never)
       .select("category, provider, display_name, status, capabilities, config, secret_refs, score")
       .eq("project_id" as never, data.projectId as never)
-      .in("category" as never, ["auth", "database", "storage", "functions", "ai"] as never)
+        .in("category" as never, ["auth", "database", "storage", "functions", "ai", "payments", "email", "push"] as never)
       .order("category" as never, { ascending: true });
     if (error) throw new Error(error.message);
     const rows = (configs ?? []) as RuntimeContractAdapter[];

@@ -219,4 +219,6 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 - B6-B7 (Diff review + pipeline observability): DONE — reviewable patch sets, pipeline replay events, deterministic diffs
 - C1-C2 (Auth/database adapters): DONE — portable auth/database catalog, config persistence, IR sync
 - C3-C5 (Storage/functions/AI adapters): DONE — S3/GCS/storage providers, edge/self-host function targets, AI gateway/OpenAI/self-host targets, generated @app/runtime contract files
-- Remaining batches in Foundry v2: 20
+- C6 (Payments/email/push adapters): DONE — Stripe/Paddle/Razorpay, Resend/Postmark/SMTP, FCM/APNs/OneSignal/Web Push in the portable runtime contract
+- D1-D2 (Web + iOS/Android targets): DONE — deterministic target profiles, target readiness scoring, generated web/mobile artifacts, and target run tracking
+- Remaining batches in Foundry v2: 17

@@ -8,10 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bot, Box, Cloud, Database, KeyRound, Link2, RefreshCw, Shield, Smartphone, Workflow, Zap } from "lucide-react";
+import { Bell, Bot, Box, Cloud, CreditCard, Database, KeyRound, Link2, Mail, RefreshCw, Shield, Smartphone, Workflow, Zap } from "lucide-react";
 import { toast } from "sonner";
 
-type Category = "auth" | "database" | "storage" | "functions" | "ai";
+type Category = "auth" | "database" | "storage" | "functions" | "ai" | "payments" | "email" | "push";
 
 const categoryTabs: Array<{ value: Category; label: string; icon: typeof KeyRound; badge: string }> = [
   { value: "auth", label: "Auth", icon: KeyRound, badge: "C1" },
@@ -19,6 +19,9 @@ const categoryTabs: Array<{ value: Category; label: string; icon: typeof KeyRoun
   { value: "storage", label: "Storage", icon: Box, badge: "C3" },
   { value: "functions", label: "Functions", icon: Zap, badge: "C4" },
   { value: "ai", label: "AI", icon: Bot, badge: "C5" },
+  { value: "payments", label: "Payments", icon: CreditCard, badge: "C6" },
+  { value: "email", label: "Email", icon: Mail, badge: "C6" },
+  { value: "push", label: "Push", icon: Bell, badge: "C6" },
 ];
 
 export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
@@ -72,7 +75,7 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
           <Workflow className="size-4" /> Portable Runtime Adapters
           <Badge variant="outline" className="text-[10px]">C1 auth</Badge>
           <Badge variant="outline" className="text-[10px]">C2 database</Badge>
-          <Badge variant="outline" className="text-[10px]">C3-C5 runtime</Badge>
+          <Badge variant="outline" className="text-[10px]">C3-C6 runtime</Badge>
           <div className="ml-auto flex flex-wrap gap-2">
             <Button size="sm" variant="outline" onClick={() => contractM.mutate()} disabled={contractM.isPending}>
               <Cloud className="mr-1 size-3.5" /> Generate contract
@@ -88,7 +91,7 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
           <Metric label="Configured" value={String(configs.length)} />
           <Metric label="Healthy" value={String(configs.filter((c: any) => c.status === "healthy" || c.status === "configured").length)} />
           <Metric label="Runtime score" value={String(summary?.averageScore ?? 0)} />
-          <Metric label="Missing categories" value={String(summary?.missingCategories?.length ?? 5)} />
+          <Metric label="Missing categories" value={String(summary?.missingCategories?.length ?? 8)} />
         </div>
 
         <Tabs value={category} onValueChange={(v) => { const next = v as Category; setCategory(next); const first = catalog.find((a: any) => a.category === next); if (first) setProvider(first.provider); }}>
