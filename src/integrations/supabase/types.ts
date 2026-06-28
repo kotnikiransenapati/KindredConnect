@@ -4157,6 +4157,156 @@ export type Database = {
           },
         ]
       }
+      foundry_monetization_plans: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          features: Json
+          id: string
+          interval: string
+          name: string
+          price_cents: number
+          project_id: string
+          quotas: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          features?: Json
+          id?: string
+          interval?: string
+          name: string
+          price_cents?: number
+          project_id: string
+          quotas?: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          features?: Json
+          id?: string
+          interval?: string
+          name?: string
+          price_cents?: number
+          project_id?: string
+          quotas?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_monetization_plans_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_onboarding_journeys: {
+        Row: {
+          audience: string
+          completion_goal: string | null
+          created_at: string
+          created_by: string | null
+          enabled: boolean
+          id: string
+          name: string
+          project_id: string
+          slug: string
+          steps: Json
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          completion_goal?: string | null
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          name: string
+          project_id: string
+          slug: string
+          steps?: Json
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          completion_goal?: string | null
+          created_at?: string
+          created_by?: string | null
+          enabled?: boolean
+          id?: string
+          name?: string
+          project_id?: string
+          slug?: string
+          steps?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_onboarding_journeys_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_polish_reports: {
+        Row: {
+          category_scores: Json
+          created_at: string
+          created_by: string | null
+          findings: Json
+          grade: string
+          id: string
+          project_id: string
+          recommendations: Json
+          score: number
+        }
+        Insert: {
+          category_scores?: Json
+          created_at?: string
+          created_by?: string | null
+          findings?: Json
+          grade: string
+          id?: string
+          project_id: string
+          recommendations?: Json
+          score: number
+        }
+        Update: {
+          category_scores?: Json
+          created_at?: string
+          created_by?: string | null
+          findings?: Json
+          grade?: string
+          id?: string
+          project_id?: string
+          recommendations?: Json
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_polish_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       foundry_product_docs: {
         Row: {
           content_md: string
