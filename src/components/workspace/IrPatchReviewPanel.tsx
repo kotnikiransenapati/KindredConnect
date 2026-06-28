@@ -190,11 +190,11 @@ function createProductionPatch(ir: any) {
     title: home.title || `${ir.name} Home`,
     components: [
       ...(home.components ?? []),
-      { id: `patch-hero-${Date.now()}`, type: "hero", props: { eyebrow: "Production ready", title: ir.name, subtitle: ir.description || "A generated web, iOS, and Android product with portable runtime adapters.", cta: "Start building", secondaryCta: "Review pipeline" } },
-      { id: `patch-cta-${Date.now()}`, type: "cta", props: { title: "Ship across web and native", subtitle: "Generated routes, data models, auth, database, preview, and deployment artifacts stay traceable through the IR pipeline.", button: "Generate app" } },
+      { id: `patch-hero-${Date.now()}`, type: "Hero", props: { title: ir.name, subtitle: ir.description || "A generated web, iOS, and Android product with portable runtime adapters.", cta: "Start building", href: "/" } },
+      { id: `patch-cta-${Date.now()}`, type: "CTA", props: { title: "Ship across web and native", cta: "Generate app", href: "/" } },
     ],
   }];
-  if (!hasPricing) nextPages.push({ route: "/pricing", title: "Pricing", description: "Flexible plan page", auth: "public", layout: "default", components: [{ id: `patch-pricing-${Date.now()}`, type: "pricing", props: { title: "Plans for every launch", tiers: ["Starter", "Growth", "Enterprise"] } }] });
+  if (!hasPricing) nextPages.push({ route: "/pricing", title: "Pricing", description: "Flexible plan page", auth: "public", layout: "default", components: [{ id: `patch-pricing-${Date.now()}`, type: "Pricing", props: { tiers: ["Starter — launch", "Growth — scale", "Enterprise — govern"] } }] });
   return { ...ir, pages: nextPages.sort((a: any, b: any) => a.route.localeCompare(b.route)), integrations: ensureIntegration(ensureIntegration(ir.integrations ?? [], "auth", "portable-auth"), "db", "portable-database") };
 }
 
