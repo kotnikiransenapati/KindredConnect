@@ -2680,6 +2680,56 @@ export type Database = {
           },
         ]
       }
+      deploy_adapters: {
+        Row: {
+          config: Json
+          created_at: string
+          created_by: string | null
+          credentials_ref: string | null
+          environment: string
+          id: string
+          project_id: string
+          provider: string
+          region: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          credentials_ref?: string | null
+          environment?: string
+          id?: string
+          project_id: string
+          provider: string
+          region?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          credentials_ref?: string | null
+          environment?: string
+          id?: string
+          project_id?: string
+          provider?: string
+          region?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deploy_adapters_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deploy_healing: {
         Row: {
           action: string
@@ -2757,6 +2807,136 @@ export type Database = {
             columns: ["rollback_to_deployment_id"]
             isOneToOne: false
             referencedRelation: "deployments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deploy_plans: {
+        Row: {
+          adapter_id: string | null
+          created_at: string
+          created_by: string | null
+          environment: string
+          estimated_cost_cents: number
+          id: string
+          ir_hash: string
+          plan: Json
+          project_id: string
+          provider: string
+          status: string
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          adapter_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          environment?: string
+          estimated_cost_cents?: number
+          id?: string
+          ir_hash?: string
+          plan?: Json
+          project_id: string
+          provider: string
+          status?: string
+          target: string
+          updated_at?: string
+        }
+        Update: {
+          adapter_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          environment?: string
+          estimated_cost_cents?: number
+          id?: string
+          ir_hash?: string
+          plan?: Json
+          project_id?: string
+          provider?: string
+          status?: string
+          target?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deploy_plans_adapter_id_fkey"
+            columns: ["adapter_id"]
+            isOneToOne: false
+            referencedRelation: "deploy_adapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_plans_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deploy_runs: {
+        Row: {
+          action: string
+          adapter_id: string | null
+          created_at: string
+          duration_ms: number | null
+          id: string
+          logs: string
+          output: Json
+          plan_id: string | null
+          project_id: string
+          status: string
+          triggered_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          adapter_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          logs?: string
+          output?: Json
+          plan_id?: string | null
+          project_id: string
+          status?: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          adapter_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          logs?: string
+          output?: Json
+          plan_id?: string | null
+          project_id?: string
+          status?: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deploy_runs_adapter_id_fkey"
+            columns: ["adapter_id"]
+            isOneToOne: false
+            referencedRelation: "deploy_adapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_runs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "deploy_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deploy_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
