@@ -26,6 +26,9 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
   const applyFn = useServerFn(applyDeployPlan);
   const rollbackFn = useServerFn(rollbackDeployPlan);
   const deleteFn = useServerFn(deleteDeployAdapter);
+  const validateFn = useServerFn(validateDeployCredentials);
+  const exportFn = useServerFn(exportSelfHostBundle);
+  const canaryFn = useServerFn(createCanaryDeployPlan);
 
   const dataQ = useQuery({ queryKey: ["deploy-orchestrator", projectId], queryFn: () => listFn({ data: { projectId } }), refetchInterval: 15_000 });
   const data = dataQ.data as { catalog: any[]; adapters: any[]; plans: any[]; runs: any[] } | undefined;
@@ -36,6 +39,10 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
   const [region, setRegion] = useState("");
   const [trafficPercent, setTrafficPercent] = useState(100);
   const [credentialsRef, setCredentialsRef] = useState("");
+  const [exportDomain, setExportDomain] = useState("");
+  const [canaryRegions, setCanaryRegions] = useState("iad1,sfo1,fra1");
+  const [canaryStages, setCanaryStages] = useState("5:120,25:180,50:180,100:0");
+  const [credCheck, setCredCheck] = useState<{ ready: boolean; missing: string[]; present: string[] } | null>(null);
 
   const catalogEntry = useMemo(() => data?.catalog.find((entry) => entry.provider === provider), [data, provider]);
   const filteredTargets = useMemo(() => TARGET_OPTIONS.filter((t) => catalogEntry?.supportedTargets?.includes(t)), [catalogEntry]);
