@@ -110,7 +110,7 @@ export const createMarketplaceListing = createServerFn({ method: "POST" })
     });
     const { data: row, error } = await supabaseAdmin.from("foundry_marketplace_listings").insert({
       project_id: data.projectId, artifact_kind: data.artifactKind, slug: data.slug, name: data.name,
-      version: data.version, visibility: data.visibility, manifest: bundle.manifest, bundle: bundle as unknown as Record<string, unknown>,
+      version: data.version, visibility: data.visibility, manifest: bundle.manifest as unknown as Json, bundle: bundle as unknown as Json,
       status: "draft", created_by: context.userId,
     }).select("*").single();
     if (error) throw new Error(error.message);
