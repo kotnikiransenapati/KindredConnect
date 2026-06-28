@@ -276,6 +276,7 @@ function ProjectWorkspace() {
                 <FoundryLaunchCenterPanel projectId={projectId} />
                 <FoundryFinalizePanel projectId={projectId} />
                 <FoundryProductionStudioPanel projectId={projectId} />
+                <FoundryDeliveryPanel projectId={projectId} />
                 <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
