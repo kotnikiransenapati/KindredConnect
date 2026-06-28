@@ -35,7 +35,7 @@ export type IrComponent = {
 export const IrComponentSchema: z.ZodType<IrComponent> = z.object({
   id: z.string().min(1),
   type: z.string().min(1),
-  props: z.record(z.string(), z.any()).default({}),
+  props: z.record(z.string(), z.any()),
   children: z.array(z.lazy(() => IrComponentSchema)).optional(),
 });
 
