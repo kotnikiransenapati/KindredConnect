@@ -3,6 +3,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { assessProductionReadiness, buildComplianceFiles, buildSecurityFiles, buildTelemetryFiles, complianceControlDefaults, defaultSecurityBaseline, type ComplianceConfig, type SecurityBaselineConfig, type TelemetryConfig } from "./production-readiness.shared";
 import type { RuntimeContractAdapter } from "./runtime-contract.shared";
 
@@ -14,8 +15,9 @@ const TelemetryProviderZ = z.enum(["otlp", "honeycomb", "datadog", "grafana-clou
 const ComplianceProfileZ = z.enum(["soc2", "hipaa", "gdpr", "pci", "iso27001", "custom"]);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function requireRole(ctx: { supabase: any; userId: string }, projectId: string, role: "viewer" | "editor" | "owner") {
-  const { data: allowed, error } = await ctx.supabase.rpc("has_project_role", { _project_id: projectId, _user_id: ctx.userId, _min_role: role });
+async function requireRole(ctx: { userId: string }, projectId: string, role: "viewer" | "editor" | "owner") {
+  // Use service-role only for this authorization lookup so project member checks do not rely on an exposed SECURITY DEFINER RPC.
+  const { data: allowed, error } = await supabaseAdmin.rpc("has_project_role", { _project_id: projectId, _user_id: ctx.userId, _min_role: role });
   if (error || !allowed) throw new Error("Forbidden");
 }
 
