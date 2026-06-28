@@ -3986,6 +3986,75 @@ export type Database = {
           },
         ]
       }
+      foundry_artifact_plans: {
+        Row: {
+          blueprint_id: string | null
+          created_at: string
+          created_by: string | null
+          gates: Json
+          generated_files: Json
+          id: string
+          outputs: Json
+          pipeline_hash: string
+          project_id: string
+          risk_register: Json
+          stages: Json
+          status: string
+          target_matrix: Json
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          blueprint_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          gates?: Json
+          generated_files?: Json
+          id?: string
+          outputs?: Json
+          pipeline_hash: string
+          project_id: string
+          risk_register?: Json
+          stages?: Json
+          status?: string
+          target_matrix?: Json
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          blueprint_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          gates?: Json
+          generated_files?: Json
+          id?: string
+          outputs?: Json
+          pipeline_hash?: string
+          project_id?: string
+          risk_register?: Json
+          stages?: Json
+          status?: string
+          target_matrix?: Json
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_artifact_plans_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "foundry_product_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "foundry_artifact_plans_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       foundry_compliance_profiles: {
         Row: {
           created_at: string
@@ -4300,6 +4369,77 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "foundry_polish_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_product_blueprints: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          data_model: Json
+          id: string
+          integrations: Json
+          name: string
+          personas: Json
+          project_id: string
+          readiness_score: number
+          release_criteria: Json
+          security_controls: Json
+          source: string
+          status: string
+          summary: string | null
+          surfaces: Json
+          updated_at: string
+          version: number
+          warnings: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          data_model?: Json
+          id?: string
+          integrations?: Json
+          name: string
+          personas?: Json
+          project_id: string
+          readiness_score?: number
+          release_criteria?: Json
+          security_controls?: Json
+          source?: string
+          status?: string
+          summary?: string | null
+          surfaces?: Json
+          updated_at?: string
+          version?: number
+          warnings?: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          data_model?: Json
+          id?: string
+          integrations?: Json
+          name?: string
+          personas?: Json
+          project_id?: string
+          readiness_score?: number
+          release_criteria?: Json
+          security_controls?: Json
+          source?: string
+          status?: string
+          summary?: string | null
+          surfaces?: Json
+          updated_at?: string
+          version?: number
+          warnings?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_product_blueprints_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"

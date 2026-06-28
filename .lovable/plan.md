@@ -226,3 +226,34 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 - E2-E4 (Credentials, self-host export, multi-region canary): DONE — deploy credential validation, portable Docker/Compose/Helm/Terraform export, progressive regional canary plans
 - F1-F3 + G1 (Security, observability, compliance, readiness): DONE — generated app security kit, OpenTelemetry pipeline, compliance bundles, production readiness assessor/materializer
 - Remaining batches in Foundry v2: 6
+
+## Foundry v3 Production Extension — 12 batches
+
+The v2 plan is complete. v3 deepens the builder from “feature-rich app generator” into a production operating system that can create, verify, package and continuously improve real web, iOS and Android apps across portable providers.
+
+| Phase | Batches | Focus |
+|-------|---------|-------|
+| H | 4 | Product graph, verified artifact matrix, autonomous backlog, acceptance contracts |
+| I | 4 | Real build execution, preview farm, mobile signing lanes, release provenance |
+| J | 4 | Runtime portability hardening, SLA operations, growth loops, enterprise governance |
+
+### H1 — Production Blueprint Graph: DONE
+- Synthesizes a project-specific product blueprint from generated files, runtime adapters, deploy providers, security baseline, telemetry, compliance, onboarding and monetization state.
+- Persists versioned blueprints with RLS, editor approval flow, readiness score, release criteria, personas, surfaces, data model and security controls.
+
+### H2 — Verified Artifact Matrix: DONE
+- Builds a deterministic web/iOS/Android/backend artifact matrix from the approved blueprint.
+- Generates stage dependencies, outputs, gates, risk register and pipeline hash, then materializes production blueprint and pipeline manifest files into project files.
+
+### H3 — Autonomous Backlog Compiler: PLANNED
+### H4 — Acceptance Contract Test Graph: PLANNED
+### I1 — Isolated Build Executor: PLANNED
+### I2 — Preview Device Farm: PLANNED
+### I3 — Mobile Signing & Store Lane: PLANNED
+### I4 — Release Provenance Ledger: PLANNED
+### J1 — Adapter Parity Verifier: PLANNED
+### J2 — SLA Operations Cockpit: PLANNED
+### J3 — Growth Experiment Runtime: PLANNED
+### J4 — Enterprise Governance Layer: PLANNED
+
+- Remaining batches in Foundry v3: 10

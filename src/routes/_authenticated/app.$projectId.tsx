@@ -93,6 +93,7 @@ import { DeployOrchestratorPanel } from "@/components/workspace/DeployOrchestrat
 import { ProductionReadinessPanel } from "@/components/workspace/ProductionReadinessPanel";
 import { FoundryLaunchCenterPanel } from "@/components/workspace/FoundryLaunchCenterPanel";
 import { FoundryFinalizePanel } from "@/components/workspace/FoundryFinalizePanel";
+import { FoundryProductionStudioPanel } from "@/components/workspace/FoundryProductionStudioPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -274,6 +275,7 @@ function ProjectWorkspace() {
                 <ProductionReadinessPanel projectId={projectId} />
                 <FoundryLaunchCenterPanel projectId={projectId} />
                 <FoundryFinalizePanel projectId={projectId} />
+                <FoundryProductionStudioPanel projectId={projectId} />
                 <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
