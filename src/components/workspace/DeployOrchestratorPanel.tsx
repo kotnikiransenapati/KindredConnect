@@ -75,6 +75,39 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const validateM = useMutation({
+    mutationFn: () => validateFn({ data: { projectId, provider } }),
+    onSuccess: (r) => {
+      setCredCheck({ ready: r.ready, missing: r.missing, present: r.present });
+      r.ready ? toast.success(`All ${r.required.length} credentials present`) : toast.error(`Missing ${r.missing.length}: ${r.missing.join(", ")}`);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const exportM = useMutation({
+    mutationFn: () => exportFn({ data: { projectId, provider, target, domain: exportDomain || undefined } }),
+    onSuccess: (bundle) => {
+      const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = `${provider}-${target}-selfhost.json`; a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Bundle ready · ${bundle.summary.fileCount} files · ${(bundle.summary.bytes / 1024).toFixed(1)}KB`);
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const canaryM = useMutation({
+    mutationFn: () => {
+      const regions = canaryRegions.split(",").map((s) => s.trim()).filter(Boolean);
+      const stages = canaryStages.split(",").map((s) => s.trim()).filter(Boolean).map((pair) => {
+        const [p, h] = pair.split(":").map((n) => parseInt(n, 10));
+        return { percent: Math.max(1, Math.min(100, p || 100)), holdSeconds: Math.max(0, h || 0) };
+      });
+      return canaryFn({ data: { projectId, provider, target, environment, regions, stages } });
+    },
+    onSuccess: (r) => { toast.success(`Canary plan · ${r.plan.steps.length} steps · ${r.plan.warnings.length} warning(s)`); invalidate(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <Card className="border-border/60 bg-card/50">
       <CardHeader>
