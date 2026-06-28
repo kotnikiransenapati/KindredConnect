@@ -80,6 +80,8 @@ import { ComponentPalettePanel } from "@/components/workspace/ComponentPalettePa
 import { DeviceStudioPanel } from "@/components/workspace/DeviceStudioPanel";
 import { InspectorHudPanel } from "@/components/workspace/InspectorHudPanel";
 import { AnimationTimelinePanel } from "@/components/workspace/AnimationTimelinePanel";
+import { SpatialPresencePanel } from "@/components/workspace/SpatialPresencePanel";
+import { AccessibilityPanel } from "@/components/workspace/AccessibilityPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -249,6 +251,8 @@ function ProjectWorkspace() {
                 <DeviceStudioPanel projectId={projectId} />
                 <InspectorHudPanel projectId={projectId} />
                 <AnimationTimelinePanel projectId={projectId} />
+                <SpatialPresencePanel projectId={projectId} />
+                <AccessibilityPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 

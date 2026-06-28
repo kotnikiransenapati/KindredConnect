@@ -163,6 +163,10 @@ Single `<script>` tag → mounts into any host page in a shadow DOM, talks to th
 
 ---
 
+## Progress
+- A7 Spatial Presence ✅
+- A8 Accessibility ## 8. Batch Plan Flat Fallback ✅
+
 ## 8. Batch Plan (38 batches total)
 
 | Phase | Batches | Focus |
