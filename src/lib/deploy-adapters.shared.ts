@@ -15,7 +15,7 @@ export type DeployAdapterCatalogEntry = {
   displayName: string;
   supportedTargets: BuildTarget[];
   capabilities: { multiRegion: boolean; canary: boolean; previewEnvironments: boolean; selfHost: boolean; managedTls: boolean; logsRetentionDays: number };
-  defaultConfig: Record<string, unknown>;
+  defaultConfig: Record<string, any>;
   credentialKeys: string[];
   // Estimated cents per million requests at baseline tier — used for plan cost estimates.
   estimatedCostPerMillionCents: number;
