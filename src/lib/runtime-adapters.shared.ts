@@ -12,7 +12,10 @@ export type RuntimeAdapterOption = {
   nativeReady: boolean;
   selfHostReady: boolean;
   score: number;
-  configDefaults: Record<string, unknown>;
+  // Server functions require concrete serializable shapes; `any` avoids leaking
+  // `unknown` through TanStack Start's serializability validator.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  configDefaults: Record<string, any>;
 };
 
 export const RUNTIME_ADAPTER_CATALOG: RuntimeAdapterOption[] = [

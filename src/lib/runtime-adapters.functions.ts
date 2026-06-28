@@ -44,7 +44,7 @@ export const getRuntimeAdapters = createServerFn({ method: "POST" })
 
     return {
       catalog: RUNTIME_ADAPTER_CATALOG.filter((adapter) => adapter.category === "auth" || adapter.category === "database"),
-      configs: (configs ?? []) as Array<{ id: string; category: RuntimeAdapterCategory; provider: string; display_name: string; status: string; capabilities: string[]; config: Record<string, unknown>; secret_refs: string[]; score: number; updated_at: string }>,
+      configs: (configs ?? []) as Array<{ id: string; category: RuntimeAdapterCategory; provider: string; display_name: string; status: string; capabilities: string[]; config: Record<string, any>; secret_refs: string[]; score: number; updated_at: string }>,
       audits: (audits ?? []) as Array<{ id: string; action: string; summary: string; created_at: string; adapter_config_id: string | null }>,
     };
   });
@@ -151,7 +151,7 @@ export const applyRuntimeAdaptersToIr = createServerFn({ method: "POST" })
       .maybeSingle();
     const current = IrSchema.parse((row as unknown as { ir: unknown } | null)?.ir ?? EMPTY_IR);
     const nextIntegrations = current.integrations.filter((integration) => integration.kind !== "auth" && integration.kind !== "db");
-    for (const config of (configs ?? []) as Array<{ category: RuntimeAdapterCategory; provider: string; config: Record<string, unknown>; status: string }>) {
+    for (const config of (configs ?? []) as Array<{ category: RuntimeAdapterCategory; provider: string; config: Record<string, any>; status: string }>) {
       nextIntegrations.push({ kind: integrationKindForCategory(config.category), provider: config.provider, config: { ...config.config, status: config.status } });
     }
     const next: Ir = IrSchema.parse({ ...current, integrations: nextIntegrations });

@@ -9,6 +9,19 @@ const ProjectInput = z.object({ projectId: z.string().uuid() });
 const PatchInput = z.object({ projectId: z.string().uuid(), patchSetId: z.string().uuid() });
 const CreatePatchInput = z.object({ projectId: z.string().uuid(), targetIr: z.unknown(), summary: z.string().max(500).default("IR patch proposal") });
 
+type StoredPatchSet = {
+  id: string;
+  base_ir_hash: string;
+  target_ir_hash: string;
+  status: string;
+  summary: string;
+  files: PatchFile[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stats: PatchStats & { targetIr?: any };
+  created_at: string;
+  applied_at: string | null;
+};
+
 async function requireEditor(context: { supabase: any; userId: string }, projectId: string) {
   const { data: allowed } = await context.supabase.rpc("has_project_role", {
     _project_id: projectId,
@@ -54,7 +67,8 @@ export const createIrPatchSet = createServerFn({ method: "POST" })
       .select("id, status, stats")
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return { ok: true, patchSetId: (row as { id: string }).id, stats };
+    if (!row) throw new Error("Patch set was not persisted");
+    return { ok: true, patchSetId: (row as unknown as { id: string }).id, stats };
   });
 
 export const listIrPatchSets = createServerFn({ method: "POST" })
@@ -75,15 +89,7 @@ export const getIrPatchSet = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: z.infer<typeof PatchInput>) => PatchInput.parse(d))
   .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
-      .from("ir_patch_sets" as never)
-      .select("id, base_ir_hash, target_ir_hash, status, summary, files, stats, created_at, applied_at")
-      .eq("project_id" as never, data.projectId as never)
-      .eq("id" as never, data.patchSetId as never)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!row) throw new Error("Patch set not found");
-    return { patchSet: row as unknown as { id: string; base_ir_hash: string; target_ir_hash: string; status: string; summary: string; files: PatchFile[]; stats: PatchStats & { targetIr?: unknown }; created_at: string; applied_at: string | null } };
+    return { patchSet: await loadPatchSet(context, data.projectId, data.patchSetId) };
   });
 
 export const applyIrPatchSet = createServerFn({ method: "POST" })
@@ -91,7 +97,7 @@ export const applyIrPatchSet = createServerFn({ method: "POST" })
   .inputValidator((d: z.infer<typeof PatchInput>) => PatchInput.parse(d))
   .handler(async ({ data, context }) => {
     await requireEditor(context, data.projectId);
-    const { patchSet } = await getIrPatchSet({ data });
+    const patchSet = await loadPatchSet(context, data.projectId, data.patchSetId);
     if (patchSet.status === "applied") return { ok: true, written: 0, deleted: 0, version: null as number | null };
 
     const upserts = patchSet.files
@@ -115,7 +121,7 @@ export const applyIrPatchSet = createServerFn({ method: "POST" })
     }
 
     let version: number | null = null;
-    const parsedTarget = IrSchema.safeParse((patchSet.stats as { targetIr?: unknown }).targetIr);
+    const parsedTarget = IrSchema.safeParse(patchSet.stats.targetIr);
     if (parsedTarget.success) {
       const { data: existing } = await context.supabase
         .from("project_ir" as never)
@@ -164,3 +170,15 @@ export const rejectIrPatchSet = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+async function loadPatchSet(context: { supabase: any }, projectId: string, patchSetId: string): Promise<StoredPatchSet> {
+  const { data: row, error } = await context.supabase
+    .from("ir_patch_sets" as never)
+    .select("id, base_ir_hash, target_ir_hash, status, summary, files, stats, created_at, applied_at")
+    .eq("project_id" as never, projectId as never)
+    .eq("id" as never, patchSetId as never)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Patch set not found");
+  return row as unknown as StoredPatchSet;
+}

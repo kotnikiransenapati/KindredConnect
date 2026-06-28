@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { EMPTY_IR, IrSchema, generateFilesFromIr, hashIr, lintIr, type IrIssue } from "./ir.shared";
+import { EMPTY_IR, IrSchema, generateFilesFromIr, hashIr, lintIr } from "./ir.shared";
 
 const ProjectInput = z.object({ projectId: z.string().uuid(), runId: z.string().optional() });
 
@@ -14,7 +14,8 @@ type PipelineEvent = {
   status: "queued" | "running" | "succeeded" | "failed" | "blocked" | "skipped";
   severity: "debug" | "info" | "warn" | "error";
   message: string;
-  payload: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload: Record<string, any>;
   actor_id: string;
 };
 
@@ -46,12 +47,13 @@ export const runPipelineReplay = createServerFn({ method: "POST" })
     const warnings = issues.filter((issue) => issue.severity === "warn");
 
     const events: PipelineEvent[] = [];
-    const push = (stage: string, status: PipelineEvent["status"], severity: PipelineEvent["severity"], message: string, payload: Record<string, unknown> = {}) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const push = (stage: string, status: PipelineEvent["status"], severity: PipelineEvent["severity"], message: string, payload: Record<string, any> = {}) => {
       events.push({ project_id: data.projectId, run_id: runId, sequence: events.length + 1, stage, status, severity, message, payload, actor_id: context.userId });
     };
 
     push("prompt", "succeeded", "info", "IR snapshot loaded", { version: (row as unknown as { version?: number } | null)?.version ?? 0, irHash: hashIr(ir) });
-    push("validate", blocking.length ? "blocked" : "succeeded", blocking.length ? "error" : warnings.length ? "warn" : "info", blocking.length ? "IR has blocking validation errors" : warnings.length ? "IR is valid with warnings" : "IR is valid", { issues: issues satisfies IrIssue[] });
+    push("validate", blocking.length ? "blocked" : "succeeded", blocking.length ? "error" : warnings.length ? "warn" : "info", blocking.length ? "IR has blocking validation errors" : warnings.length ? "IR is valid with warnings" : "IR is valid", { issues });
     push("codegen", blocking.length ? "skipped" : "succeeded", blocking.length ? "warn" : "info", blocking.length ? "Codegen skipped until validation passes" : `Generated ${files.length} deterministic files`, { files: files.map((file) => ({ path: file.path, bytes: file.content.length })) });
     push("security", blocking.length ? "skipped" : "succeeded", "info", "Generated database artifacts include grants and row-policy scaffolds", { models: ir.models.length, policyModes: ir.models.map((model) => ({ model: model.name, rls: model.rls })) });
     push("adapters", adapters.length ? "succeeded" : "blocked", adapters.length ? "info" : "warn", adapters.length ? "Runtime adapters resolved" : "No runtime adapters selected yet", { adapters });
@@ -76,5 +78,5 @@ export const listPipelineEvents = createServerFn({ method: "POST" })
     if (data.runId) query = query.eq("run_id" as never, data.runId as never);
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
-    return { events: (rows ?? []) as Array<{ id: string; run_id: string; sequence: number; stage: string; status: string; severity: string; message: string; payload: Record<string, unknown>; created_at: string }> };
+    return { events: (rows ?? []) as Array<{ id: string; run_id: string; sequence: number; stage: string; status: string; severity: string; message: string; payload: Record<string, any>; created_at: string }> };
   });
