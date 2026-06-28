@@ -247,6 +247,8 @@ function ProjectWorkspace() {
                 <SpatialScenePanel projectId={projectId} />
                 <ComponentPalettePanel projectId={projectId} />
                 <DeviceStudioPanel projectId={projectId} />
+                <InspectorHudPanel projectId={projectId} />
+                <AnimationTimelinePanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
