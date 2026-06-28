@@ -4068,6 +4068,116 @@ export type Database = {
           },
         ]
       }
+      ir_plan_runs: {
+        Row: {
+          applied_revision_id: string | null
+          attempts: number
+          created_at: string
+          errors: Json
+          id: string
+          model: string | null
+          project_id: string
+          prompt: string
+          spec: Json | null
+          status: string
+          tokens_in: number
+          tokens_out: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          applied_revision_id?: string | null
+          attempts?: number
+          created_at?: string
+          errors?: Json
+          id?: string
+          model?: string | null
+          project_id: string
+          prompt: string
+          spec?: Json | null
+          status?: string
+          tokens_in?: number
+          tokens_out?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          applied_revision_id?: string | null
+          attempts?: number
+          created_at?: string
+          errors?: Json
+          id?: string
+          model?: string | null
+          project_id?: string
+          prompt?: string
+          spec?: Json | null
+          status?: string
+          tokens_in?: number
+          tokens_out?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ir_plan_runs_applied_revision_id_fkey"
+            columns: ["applied_revision_id"]
+            isOneToOne: false
+            referencedRelation: "ir_revisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ir_plan_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ir_revisions: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          id: string
+          ir: Json
+          ir_hash: string
+          note: string | null
+          project_id: string
+          source: string
+          version: number
+        }
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          ir: Json
+          ir_hash: string
+          note?: string | null
+          project_id: string
+          source?: string
+          version: number
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          ir?: Json
+          ir_hash?: string
+          note?: string | null
+          project_id?: string
+          source?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ir_revisions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kms_key_audit: {
         Row: {
           action: string
@@ -5803,6 +5913,41 @@ export type Database = {
             foreignKeyName: "project_files_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_ir: {
+        Row: {
+          ir: Json
+          ir_hash: string
+          project_id: string
+          updated_at: string
+          updated_by: string | null
+          version: number
+        }
+        Insert: {
+          ir?: Json
+          ir_hash?: string
+          project_id: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Update: {
+          ir?: Json
+          ir_hash?: string
+          project_id?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_ir_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },

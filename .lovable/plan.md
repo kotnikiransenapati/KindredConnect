@@ -209,6 +209,10 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 - A2 (Spatial File System): DONE
 - A3 (Component Palette): DONE
 - A4 (3D Device Studio): DONE
-- A5 (Inspector HUD): DONE — node_inspector_props table; typed prop upserts (string/number/boolean/color/json) across style/a11y/data/layout/event categories; in-scene-style panel UI
-- A6 (Animation Timeline): DONE — node_animations + node_keyframes; per-node tracks bound to position/rotation/scale/opacity/color; deterministic easing sampler (linear/easeIn/easeOut/easeInOut/spring/step); scrubbable Z-axis timeline UI
-- Remaining batches in Foundry v2: 29
+- A5 (Inspector HUD): DONE
+- A6 (Animation Timeline): DONE
+- A7 (Spatial Presence): DONE
+- A8 (Accessibility & 2D Fallback): DONE
+- B1 (IR schema + validator + round-trip codegen): DONE — Zod schema (pages/models/integrations/theme/i18n), FNV-1a 64-bit hash, lintIr, generateFilesFromIr (TanStack routes + SQL + theme.css), project_ir + ir_revisions tables, IR Editor panel with codegen preview + revision history
+- B2 (Planner + Critic loop): DONE — Gemini 2.5 Flash via Lovable AI Gateway, JSON-mode response, max 3 attempts with critic prompt feeding lint errors back, ir_plan_runs telemetry, rate-limited (6/min/user), optional auto-apply that writes a new IR revision
+- Remaining batches in Foundry v2: 27
