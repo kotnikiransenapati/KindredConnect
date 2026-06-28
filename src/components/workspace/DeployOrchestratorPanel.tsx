@@ -213,6 +213,47 @@ export function DeployOrchestratorPanel({ projectId }: { projectId: string }) {
             {!data?.runs.length && <p className="text-xs text-muted-foreground">No deploy actions yet.</p>}
           </div>
         </Section>
+
+        <div className="grid gap-3 lg:grid-cols-3">
+          <Section title="E2 · Bring-your-own credentials">
+            <p className="mb-2 text-[11px] text-muted-foreground">Checks the project secrets vault for every credential key required by <b>{provider}</b>.</p>
+            <Button size="sm" variant="outline" onClick={() => validateM.mutate()} disabled={validateM.isPending}>
+              {validateM.isPending ? <Loader2 className="mr-1 size-3 animate-spin" /> : <KeyRound className="mr-1 size-3" />} Validate credentials
+            </Button>
+            {credCheck && (
+              <div className="mt-2 space-y-1 text-xs">
+                <div className="flex items-center gap-1">{credCheck.ready ? <CheckCircle2 className="size-3.5 text-emerald-500" /> : <XCircle className="size-3.5 text-destructive" />}<span>{credCheck.ready ? "Ready to deploy" : "Missing credentials"}</span></div>
+                {credCheck.present.length > 0 && <div className="flex flex-wrap gap-1">{credCheck.present.map((k) => <Badge key={k} variant="outline" className="text-[10px]">✓ {k}</Badge>)}</div>}
+                {credCheck.missing.length > 0 && <div className="flex flex-wrap gap-1">{credCheck.missing.map((k) => <Badge key={k} variant="destructive" className="text-[10px]">{k}</Badge>)}</div>}
+              </div>
+            )}
+          </Section>
+
+          <Section title="E3 · Self-host export">
+            <p className="mb-2 text-[11px] text-muted-foreground">Generates Dockerfile + Compose + Helm + Terraform + Caddyfile for the current IR. Downloads as a JSON manifest.</p>
+            <div className="space-y-2">
+              <Field label="Domain (optional)"><Input value={exportDomain} onChange={(e) => setExportDomain(e.target.value)} placeholder="app.example.com" /></Field>
+              <Button size="sm" onClick={() => exportM.mutate()} disabled={exportM.isPending}>
+                {exportM.isPending ? <Loader2 className="mr-1 size-3 animate-spin" /> : <Download className="mr-1 size-3" />} Export bundle
+              </Button>
+            </div>
+          </Section>
+
+          <Section title="E4 · Multi-region canary">
+            <p className="mb-2 text-[11px] text-muted-foreground">Progressive traffic shift across regions. Stages format: <code>percent:holdSeconds</code>.</p>
+            <div className="space-y-2">
+              <Field label="Regions (comma-separated)"><Input value={canaryRegions} onChange={(e) => setCanaryRegions(e.target.value)} placeholder="iad1,sfo1,fra1" /></Field>
+              <Field label="Stages"><Input value={canaryStages} onChange={(e) => setCanaryStages(e.target.value)} placeholder="5:120,25:180,50:180,100:0" /></Field>
+              <Button size="sm" variant="outline" onClick={() => canaryM.mutate()} disabled={canaryM.isPending}>
+                {canaryM.isPending ? <Loader2 className="mr-1 size-3 animate-spin" /> : <GitBranch className="mr-1 size-3" />} Create canary plan
+              </Button>
+            </div>
+          </Section>
+        </div>
+
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+          <Globe2 className="size-3" /> Foundry v2 · Phase E (E2 credentials · E3 self-host · E4 canary) wired through the deploy orchestrator.
+        </div>
       </CardContent>
     </Card>
   );
