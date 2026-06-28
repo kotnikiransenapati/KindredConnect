@@ -221,4 +221,6 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 - C3-C5 (Storage/functions/AI adapters): DONE — S3/GCS/storage providers, edge/self-host function targets, AI gateway/OpenAI/self-host targets, generated @app/runtime contract files
 - C6 (Payments/email/push adapters): DONE — Stripe/Paddle/Razorpay, Resend/Postmark/SMTP, FCM/APNs/OneSignal/Web Push in the portable runtime contract
 - D1-D2 (Web + iOS/Android targets): DONE — deterministic target profiles, target readiness scoring, generated web/mobile artifacts, and target run tracking
-- Remaining batches in Foundry v2: 17
+- D3-D5 (Desktop/PWA/Widget targets): DONE — Tauri 2 shell with auto-updater, Workbox PWA with offline shell + share target, embeddable widget with shadow-DOM mount
+- E1 (Deploy adapter interface): DONE — 14-provider catalog (Vercel/CF/Netlify/Fly/Render/Railway/AWS/GCP/Azure/Docker/K8s/self-host), deterministic plan synthesis, apply/rollback with run audit, canary traffic shifts
+- Remaining batches in Foundry v2: 13
