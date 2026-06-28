@@ -3986,6 +3986,212 @@ export type Database = {
           },
         ]
       }
+      foundry_compliance_profiles: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          enabled_controls: string[]
+          id: string
+          pii_classes: Json
+          profile: string
+          project_id: string
+          residency_required: boolean
+          retention_days: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          enabled_controls?: string[]
+          id?: string
+          pii_classes?: Json
+          profile: string
+          project_id: string
+          residency_required?: boolean
+          retention_days?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          enabled_controls?: string[]
+          id?: string
+          pii_classes?: Json
+          profile?: string
+          project_id?: string
+          residency_required?: boolean
+          retention_days?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_compliance_profiles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_readiness_assessments: {
+        Row: {
+          checks: Json
+          created_at: string
+          created_by: string | null
+          generated_files: Json
+          grade: string
+          id: string
+          project_id: string
+          recommendations: Json
+          score: number
+        }
+        Insert: {
+          checks?: Json
+          created_at?: string
+          created_by?: string | null
+          generated_files?: Json
+          grade: string
+          id?: string
+          project_id: string
+          recommendations?: Json
+          score: number
+        }
+        Update: {
+          checks?: Json
+          created_at?: string
+          created_by?: string | null
+          generated_files?: Json
+          grade?: string
+          id?: string
+          project_id?: string
+          recommendations?: Json
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_readiness_assessments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_security_policies: {
+        Row: {
+          audit_required: boolean
+          created_at: string
+          created_by: string | null
+          csp_preset: string
+          dependency_gate_enabled: boolean
+          id: string
+          profile: string
+          project_id: string
+          rate_limit_tier: string
+          rls_required: boolean
+          secret_rotation_days: number
+          updated_at: string
+        }
+        Insert: {
+          audit_required?: boolean
+          created_at?: string
+          created_by?: string | null
+          csp_preset?: string
+          dependency_gate_enabled?: boolean
+          id?: string
+          profile?: string
+          project_id: string
+          rate_limit_tier?: string
+          rls_required?: boolean
+          secret_rotation_days?: number
+          updated_at?: string
+        }
+        Update: {
+          audit_required?: boolean
+          created_at?: string
+          created_by?: string | null
+          csp_preset?: string
+          dependency_gate_enabled?: boolean
+          id?: string
+          profile?: string
+          project_id?: string
+          rate_limit_tier?: string
+          rls_required?: boolean
+          secret_rotation_days?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_security_policies_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_telemetry_configs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          endpoint: string
+          headers_secret_ref: string | null
+          id: string
+          logs_enabled: boolean
+          metrics_enabled: boolean
+          project_id: string
+          provider: string
+          sample_rate: number
+          service_name: string
+          status: string
+          traces_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          endpoint?: string
+          headers_secret_ref?: string | null
+          id?: string
+          logs_enabled?: boolean
+          metrics_enabled?: boolean
+          project_id: string
+          provider?: string
+          sample_rate?: number
+          service_name?: string
+          status?: string
+          traces_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          endpoint?: string
+          headers_secret_ref?: string | null
+          id?: string
+          logs_enabled?: boolean
+          metrics_enabled?: boolean
+          project_id?: string
+          provider?: string
+          sample_rate?: number
+          service_name?: string
+          status?: string
+          traces_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_telemetry_configs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hot_reload_bundles: {
         Row: {
           bundle_url: string | null
