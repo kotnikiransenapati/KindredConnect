@@ -11,7 +11,9 @@ export type TargetProfile = {
   description: string;
   outputKinds: string[];
   requiredAdapters: string[];
-  defaultConfig: Record<string, unknown>;
+  // TanStack server function serializability rejects `unknown` in returned DTOs.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultConfig: Record<string, any>;
   pipelineStages: Array<{ key: string; name: string; dependsOn?: string[] }>;
 };
 
@@ -55,7 +57,8 @@ export function targetProfile(target: BuildTarget) {
   return TARGET_PROFILES.find((profile) => profile.target === target) ?? TARGET_PROFILES[0];
 }
 
-export function targetReadiness(target: BuildTarget, adapters: TargetAdapterConfig[], config: Record<string, unknown> = {}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function targetReadiness(target: BuildTarget, adapters: TargetAdapterConfig[], config: Record<string, any> = {}) {
   const profile = targetProfile(target);
   const byCategory = new Map(adapters.map((adapter) => [adapter.category, adapter]));
   const missingAdapters = profile.requiredAdapters.filter((category) => !byCategory.has(category));
@@ -77,7 +80,8 @@ export function targetReadiness(target: BuildTarget, adapters: TargetAdapterConf
   };
 }
 
-export function generateTargetFiles(ir: Ir, target: BuildTarget, adapters: TargetAdapterConfig[], config: Record<string, unknown> = {}): TargetGeneratedFile[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function generateTargetFiles(ir: Ir, target: BuildTarget, adapters: TargetAdapterConfig[], config: Record<string, any> = {}): TargetGeneratedFile[] {
   const profile = targetProfile(target);
   const mergedConfig = { ...profile.defaultConfig, ...config };
   const readiness = targetReadiness(target, adapters, mergedConfig);
@@ -96,7 +100,8 @@ export function generateTargetFiles(ir: Ir, target: BuildTarget, adapters: Targe
   return target === "web" ? webFiles(manifest) : mobileFiles(manifest, ir);
 }
 
-function webFiles(manifest: Record<string, unknown>): TargetGeneratedFile[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function webFiles(manifest: Record<string, any>): TargetGeneratedFile[] {
   return [
     { path: "targets/web/foundry.target.json", language: "json", content: stableJson(manifest) + "\n" },
     { path: "targets/web/Dockerfile", language: "dockerfile", content: `FROM oven/bun:1 AS deps\nWORKDIR /app\nCOPY . .\nRUN bun install --frozen-lockfile\nRUN bun run build\n\nFROM gcr.io/distroless/nodejs20-debian12\nWORKDIR /app\nCOPY --from=deps /app/.output ./.output\nENV NODE_ENV=production\nCMD [".output/server/index.mjs"]\n` },
@@ -105,7 +110,8 @@ function webFiles(manifest: Record<string, unknown>): TargetGeneratedFile[] {
   ];
 }
 
-function mobileFiles(manifest: Record<string, unknown>, ir: Ir): TargetGeneratedFile[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mobileFiles(manifest: Record<string, any>, ir: Ir): TargetGeneratedFile[] {
   const appName = ir.name.replace(/[^a-z0-9 ]/gi, "").trim() || "Foundry App";
   return [
     { path: "targets/mobile/foundry.target.json", language: "json", content: stableJson(manifest) + "\n" },

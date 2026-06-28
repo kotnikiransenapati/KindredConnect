@@ -14,6 +14,10 @@ import { Box, CheckCircle2, Globe2, Loader2, Package, Rocket, Smartphone, XCircl
 import { toast } from "sonner";
 
 type BuildTarget = "web" | "mobile";
+type TargetBuildsData = {
+  profiles: any[];
+  runs: any[];
+};
 
 export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) {
   const qc = useQueryClient();
@@ -26,9 +30,10 @@ export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) 
   const [extraConfig, setExtraConfig] = useState("{}");
 
   const targetsQ = useQuery({ queryKey: ["target-builds", projectId], queryFn: () => getFn({ data: { projectId } }), refetchInterval: 15_000 });
-  const profiles = targetsQ.data?.profiles ?? [];
+  const targetData = targetsQ.data as TargetBuildsData | undefined;
+  const profiles = targetData?.profiles ?? [];
   const active = useMemo(() => profiles.find((profile: any) => profile.target === target), [profiles, target]);
-  const runs = targetsQ.data?.runs ?? [];
+  const runs = targetData?.runs ?? [];
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["target-builds", projectId] });
@@ -36,7 +41,7 @@ export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) 
   };
 
   function configForTarget() {
-    let parsed: Record<string, unknown> = {};
+    let parsed: Record<string, any> = {};
     try { parsed = JSON.parse(extraConfig || "{}"); } catch { throw new Error("Extra config must be valid JSON"); }
     if (target === "web") return { renderMode, docker: true, staticExport: true, ...parsed };
     return { packageName, capacitorFallback: true, ota: true, ...parsed };

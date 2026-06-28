@@ -57,7 +57,7 @@ export const getTargetBuilds = createServerFn({ method: "POST" })
     ]);
     if (configsRes.error) throw new Error(configsRes.error.message);
     if (runsRes.error) throw new Error(runsRes.error.message);
-    const configs = (configsRes.data ?? []) as Array<{ id: string; target: BuildTarget; status: TargetStatus; config: Record<string, unknown>; readiness: Record<string, unknown>; created_at: string; updated_at: string }>;
+    const configs = (configsRes.data ?? []) as Array<{ id: string; target: BuildTarget; status: TargetStatus; config: Record<string, any>; readiness: Record<string, any>; created_at: string; updated_at: string }>;
     const configuredTargets = new Set(configs.map((config) => config.target));
     const profileSummaries = TARGET_PROFILES.map((profile) => ({
       ...profile,
@@ -69,7 +69,7 @@ export const getTargetBuilds = createServerFn({ method: "POST" })
 
 export const saveTargetBuildConfig = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { projectId: string; target: BuildTarget; config?: Record<string, unknown> }) => z.object({ projectId: z.string().uuid(), target: TargetSchema, config: z.record(z.string(), z.any()).default({}) }).parse(d))
+  .inputValidator((d: { projectId: string; target: BuildTarget; config?: Record<string, any> }) => z.object({ projectId: z.string().uuid(), target: TargetSchema, config: z.record(z.string(), z.any()).default({}) }).parse(d))
   .handler(async ({ data, context }) => {
     await requireRole(context, data.projectId, "editor");
     const profile = TARGET_PROFILES.find((p) => p.target === data.target);
@@ -110,7 +110,7 @@ export const materializeTargetArtifacts = createServerFn({ method: "POST" })
         .maybeSingle(),
     ]);
     if (configRow.error) throw new Error(configRow.error.message);
-    const config = ((configRow.data as unknown as { config?: Record<string, unknown> } | null)?.config ?? {}) as Record<string, unknown>;
+    const config = ((configRow.data as unknown as { config?: Record<string, any> } | null)?.config ?? {}) as Record<string, any>;
     const files = generateTargetFiles(ir, data.target, adapters, config);
     const { data: run, error: runError } = await context.supabase
       .from("target_build_runs" as never)
