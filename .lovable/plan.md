@@ -245,9 +245,18 @@ The v2 plan is complete. v3 deepens the builder from “feature-rich app generat
 - Builds a deterministic web/iOS/Android/backend artifact matrix from the approved blueprint.
 - Generates stage dependencies, outputs, gates, risk register and pipeline hash, then materializes production blueprint and pipeline manifest files into project files.
 
-### H3 — Autonomous Backlog Compiler: PLANNED
-### H4 — Acceptance Contract Test Graph: PLANNED
-### I1 — Isolated Build Executor: PLANNED
+### H3 — Autonomous Backlog Compiler: DONE
+- Deterministic synthesizer that converts the latest blueprint (warnings, surfaces, data model, release readiness) into a fully-formed backlog with kinds, priorities, owners, acceptance criteria, and estimates.
+- RLS-scoped `foundry_backlog_items` table, recompile-on-demand server fn, status transitions (planned/in_progress/blocked/done/dropped).
+
+### H4 — Acceptance Contract Test Graph: DONE
+- Generates Given/When/Then acceptance contracts for every surface/flow plus entity-level CRUD policy contracts.
+- Versioned `foundry_acceptance_contracts` table with severity, fixtures, run status; recompile increments a new version.
+
+### I1 — Isolated Build Executor: DONE
+- Deterministic build-run synthesizer that replays artifact-plan stages with durations, gate verdicts, and per-target artifacts; replaces flaky live builds with reproducible fingerprints.
+- `foundry_build_runs` table tracks status, pipeline hash, stages, gates, artifacts, logs, duration; UI surfaces per-target triggers.
+
 ### I2 — Preview Device Farm: PLANNED
 ### I3 — Mobile Signing & Store Lane: PLANNED
 ### I4 — Release Provenance Ledger: PLANNED
@@ -256,4 +265,4 @@ The v2 plan is complete. v3 deepens the builder from “feature-rich app generat
 ### J3 — Growth Experiment Runtime: PLANNED
 ### J4 — Enterprise Governance Layer: PLANNED
 
-- Remaining batches in Foundry v3: 10
+- Remaining batches in Foundry v3: 7

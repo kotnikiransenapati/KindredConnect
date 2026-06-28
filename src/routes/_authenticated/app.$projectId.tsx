@@ -94,6 +94,7 @@ import { ProductionReadinessPanel } from "@/components/workspace/ProductionReadi
 import { FoundryLaunchCenterPanel } from "@/components/workspace/FoundryLaunchCenterPanel";
 import { FoundryFinalizePanel } from "@/components/workspace/FoundryFinalizePanel";
 import { FoundryProductionStudioPanel } from "@/components/workspace/FoundryProductionStudioPanel";
+import { FoundryDeliveryPanel } from "@/components/workspace/FoundryDeliveryPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
