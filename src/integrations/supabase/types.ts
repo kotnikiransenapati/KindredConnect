@@ -4068,6 +4068,62 @@ export type Database = {
           },
         ]
       }
+      ir_patch_sets: {
+        Row: {
+          applied_at: string | null
+          applied_by: string | null
+          base_ir_hash: string
+          created_at: string
+          created_by: string | null
+          files: Json
+          id: string
+          project_id: string
+          stats: Json
+          status: string
+          summary: string
+          target_ir_hash: string
+          updated_at: string
+        }
+        Insert: {
+          applied_at?: string | null
+          applied_by?: string | null
+          base_ir_hash?: string
+          created_at?: string
+          created_by?: string | null
+          files?: Json
+          id?: string
+          project_id: string
+          stats?: Json
+          status?: string
+          summary?: string
+          target_ir_hash?: string
+          updated_at?: string
+        }
+        Update: {
+          applied_at?: string | null
+          applied_by?: string | null
+          base_ir_hash?: string
+          created_at?: string
+          created_by?: string | null
+          files?: Json
+          id?: string
+          project_id?: string
+          stats?: Json
+          status?: string
+          summary?: string
+          target_ir_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ir_patch_sets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ir_plan_runs: {
         Row: {
           applied_revision_id: string | null
@@ -5437,6 +5493,56 @@ export type Database = {
           },
         ]
       }
+      pipeline_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          message: string
+          payload: Json
+          project_id: string
+          run_id: string
+          sequence: number
+          severity: string
+          stage: string
+          status: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          payload?: Json
+          project_id: string
+          run_id: string
+          sequence?: number
+          severity?: string
+          stage: string
+          status: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          payload?: Json
+          project_id?: string
+          run_id?: string
+          sequence?: number
+          severity?: string
+          stage?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
           ai_message_quota: number
@@ -6669,6 +6775,113 @@ export type Database = {
             columns: ["prompt_id"]
             isOneToOne: false
             referencedRelation: "review_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      runtime_adapter_audits: {
+        Row: {
+          action: string
+          actor_id: string | null
+          adapter_config_id: string | null
+          after_state: Json | null
+          before_state: Json | null
+          created_at: string
+          id: string
+          project_id: string
+          summary: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          adapter_config_id?: string | null
+          after_state?: Json | null
+          before_state?: Json | null
+          created_at?: string
+          id?: string
+          project_id: string
+          summary?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          adapter_config_id?: string | null
+          after_state?: Json | null
+          before_state?: Json | null
+          created_at?: string
+          id?: string
+          project_id?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "runtime_adapter_audits_adapter_config_id_fkey"
+            columns: ["adapter_config_id"]
+            isOneToOne: false
+            referencedRelation: "runtime_adapter_configs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runtime_adapter_audits_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      runtime_adapter_configs: {
+        Row: {
+          capabilities: Json
+          category: string
+          config: Json
+          created_at: string
+          created_by: string | null
+          display_name: string
+          id: string
+          project_id: string
+          provider: string
+          score: number
+          secret_refs: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          capabilities?: Json
+          category: string
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          display_name?: string
+          id?: string
+          project_id: string
+          provider: string
+          score?: number
+          secret_refs?: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          capabilities?: Json
+          category?: string
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          display_name?: string
+          id?: string
+          project_id?: string
+          provider?: string
+          score?: number
+          secret_refs?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "runtime_adapter_configs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
