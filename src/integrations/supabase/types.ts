@@ -7774,6 +7774,103 @@ export type Database = {
           },
         ]
       }
+      target_build_configs: {
+        Row: {
+          config: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          project_id: string
+          readiness: Json
+          status: string
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          project_id: string
+          readiness?: Json
+          status?: string
+          target: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          project_id?: string
+          readiness?: Json
+          status?: string
+          target?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "target_build_configs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      target_build_runs: {
+        Row: {
+          artifact_paths: Json
+          config: Json
+          created_at: string
+          duration_ms: number | null
+          id: string
+          ir_hash: string
+          logs: string
+          project_id: string
+          status: string
+          target: string
+          triggered_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          artifact_paths?: Json
+          config?: Json
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          ir_hash?: string
+          logs?: string
+          project_id: string
+          status?: string
+          target: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artifact_paths?: Json
+          config?: Json
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          ir_hash?: string
+          logs?: string
+          project_id?: string
+          status?: string
+          target?: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "target_build_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       template_listings: {
         Row: {
           author_id: string
