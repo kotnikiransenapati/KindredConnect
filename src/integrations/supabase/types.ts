@@ -4589,6 +4589,159 @@ export type Database = {
           },
         ]
       }
+      node_animations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duration_ms: number
+          enabled: boolean
+          id: string
+          loop_mode: string
+          name: string
+          node_id: string
+          project_id: string
+          property: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duration_ms?: number
+          enabled?: boolean
+          id?: string
+          loop_mode?: string
+          name: string
+          node_id: string
+          project_id: string
+          property: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duration_ms?: number
+          enabled?: boolean
+          id?: string
+          loop_mode?: string
+          name?: string
+          node_id?: string
+          project_id?: string
+          property?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "node_animations_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "spatial_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "node_animations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      node_inspector_props: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          node_id: string
+          project_id: string
+          prop_key: string
+          prop_type: string
+          prop_value: Json
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          node_id: string
+          project_id: string
+          prop_key: string
+          prop_type: string
+          prop_value?: Json
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          node_id?: string
+          project_id?: string
+          prop_key?: string
+          prop_type?: string
+          prop_value?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "node_inspector_props_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "spatial_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "node_inspector_props_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      node_keyframes: {
+        Row: {
+          animation_id: string
+          created_at: string
+          easing: string
+          id: string
+          project_id: string
+          time_ms: number
+          value: Json
+        }
+        Insert: {
+          animation_id: string
+          created_at?: string
+          easing?: string
+          id?: string
+          project_id: string
+          time_ms: number
+          value: Json
+        }
+        Update: {
+          animation_id?: string
+          created_at?: string
+          easing?: string
+          id?: string
+          project_id?: string
+          time_ms?: number
+          value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "node_keyframes_animation_id_fkey"
+            columns: ["animation_id"]
+            isOneToOne: false
+            referencedRelation: "node_animations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "node_keyframes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null

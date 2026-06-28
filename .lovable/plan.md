@@ -203,6 +203,8 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 ## Phase A Progress
 - A1 (3D Scene Foundation): DONE
 - A2 (Spatial File System): DONE
-- A3 (Component Palette): DONE — palette_blocks table, default seed (Hero/Grid/Pricing/Button/Form/Table/Chart/Gallery/Video), drag-to-scene instantiates spatial_nodes
-- A4 (3D Device Studio): DONE — preview_devices table with 5 presets, R3F device meshes with embedded iframe textures, click-to-inspect, position/rotation/scale editing
-- Remaining batches in Foundry v2: 31
+- A3 (Component Palette): DONE
+- A4 (3D Device Studio): DONE
+- A5 (Inspector HUD): DONE — node_inspector_props table; typed prop upserts (string/number/boolean/color/json) across style/a11y/data/layout/event categories; in-scene-style panel UI
+- A6 (Animation Timeline): DONE — node_animations + node_keyframes; per-node tracks bound to position/rotation/scale/opacity/color; deterministic easing sampler (linear/easeIn/easeOut/easeInOut/spring/step); scrubbable Z-axis timeline UI
+- Remaining batches in Foundry v2: 29
