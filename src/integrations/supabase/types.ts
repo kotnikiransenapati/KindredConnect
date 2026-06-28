@@ -3986,6 +3986,81 @@ export type Database = {
           },
         ]
       }
+      foundry_acceptance_contracts: {
+        Row: {
+          blueprint_id: string | null
+          created_at: string
+          created_by: string | null
+          fixtures: Json
+          flow: string
+          given: Json
+          id: string
+          last_run_at: string | null
+          metadata: Json
+          project_id: string
+          severity: string
+          status: string
+          surface: string
+          then_assertions: Json
+          updated_at: string
+          version: number
+          when_steps: Json
+        }
+        Insert: {
+          blueprint_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          fixtures?: Json
+          flow: string
+          given?: Json
+          id?: string
+          last_run_at?: string | null
+          metadata?: Json
+          project_id: string
+          severity?: string
+          status?: string
+          surface: string
+          then_assertions?: Json
+          updated_at?: string
+          version?: number
+          when_steps?: Json
+        }
+        Update: {
+          blueprint_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          fixtures?: Json
+          flow?: string
+          given?: Json
+          id?: string
+          last_run_at?: string | null
+          metadata?: Json
+          project_id?: string
+          severity?: string
+          status?: string
+          surface?: string
+          then_assertions?: Json
+          updated_at?: string
+          version?: number
+          when_steps?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_acceptance_contracts_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "foundry_product_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "foundry_acceptance_contracts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       foundry_artifact_plans: {
         Row: {
           blueprint_id: string | null
@@ -4048,6 +4123,156 @@ export type Database = {
           },
           {
             foreignKeyName: "foundry_artifact_plans_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_backlog_items: {
+        Row: {
+          acceptance: Json
+          blueprint_id: string | null
+          created_at: string
+          created_by: string | null
+          dependencies: Json
+          description: string
+          estimate_points: number
+          id: string
+          kind: string
+          metadata: Json
+          owner: string
+          priority: string
+          project_id: string
+          sequence: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          acceptance?: Json
+          blueprint_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dependencies?: Json
+          description?: string
+          estimate_points?: number
+          id?: string
+          kind: string
+          metadata?: Json
+          owner?: string
+          priority?: string
+          project_id: string
+          sequence?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          acceptance?: Json
+          blueprint_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dependencies?: Json
+          description?: string
+          estimate_points?: number
+          id?: string
+          kind?: string
+          metadata?: Json
+          owner?: string
+          priority?: string
+          project_id?: string
+          sequence?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_backlog_items_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "foundry_product_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "foundry_backlog_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foundry_build_runs: {
+        Row: {
+          artifacts: Json
+          completed_at: string | null
+          created_at: string
+          duration_ms: number
+          gates: Json
+          id: string
+          logs: Json
+          pipeline_hash: string
+          plan_id: string | null
+          project_id: string
+          run_number: number
+          stages: Json
+          started_at: string | null
+          status: string
+          target: string
+          triggered_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          artifacts?: Json
+          completed_at?: string | null
+          created_at?: string
+          duration_ms?: number
+          gates?: Json
+          id?: string
+          logs?: Json
+          pipeline_hash: string
+          plan_id?: string | null
+          project_id: string
+          run_number?: number
+          stages?: Json
+          started_at?: string | null
+          status?: string
+          target: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artifacts?: Json
+          completed_at?: string | null
+          created_at?: string
+          duration_ms?: number
+          gates?: Json
+          id?: string
+          logs?: Json
+          pipeline_hash?: string
+          plan_id?: string | null
+          project_id?: string
+          run_number?: number
+          stages?: Json
+          started_at?: string | null
+          status?: string
+          target?: string
+          triggered_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundry_build_runs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "foundry_artifact_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "foundry_build_runs_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
