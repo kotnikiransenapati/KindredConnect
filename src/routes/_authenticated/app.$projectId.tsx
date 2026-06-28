@@ -271,6 +271,7 @@ function ProjectWorkspace() {
                 <CrossPlatformTargetsPanel projectId={projectId} />
                 <DeployOrchestratorPanel projectId={projectId} />
                 <ProductionReadinessPanel projectId={projectId} />
+                <FoundryLaunchCenterPanel projectId={projectId} />
                 <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
