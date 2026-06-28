@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { EMPTY_IR, IrSchema, hashIr, type Ir } from "./ir.shared";
 import { RUNTIME_ADAPTER_CATALOG, adapterFor, integrationKindForCategory, recommendedAdapters, type RuntimeAdapterCategory } from "./runtime-adapters.shared";
+import { generateRuntimeContractFiles, runtimeContractSummary, type RuntimeContractAdapter } from "./runtime-contract.shared";
 
 const CategorySchema = z.enum(["auth", "database", "storage", "functions", "ai", "payments", "email", "push"]);
 const ProjectInput = z.object({ projectId: z.string().uuid() });
@@ -43,9 +44,10 @@ export const getRuntimeAdapters = createServerFn({ method: "POST" })
       .limit(12);
 
     return {
-      catalog: RUNTIME_ADAPTER_CATALOG.filter((adapter) => adapter.category === "auth" || adapter.category === "database"),
+      catalog: RUNTIME_ADAPTER_CATALOG.filter((adapter) => ["auth", "database", "storage", "functions", "ai"].includes(adapter.category)),
       configs: (configs ?? []) as Array<{ id: string; category: RuntimeAdapterCategory; provider: string; display_name: string; status: string; capabilities: string[]; config: Record<string, any>; secret_refs: string[]; score: number; updated_at: string }>,
       audits: (audits ?? []) as Array<{ id: string; action: string; summary: string; created_at: string; adapter_config_id: string | null }>,
+      summary: runtimeContractSummary((configs ?? []) as RuntimeContractAdapter[]),
     };
   });
 
@@ -143,14 +145,15 @@ export const applyRuntimeAdaptersToIr = createServerFn({ method: "POST" })
       .from("runtime_adapter_configs" as never)
       .select("category, provider, config, status")
       .eq("project_id" as never, data.projectId as never)
-      .in("category" as never, ["auth", "database"] as never);
+      .in("category" as never, ["auth", "database", "storage", "functions", "ai"] as never);
     const { data: row } = await context.supabase
       .from("project_ir" as never)
       .select("ir, version")
       .eq("project_id" as never, data.projectId as never)
       .maybeSingle();
     const current = IrSchema.parse((row as unknown as { ir: unknown } | null)?.ir ?? EMPTY_IR);
-    const nextIntegrations = current.integrations.filter((integration) => integration.kind !== "auth" && integration.kind !== "db");
+    const replacedKinds = new Set(["auth", "db", "storage", "functions", "ai"]);
+    const nextIntegrations = current.integrations.filter((integration) => !replacedKinds.has(integration.kind));
     for (const config of (configs ?? []) as Array<{ category: RuntimeAdapterCategory; provider: string; config: Record<string, any>; status: string }>) {
       nextIntegrations.push({ kind: integrationKindForCategory(config.category), provider: config.provider, config: { ...config.config, status: config.status } });
     }
@@ -174,4 +177,41 @@ export const applyRuntimeAdaptersToIr = createServerFn({ method: "POST" })
       note: "Synced portable runtime adapters into IR",
     } as never);
     return { ok: true, version, ir_hash: irHash, integrations: next.integrations.length };
+  });
+
+export const syncRuntimeAdapterContractFiles = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { projectId: string }) => ProjectInput.parse(d))
+  .handler(async ({ data, context }) => {
+    await requireEditor(context, data.projectId);
+    const { data: project } = await context.supabase
+      .from("projects" as never)
+      .select("name")
+      .eq("id" as never, data.projectId as never)
+      .maybeSingle();
+    const { data: configs, error } = await context.supabase
+      .from("runtime_adapter_configs" as never)
+      .select("category, provider, display_name, status, capabilities, config, secret_refs, score")
+      .eq("project_id" as never, data.projectId as never)
+      .in("category" as never, ["auth", "database", "storage", "functions", "ai"] as never)
+      .order("category" as never, { ascending: true });
+    if (error) throw new Error(error.message);
+    const rows = (configs ?? []) as RuntimeContractAdapter[];
+    const files = generateRuntimeContractFiles((project as { name?: string } | null)?.name ?? "Generated App", rows);
+    const upserts = files.map((file) => ({ project_id: data.projectId, path: file.path, content: file.content, language: file.language }));
+    if (upserts.length) {
+      const { error: writeError } = await context.supabase
+        .from("project_files" as never)
+        .upsert(upserts as never, { onConflict: "project_id,path" } as never);
+      if (writeError) throw new Error(writeError.message);
+    }
+    const summary = runtimeContractSummary(rows);
+    await context.supabase.from("runtime_adapter_audits" as never).insert({
+      project_id: data.projectId,
+      action: "runtime.contract_synced",
+      summary: `Generated ${files.length} @app/runtime contract files; ${summary.missingCategories.length} categories missing`,
+      after_state: { files: files.map((file) => file.path), summary },
+      actor_id: context.userId,
+    } as never);
+    return { ok: true, files: files.length, paths: files.map((file) => file.path), summary };
   });
