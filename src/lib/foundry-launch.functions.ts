@@ -154,8 +154,8 @@ export const seedLaunchRunbooks = createServerFn({ method: "POST" })
       const tpl = synthesizeRunbook(s);
       return {
         project_id: data.projectId, scenario: tpl.scenario, severity: tpl.severity, title: tpl.title,
-        steps: tpl.steps as unknown as Record<string, unknown>[], owners: [] as unknown as Record<string, unknown>[],
-        escalation: tpl.escalation as unknown as Record<string, unknown>, sla_minutes: tpl.slaMinutes, created_by: context.userId,
+        steps: tpl.steps as unknown as Json, owners: [] as unknown as Json,
+        escalation: tpl.escalation as unknown as Json, sla_minutes: tpl.slaMinutes, created_by: context.userId,
       };
     });
     const { error } = await supabaseAdmin.from("foundry_launch_runbooks").insert(rows);
