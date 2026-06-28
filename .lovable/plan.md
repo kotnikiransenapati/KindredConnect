@@ -223,4 +223,6 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 - D1-D2 (Web + iOS/Android targets): DONE — deterministic target profiles, target readiness scoring, generated web/mobile artifacts, and target run tracking
 - D3-D5 (Desktop/PWA/Widget targets): DONE — Tauri 2 shell with auto-updater, Workbox PWA with offline shell + share target, embeddable widget with shadow-DOM mount
 - E1 (Deploy adapter interface): DONE — 14-provider catalog (Vercel/CF/Netlify/Fly/Render/Railway/AWS/GCP/Azure/Docker/K8s/self-host), deterministic plan synthesis, apply/rollback with run audit, canary traffic shifts
-- Remaining batches in Foundry v2: 13
+- E2-E4 (Credentials, self-host export, multi-region canary): DONE — deploy credential validation, portable Docker/Compose/Helm/Terraform export, progressive regional canary plans
+- F1-F3 + G1 (Security, observability, compliance, readiness): DONE — generated app security kit, OpenTelemetry pipeline, compliance bundles, production readiness assessor/materializer
+- Remaining batches in Foundry v2: 6

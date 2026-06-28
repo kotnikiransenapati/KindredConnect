@@ -90,6 +90,7 @@ import { PipelineTimelinePanel } from "@/components/workspace/PipelineTimelinePa
 import { RuntimeAdaptersPanel } from "@/components/workspace/RuntimeAdaptersPanel";
 import { CrossPlatformTargetsPanel } from "@/components/workspace/CrossPlatformTargetsPanel";
 import { DeployOrchestratorPanel } from "@/components/workspace/DeployOrchestratorPanel";
+import { ProductionReadinessPanel } from "@/components/workspace/ProductionReadinessPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -268,6 +269,7 @@ function ProjectWorkspace() {
                 <RuntimeAdaptersPanel projectId={projectId} />
                 <CrossPlatformTargetsPanel projectId={projectId} />
                 <DeployOrchestratorPanel projectId={projectId} />
+                <ProductionReadinessPanel projectId={projectId} />
                 <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
