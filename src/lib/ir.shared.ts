@@ -49,7 +49,7 @@ export const IrPageSchema = z.object({
 });
 
 export const IrIntegrationSchema = z.object({
-  kind: z.enum(["auth", "db", "storage", "ai", "payments", "email", "push", "analytics"]),
+  kind: z.enum(["auth", "db", "storage", "functions", "ai", "payments", "email", "push", "analytics"]),
   provider: z.string().min(1),
   config: z.record(z.string(), z.any()).default({}),
 });

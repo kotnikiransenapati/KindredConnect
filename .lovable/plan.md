@@ -215,4 +215,8 @@ Approve and I'll start with **Phase A, Batches A1–A3** (scene foundation, spat
 - A8 (Accessibility & 2D Fallback): DONE
 - B1 (IR schema + validator + round-trip codegen): DONE — Zod schema (pages/models/integrations/theme/i18n), FNV-1a 64-bit hash, lintIr, generateFilesFromIr (TanStack routes + SQL + theme.css), project_ir + ir_revisions tables, IR Editor panel with codegen preview + revision history
 - B2 (Planner + Critic loop): DONE — Gemini 2.5 Flash via Lovable AI Gateway, JSON-mode response, max 3 attempts with critic prompt feeding lint errors back, ir_plan_runs telemetry, rate-limited (6/min/user), optional auto-apply that writes a new IR revision
-- Remaining batches in Foundry v2: 27
+- B3-B5 (Block runtime, visual page editor, materialization): DONE — typed block catalog, page editor, deterministic IR → project_files writer
+- B6-B7 (Diff review + pipeline observability): DONE — reviewable patch sets, pipeline replay events, deterministic diffs
+- C1-C2 (Auth/database adapters): DONE — portable auth/database catalog, config persistence, IR sync
+- C3-C5 (Storage/functions/AI adapters): DONE — S3/GCS/storage providers, edge/self-host function targets, AI gateway/OpenAI/self-host targets, generated @app/runtime contract files
+- Remaining batches in Foundry v2: 20

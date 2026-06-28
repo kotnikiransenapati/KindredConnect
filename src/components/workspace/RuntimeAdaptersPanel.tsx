@@ -1,17 +1,25 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { applyRuntimeAdaptersToIr, checkRuntimeAdapterConfig, getRuntimeAdapters, saveRuntimeAdapterConfig } from "@/lib/runtime-adapters.functions";
+import { applyRuntimeAdaptersToIr, checkRuntimeAdapterConfig, getRuntimeAdapters, saveRuntimeAdapterConfig, syncRuntimeAdapterContractFiles } from "@/lib/runtime-adapters.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Database, KeyRound, Link2, RefreshCw, Shield, Smartphone, Workflow } from "lucide-react";
+import { Bot, Box, Cloud, Database, KeyRound, Link2, RefreshCw, Shield, Smartphone, Workflow, Zap } from "lucide-react";
 import { toast } from "sonner";
 
-type Category = "auth" | "database";
+type Category = "auth" | "database" | "storage" | "functions" | "ai";
+
+const categoryTabs: Array<{ value: Category; label: string; icon: typeof KeyRound; badge: string }> = [
+  { value: "auth", label: "Auth", icon: KeyRound, badge: "C1" },
+  { value: "database", label: "Database", icon: Database, badge: "C2" },
+  { value: "storage", label: "Storage", icon: Box, badge: "C3" },
+  { value: "functions", label: "Functions", icon: Zap, badge: "C4" },
+  { value: "ai", label: "AI", icon: Bot, badge: "C5" },
+];
 
 export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
   const qc = useQueryClient();
@@ -19,6 +27,7 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
   const saveFn = useServerFn(saveRuntimeAdapterConfig);
   const checkFn = useServerFn(checkRuntimeAdapterConfig);
   const applyFn = useServerFn(applyRuntimeAdaptersToIr);
+  const contractFn = useServerFn(syncRuntimeAdapterContractFiles);
   const [category, setCategory] = useState<Category>("auth");
   const [provider, setProvider] = useState("lovable-cloud-auth");
   const [secrets, setSecrets] = useState("");
@@ -28,6 +37,7 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
   const options = useMemo(() => catalog.filter((adapter: any) => adapter.category === category), [catalog, category]);
   const selected = options.find((adapter: any) => adapter.provider === provider) ?? options[0];
   const configs = adaptersQ.data?.configs ?? [];
+  const summary = adaptersQ.data?.summary;
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["runtime-adapters", projectId] });
@@ -49,6 +59,11 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
     onSuccess: (r) => { toast.success(`Synced adapters into IR v${r.version}`); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
+  const contractM = useMutation({
+    mutationFn: () => contractFn({ data: { projectId } }),
+    onSuccess: (r) => { toast.success(`Runtime contract generated: ${r.files} files`); invalidate(); qc.invalidateQueries({ queryKey: ["project-files", projectId] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   return (
     <Card className="border-border/60 bg-card/50">
@@ -57,23 +72,31 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
           <Workflow className="size-4" /> Portable Runtime Adapters
           <Badge variant="outline" className="text-[10px]">C1 auth</Badge>
           <Badge variant="outline" className="text-[10px]">C2 database</Badge>
-          <Button size="sm" variant="outline" className="ml-auto" onClick={() => applyM.mutate()} disabled={applyM.isPending}>
-            <Link2 className="mr-1 size-3.5" /> Sync to IR
-          </Button>
+          <Badge variant="outline" className="text-[10px]">C3-C5 runtime</Badge>
+          <div className="ml-auto flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => contractM.mutate()} disabled={contractM.isPending}>
+              <Cloud className="mr-1 size-3.5" /> Generate contract
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => applyM.mutate()} disabled={applyM.isPending}>
+              <Link2 className="mr-1 size-3.5" /> Sync to IR
+            </Button>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-2 md:grid-cols-4">
           <Metric label="Configured" value={String(configs.length)} />
           <Metric label="Healthy" value={String(configs.filter((c: any) => c.status === "healthy" || c.status === "configured").length)} />
-          <Metric label="Auth options" value={String(catalog.filter((c: any) => c.category === "auth").length)} />
-          <Metric label="DB options" value={String(catalog.filter((c: any) => c.category === "database").length)} />
+          <Metric label="Runtime score" value={String(summary?.averageScore ?? 0)} />
+          <Metric label="Missing categories" value={String(summary?.missingCategories?.length ?? 5)} />
         </div>
 
         <Tabs value={category} onValueChange={(v) => { const next = v as Category; setCategory(next); const first = catalog.find((a: any) => a.category === next); if (first) setProvider(first.provider); }}>
-          <TabsList>
-            <TabsTrigger value="auth"><KeyRound className="mr-1 size-3.5" /> Auth</TabsTrigger>
-            <TabsTrigger value="database"><Database className="mr-1 size-3.5" /> Database</TabsTrigger>
+          <TabsList className="flex h-auto flex-wrap">
+            {categoryTabs.map((tab) => {
+              const Icon = tab.icon;
+              return <TabsTrigger key={tab.value} value={tab.value}><Icon className="mr-1 size-3.5" /> {tab.label}<Badge variant="outline" className="ml-1 text-[9px]">{tab.badge}</Badge></TabsTrigger>;
+            })}
           </TabsList>
           <TabsContent value={category} className="space-y-3">
             <div className="grid gap-3 rounded-lg border border-border/60 bg-background/40 p-3 md:grid-cols-[240px_1fr]">
@@ -99,6 +122,7 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
                     <Ready flag={selected.nativeReady} label="iOS/Android" icon="native" />
                     <Ready flag={selected.selfHostReady} label="Self-host" />
                   </div>
+                  {!!selected.requiredSecretRefs.length && <p className="text-xs text-muted-foreground">Required refs: {selected.requiredSecretRefs.join(", ")}</p>}
                 </div>
               ) : <p className="text-sm text-muted-foreground">No provider available.</p>}
             </div>
@@ -122,7 +146,7 @@ export function RuntimeAdaptersPanel({ projectId }: { projectId: string }) {
         </div>
 
         <div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-xs text-muted-foreground">
-          Latest audits: {(adaptersQ.data?.audits ?? []).map((audit: any) => audit.summary).join(" · ") || "No adapter audit events yet."}
+          Runtime readiness: {summary?.productionReady ? "production-ready" : `missing ${(summary?.missingCategories ?? []).join(", ") || "health checks"}`} · Latest audits: {(adaptersQ.data?.audits ?? []).map((audit: any) => audit.summary).join(" · ") || "No adapter audit events yet."}
         </div>
       </CardContent>
     </Card>
