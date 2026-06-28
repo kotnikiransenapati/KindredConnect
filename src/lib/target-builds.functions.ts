@@ -5,7 +5,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { EMPTY_IR, IrSchema, hashIr } from "./ir.shared";
 import { TARGET_PROFILES, generateTargetFiles, targetReadiness, type BuildTarget, type TargetAdapterConfig, type TargetStatus } from "./target-builds.shared";
 
-const TargetSchema = z.enum(["web", "mobile"]);
+const TargetSchema = z.enum(["web", "mobile", "desktop", "pwa", "widget"]);
 const ProjectInput = z.object({ projectId: z.string().uuid() });
 
 async function requireRole(context: { supabase: any; userId: string }, projectId: string, role: "viewer" | "editor" | "owner") {

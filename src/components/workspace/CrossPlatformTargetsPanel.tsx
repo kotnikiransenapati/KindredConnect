@@ -10,14 +10,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { getTargetBuilds, materializeTargetArtifacts, saveTargetBuildConfig } from "@/lib/target-builds.functions";
-import { Box, CheckCircle2, Globe2, Loader2, Package, Rocket, Smartphone, XCircle } from "lucide-react";
+import { Box, Boxes, CheckCircle2, Code2, Globe2, Loader2, Monitor, Package, Rocket, Smartphone, WifiOff, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
-type BuildTarget = "web" | "mobile";
+type BuildTarget = "web" | "mobile" | "desktop" | "pwa" | "widget";
 type TargetBuildsData = {
   profiles: any[];
   runs: any[];
 };
+
+const TARGET_ICON: Record<BuildTarget, any> = { web: Globe2, mobile: Smartphone, desktop: Monitor, pwa: WifiOff, widget: Code2 };
 
 export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) {
   const qc = useQueryClient();
@@ -43,9 +45,15 @@ export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) 
   function configForTarget() {
     let parsed: Record<string, any> = {};
     try { parsed = JSON.parse(extraConfig || "{}"); } catch { throw new Error("Extra config must be valid JSON"); }
-    if (target === "web") return { renderMode, docker: true, staticExport: true, ...parsed };
-    return { packageName, capacitorFallback: true, ota: true, ...parsed };
+    switch (target) {
+      case "web": return { renderMode, docker: true, staticExport: true, ...parsed };
+      case "mobile": return { packageName, capacitorFallback: true, ota: true, ...parsed };
+      case "desktop": return { systemTray: true, autoUpdater: true, targets: ["windows", "macos", "linux"], ...parsed };
+      case "pwa": return { offlineShell: true, shareTarget: true, ...parsed };
+      case "widget": return { isolation: "shadow", mountSelector: "[data-foundry-widget]", ...parsed };
+    }
   }
+
 
   const saveM = useMutation({
     mutationFn: () => saveFn({ data: { projectId, target, config: configForTarget() } }),
@@ -76,6 +84,9 @@ export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) 
           <TabsList className="flex h-auto flex-wrap">
             <TabsTrigger value="web"><Globe2 className="mr-1 size-3.5" /> Web</TabsTrigger>
             <TabsTrigger value="mobile"><Smartphone className="mr-1 size-3.5" /> iOS & Android</TabsTrigger>
+            <TabsTrigger value="desktop"><Monitor className="mr-1 size-3.5" /> Desktop</TabsTrigger>
+            <TabsTrigger value="pwa"><WifiOff className="mr-1 size-3.5" /> PWA</TabsTrigger>
+            <TabsTrigger value="widget"><Code2 className="mr-1 size-3.5" /> Widget</TabsTrigger>
           </TabsList>
           <TabsContent value={target} className="space-y-3">
             <div className="grid gap-3 rounded-lg border border-border/60 bg-background/40 p-3 lg:grid-cols-[280px_1fr]">
@@ -131,7 +142,7 @@ export function CrossPlatformTargetsPanel({ projectId }: { projectId: string }) 
             return (
               <div key={run.id} className="rounded-lg border border-border/60 bg-background/40 p-3">
                 <div className="flex items-center gap-2 text-sm">
-                  {run.target === "web" ? <Globe2 className="size-3.5" /> : <Smartphone className="size-3.5" />}
+                  {(() => { const Icon = TARGET_ICON[run.target as BuildTarget] ?? Boxes; return <Icon className="size-3.5" />; })()}
                   <Badge variant="outline">{run.target}</Badge>
                   <span className="font-mono text-xs">{run.ir_hash}</span>
                   {ok ? <CheckCircle2 className="ml-auto size-4 text-emerald-500" /> : blocked ? <XCircle className="ml-auto size-4 text-destructive" /> : <Box className="ml-auto size-4 text-muted-foreground" />}
