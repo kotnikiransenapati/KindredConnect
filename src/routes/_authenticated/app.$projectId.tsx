@@ -84,6 +84,7 @@ import { SpatialPresencePanel } from "@/components/workspace/SpatialPresencePane
 import { AccessibilityPanel } from "@/components/workspace/AccessibilityPanel";
 import { IrEditorPanel } from "@/components/workspace/IrEditorPanel";
 import { IrPlannerPanel } from "@/components/workspace/IrPlannerPanel";
+import { PageEditorPanel } from "@/components/workspace/PageEditorPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -256,6 +257,7 @@ function ProjectWorkspace() {
                 <SpatialPresencePanel projectId={projectId} />
                 <AccessibilityPanel projectId={projectId} />
                 <IrPlannerPanel projectId={projectId} />
+                <PageEditorPanel projectId={projectId} />
                 <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
