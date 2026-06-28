@@ -91,6 +91,7 @@ import { RuntimeAdaptersPanel } from "@/components/workspace/RuntimeAdaptersPane
 import { CrossPlatformTargetsPanel } from "@/components/workspace/CrossPlatformTargetsPanel";
 import { DeployOrchestratorPanel } from "@/components/workspace/DeployOrchestratorPanel";
 import { ProductionReadinessPanel } from "@/components/workspace/ProductionReadinessPanel";
+import { FoundryLaunchCenterPanel } from "@/components/workspace/FoundryLaunchCenterPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -270,6 +271,7 @@ function ProjectWorkspace() {
                 <CrossPlatformTargetsPanel projectId={projectId} />
                 <DeployOrchestratorPanel projectId={projectId} />
                 <ProductionReadinessPanel projectId={projectId} />
+                <FoundryLaunchCenterPanel projectId={projectId} />
                 <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
