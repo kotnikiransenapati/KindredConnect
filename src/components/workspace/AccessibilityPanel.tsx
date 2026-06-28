@@ -31,7 +31,10 @@ export function AccessibilityPanel({ projectId }: { projectId: string }) {
 
   const q = useQuery({
     queryKey: ["spatial-nodes-a11y", projectId],
-    queryFn: () => list({ data: { projectId } }) as Promise<Node[]>,
+    queryFn: async () => {
+      const r = (await list({ data: { projectId } })) as { nodes: Node[] };
+      return r.nodes ?? [];
+    },
   });
 
   const items = useMemo(() => (q.data ?? []).slice().sort((a, b) => a.label.localeCompare(b.label)), [q.data]);
