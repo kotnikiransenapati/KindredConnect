@@ -75,7 +75,7 @@ export function Block({ kind, props }: { kind: string; props: BlockProps }): Rea
       );
     case "Heading": {
       const lvl = Math.min(6, Math.max(1, Number(props.level ?? 2)));
-      const Tag = `h${lvl}` as keyof JSX.IntrinsicElements;
+      const Tag = (`h${lvl}`) as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
       return <Tag className="px-6 py-3 font-display text-2xl font-semibold">{props.text ?? ""}</Tag>;
     }
     case "Paragraph":
