@@ -78,6 +78,8 @@ import { PluginsPanel } from "@/components/workspace/PluginsPanel";
 import { SpatialScenePanel } from "@/components/workspace/SpatialScenePanel";
 import { ComponentPalettePanel } from "@/components/workspace/ComponentPalettePanel";
 import { DeviceStudioPanel } from "@/components/workspace/DeviceStudioPanel";
+import { InspectorHudPanel } from "@/components/workspace/InspectorHudPanel";
+import { AnimationTimelinePanel } from "@/components/workspace/AnimationTimelinePanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
