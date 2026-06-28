@@ -82,6 +82,8 @@ import { InspectorHudPanel } from "@/components/workspace/InspectorHudPanel";
 import { AnimationTimelinePanel } from "@/components/workspace/AnimationTimelinePanel";
 import { SpatialPresencePanel } from "@/components/workspace/SpatialPresencePanel";
 import { AccessibilityPanel } from "@/components/workspace/AccessibilityPanel";
+import { IrEditorPanel } from "@/components/workspace/IrEditorPanel";
+import { IrPlannerPanel } from "@/components/workspace/IrPlannerPanel";
 
 
 import { PreferencesDialog } from "@/components/workspace/PreferencesDialog";
@@ -253,6 +255,8 @@ function ProjectWorkspace() {
                 <AnimationTimelinePanel projectId={projectId} />
                 <SpatialPresencePanel projectId={projectId} />
                 <AccessibilityPanel projectId={projectId} />
+                <IrPlannerPanel projectId={projectId} />
+                <IrEditorPanel projectId={projectId} />
                 <ActivityFeed projectId={projectId} />
 
 
